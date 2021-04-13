@@ -1,29 +1,129 @@
 package com.shkcodes.aurora.ui.home
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import coil.transform.CircleCropTransformation
+import com.google.accompanist.coil.CoilImage
+import com.shkcodes.aurora.R
+import com.shkcodes.aurora.api.response.Tweet
+import com.shkcodes.aurora.theme.Dimens
+import com.shkcodes.aurora.ui.common.TerminalError
+import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
+import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
+import com.shkcodes.aurora.ui.home.HomeContract.State
+import com.shkcodes.aurora.util.toPrettyTime
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+
+private const val USER_HANDLE_OPACITY = 0.5F
 
 @Composable
 fun HomeScreen() {
+    val viewModel = hiltNavGraphViewModel<HomeViewModel>()
+
+    LaunchedEffect(Unit) {
+        viewModel.handleIntent(Init)
+        launch {
+            viewModel.getSideEffects().collect { }
+        }
+    }
+
     Scaffold {
+        when (val state = viewModel.getState().collectAsState().value) {
+            is State.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+            is State.Content -> {
+                LazyColumn {
+                    items(state.tweets) {
+                        TweetItem(it)
+                    }
+                }
+            }
+            is State.Error -> {
+                TerminalError(message = state.message) {
+                    viewModel.handleIntent(Retry)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TweetItem(tweet: Tweet) {
+    Row(modifier = Modifier.padding(Dimens.keyline_1.dp)) {
+        CoilImage(
+            data = tweet.user.profileImageUrl,
+            contentDescription = null,
+            fadeIn = true,
+            requestBuilder = {
+                transformations(CircleCropTransformation())
+            },
+            modifier = Modifier.size(Dimens.tweet_profile_pic.dp)
+        )
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(start = Dimens.space.dp)
         ) {
+            Row {
+                Row(modifier = Modifier.weight(1F)) {
+                    Text(
+                        text = tweet.user.name,
+                        style = MaterialTheme.typography.subtitle2.copy(fontSize = Dimens.text_body.sp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = stringResource(
+                            id = R.string.user_handle_placeholder,
+                            tweet.user.screenName
+                        ),
+                        style = MaterialTheme.typography.body2,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        modifier = Modifier
+                            .padding(start = Dimens.space_small.dp)
+                            .alpha(USER_HANDLE_OPACITY)
+                    )
+                }
+                Text(
+                    text = tweet.createdAt.toPrettyTime(),
+                    style = MaterialTheme.typography.overline,
+                    modifier = Modifier.padding(
+                        start = Dimens.space_small.dp,
+                        top = Dimens.space_small.dp
+                    )
+                )
+            }
             Text(
-                text = "Home",
-                style = MaterialTheme.typography.h3
+                text = tweet.content,
+                style = MaterialTheme.typography.body2,
+                modifier = Modifier
+                    .padding(top = Dimens.space.dp)
+
             )
         }
     }

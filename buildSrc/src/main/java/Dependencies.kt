@@ -30,7 +30,11 @@ object Versions {
 
     const val retrofit = "2.9.0"
     const val okhttp = "4.9.0"
-    const val moshi = "1.11.0"
+    const val moshi = "1.12.0"
+
+    const val accompanist = "0.7.0"
+
+    const val desugarLib = "1.0.9"
 }
 
 object Dependencies {
@@ -74,8 +78,13 @@ object Dependencies {
     const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     const val okhttp = "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
     const val moshi = "com.squareup.moshi:moshi-kotlin:${Versions.moshi}"
+    const val moshiCompiler = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.moshi}"
     const val scalarsConverter = "com.squareup.retrofit2:converter-scalars:${Versions.retrofit}"
     const val moshiConverter = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
+
+    const val coil = "com.google.accompanist:accompanist-coil:${Versions.accompanist}"
+
+    const val desugarLib = "com.android.tools:desugar_jdk_libs:${Versions.desugarLib}"
 
 }
 

@@ -5,6 +5,8 @@ import com.shkcodes.aurora.api.AuthApi
 import com.shkcodes.aurora.api.AuthInterceptor
 import com.shkcodes.aurora.api.NetworkErrorHandler
 import com.shkcodes.aurora.api.StringProviderImpl
+import com.shkcodes.aurora.api.UserApi
+import com.shkcodes.aurora.api.adapters.DateTimeAdapter
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.StringProvider
 import com.shkcodes.aurora.util.ApiConstants
@@ -38,8 +40,8 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideMoshi(): Moshi {
-        return Moshi.Builder().build()
+    fun provideMoshi(dateTimeAdapter: DateTimeAdapter): Moshi {
+        return Moshi.Builder().add(dateTimeAdapter).build()
     }
 
     @Provides
@@ -80,6 +82,10 @@ object ApiModule {
     @Provides
     @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideUserApi(retrofit: Retrofit): UserApi = retrofit.create()
 
     @Provides
     @Singleton

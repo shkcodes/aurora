@@ -35,7 +35,7 @@ private val colorPalette = darkColors(
     onSurface = Color(0xFF0DE791),
     background = Color(0xFF212121),
     onBackground = Color(0xFFFFFFFF),
-    error = Color(0xFFFF0000),
+    error = Color(0xFFF56460),
     onError = Color(0xFFFFFFFF)
 )
 

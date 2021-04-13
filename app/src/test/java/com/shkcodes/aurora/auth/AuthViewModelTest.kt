@@ -38,14 +38,14 @@ class AuthViewModelTest : BaseTest() {
     }
 
     @Test
-    fun `state update correctly on init in case of success`() =
+    fun `state updates correctly on init in case of success`() =
         viewModel.test(intents = listOf(Init), states = {
             assert(expectItem() == State.Loading)
             assert(expectItem() == State.RequestToken("token"))
         })
 
     @Test
-    fun `state update correctly on init in case of error`() {
+    fun `state updates correctly on init in case of error`() {
         coEvery { authService.getRequestToken() } returns Result.Failure(Exception())
         viewModel.test(intents = listOf(Init), states = {
             assert(expectItem() == State.Loading)
@@ -55,7 +55,7 @@ class AuthViewModelTest : BaseTest() {
 
 
     @Test
-    fun `state update correctly on request access token in case of success`() =
+    fun `state updates correctly on request access token in case of success`() =
         viewModel.test(intents = listOf(
             Init,
             RequestAccessToken(
@@ -71,7 +71,7 @@ class AuthViewModelTest : BaseTest() {
         })
 
     @Test
-    fun `state update correctly on request access token in case of failure`() {
+    fun `state updates correctly on request access token in case of failure`() {
         coEvery { authService.getAccessToken(any(), any()) } returns Result.Failure(Exception())
         viewModel.test(intents = listOf(
             Init,
@@ -88,7 +88,7 @@ class AuthViewModelTest : BaseTest() {
     }
 
     @Test
-    fun `state update correctly on retry event`() {
+    fun `state updates correctly on retry event`() {
         coEvery { authService.getRequestToken() } returns Result.Failure(Exception())
         viewModel.test(intents = listOf(Init, Retry), states = {
             assert(expectItem() == State.Loading)

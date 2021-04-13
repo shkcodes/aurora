@@ -42,7 +42,7 @@ fun LoginScreen(navController: NavController) {
 }
 
 @Composable
-fun Content(login: () -> Unit) {
+private fun Content(login: () -> Unit) {
     Scaffold {
         Column(modifier = Modifier.fillMaxSize()) {
             Text(

@@ -8,4 +8,6 @@
     <string name="error_no_internet">No internet connection</string>
     <string name="error_unknown">An unknown error has occurred</string>
     <string name="error_timeout">Could not reach the servers</string>
+
+    <string name="user_handle_placeholder">\@%1$s</string>
 </resources>
