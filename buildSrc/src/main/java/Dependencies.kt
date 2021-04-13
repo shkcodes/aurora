@@ -3,7 +3,7 @@ object Versions {
     const val minSdkVersion = 23
     const val targetSdkVersion = 30
 
-    const val gradle = "7.0.0-alpha12"
+    const val gradle = "7.0.0-alpha14"
     const val kotlin = "1.4.31"
 
     const val coreKtx = "1.3.2"
