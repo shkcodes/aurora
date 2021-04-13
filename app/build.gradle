@@ -1,0 +1,93 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'io.gitlab.arturbosch.detekt'
+}
+
+android {
+    compileSdkVersion Versions.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.shkcodes.aurora"
+        minSdkVersion Versions.minSdkVersion
+        targetSdkVersion Versions.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.compose
+    }
+    buildTypes.each { type ->
+        type.buildConfigField 'String', 'CONSUMER_KEY', "\"${System.getenv('TWITTER_CONSUMER_KEY')}\""
+        type.buildConfigField 'String', 'CONSUMER_SECRET', "\"${System.getenv('TWITTER_CONSUMER_SECRET')}\""
+        type.buildConfigField 'String', 'ACCESS_TOKEN', "\"${System.getenv('TWITTER_ACCESS_TOKEN')}\""
+        type.buildConfigField 'String', 'ACCESS_SECRET', "\"${System.getenv('TWITTER_ACCESS_SECRET')}\""
+        type.buildConfigField 'String', 'CALLBACK_URL', "\"${System.getenv('TWITTER_CALLBACK_URL')}\""
+    }
+}
+detekt {
+    autoCorrect = true
+}
+
+dependencies {
+
+    implementation Dependencies.coreKtx
+    implementation Dependencies.appCompat
+
+    implementation Dependencies.composeUi
+    implementation Dependencies.composeTooling
+    implementation Dependencies.composeFoundation
+    implementation Dependencies.composeMaterial
+    implementation Dependencies.composeIcons
+    implementation Dependencies.composeActivity
+    implementation Dependencies.composeViewModel
+    implementation Dependencies.composeNavigation
+
+    implementation Dependencies.viewModel
+
+    implementation Dependencies.hilt
+    implementation Dependencies.hiltViewModel
+    implementation Dependencies.hiltComposeNavigation
+    kapt Dependencies.hiltCompiler
+    kapt Dependencies.hiltCompilerJetpack
+
+    implementation Dependencies.coroutinesCore
+    implementation Dependencies.coroutinesAndroid
+
+    detektPlugins Dependencies.detektFormatter
+
+    implementation Dependencies.retrofit
+    implementation Dependencies.okhttp
+    implementation Dependencies.moshi
+    implementation Dependencies.moshiConverter
+    implementation Dependencies.scalarsConverter
+
+    testImplementation TestDependencies.junit
+    testImplementation TestDependencies.coroutines
+    testImplementation TestDependencies.mockk
+    testImplementation TestDependencies.turbine
+}

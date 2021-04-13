@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Aurora</string>
+    <string name="login_prompt">You need to authorize Aurora to access your Twitter account</string>
+    <string name="proceed">Proceed</string>
+</resources>
