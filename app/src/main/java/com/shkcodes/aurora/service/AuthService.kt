@@ -1,6 +1,8 @@
 package com.shkcodes.aurora.service
 
 import com.shkcodes.aurora.api.AuthApi
+import com.shkcodes.aurora.api.Result
+import com.shkcodes.aurora.api.execute
 import com.shkcodes.aurora.cache.PreferenceManager
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,13 +13,15 @@ class AuthService @Inject constructor(
     private val preferenceManager: PreferenceManager
 ) {
 
-    suspend fun getRequestToken(): String {
-        val response = api.getRequestToken()
-        return response.parseToken()
+    suspend fun getRequestToken(): Result<String> {
+        return execute {
+            val response = api.getRequestToken()
+            response.parseToken()
+        }
     }
 
-    suspend fun getAccessToken(verifier: String, token: String) {
-        api.getAccessToken(verifier, token)
+    suspend fun getAccessToken(verifier: String, token: String): Result<Unit> {
+        return execute { api.getAccessToken(verifier, token) }
     }
 
     private fun String.parseToken(): String {

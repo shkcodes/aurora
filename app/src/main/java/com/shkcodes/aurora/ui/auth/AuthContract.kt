@@ -11,6 +11,7 @@ interface AuthContract {
 
     sealed class State {
         object Loading : State()
+        data class Error(val message: String) : State()
         data class RequestToken(val token: String) : State() {
             val authorizationUrl = "$AUTH_URL$token"
         }
@@ -18,6 +19,7 @@ interface AuthContract {
 
     sealed class Intent {
         object Init : Intent()
+        object Retry : Intent()
         data class RequestAccessToken(
             val tokenState: RequestToken,
             val authorizationResponse: String

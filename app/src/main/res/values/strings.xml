@@ -2,4 +2,10 @@
     <string name="app_name">Aurora</string>
     <string name="login_prompt">You need to authorize Aurora to access your Twitter account</string>
     <string name="proceed">Proceed</string>
+    <string name="retry">Retry</string>
+
+    <!--errors-->
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_unknown">An unknown error has occurred</string>
+    <string name="error_timeout">Could not reach the servers</string>
 </resources>

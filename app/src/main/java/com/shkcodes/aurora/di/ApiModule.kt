@@ -3,6 +3,10 @@ package com.shkcodes.aurora.di
 import com.shkcodes.aurora.BuildConfig
 import com.shkcodes.aurora.api.AuthApi
 import com.shkcodes.aurora.api.AuthInterceptor
+import com.shkcodes.aurora.api.NetworkErrorHandler
+import com.shkcodes.aurora.api.StringProviderImpl
+import com.shkcodes.aurora.base.ErrorHandler
+import com.shkcodes.aurora.base.StringProvider
 import com.shkcodes.aurora.util.ApiConstants
 import com.shkcodes.aurora.util.ApiConstants.API_TIMEOUT
 import com.squareup.moshi.Moshi
@@ -76,4 +80,12 @@ object ApiModule {
     @Provides
     @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideStringProvider(stringProvider: StringProviderImpl): StringProvider = stringProvider
+
+    @Provides
+    @Singleton
+    fun provideErrorHandler(errorHandler: NetworkErrorHandler): ErrorHandler = errorHandler
 }
