@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.shkcodes.aurora.R
@@ -28,7 +29,9 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, navController: NavController) {
+fun LoginScreen(navController: NavController) {
+    val viewModel = hiltNavGraphViewModel<LoginViewModel>()
+
     LaunchedEffect(Unit) {
         launch {
             viewModel.getSideEffects().collect { handleActions(it, navController) }

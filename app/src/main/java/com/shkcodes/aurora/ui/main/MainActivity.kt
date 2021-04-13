@@ -3,8 +3,6 @@ package com.shkcodes.aurora.ui.main
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.hilt.navigation.HiltViewModelFactory
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -29,34 +27,13 @@ class MainActivity : AppCompatActivity() {
                     startDestination = Screen.SPLASH.name
                 ) {
                     composable(Screen.SPLASH.name) {
-                        SplashScreen(
-                            viewModel(
-                                factory = HiltViewModelFactory(
-                                    this@MainActivity,
-                                    it
-                                )
-                            ), navController
-                        )
+                        SplashScreen(navController)
                     }
                     composable(Screen.LOGIN.name) {
-                        LoginScreen(
-                            viewModel(
-                                factory = HiltViewModelFactory(
-                                    this@MainActivity,
-                                    it
-                                )
-                            ), navController
-                        )
+                        LoginScreen(navController)
                     }
                     composable(Screen.AUTH.name) {
-                        AuthScreen(
-                            viewModel(
-                                factory = HiltViewModelFactory(
-                                    this@MainActivity,
-                                    it
-                                )
-                            ), navController
-                        )
+                        AuthScreen(navController)
                     }
                     composable(Screen.HOME.name) {
                         HomeScreen()

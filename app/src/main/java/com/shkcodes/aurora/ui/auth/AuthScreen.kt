@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.popUpTo
@@ -39,7 +40,9 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
-fun AuthScreen(viewModel: AuthViewModel, navController: NavController) {
+fun AuthScreen(navController: NavController) {
+    val viewModel = hiltNavGraphViewModel<AuthViewModel>()
+
     LaunchedEffect(Unit) {
         viewModel.handleIntent(Init)
         launch {

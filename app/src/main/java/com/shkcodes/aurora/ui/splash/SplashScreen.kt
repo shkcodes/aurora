@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.popUpTo
@@ -24,7 +25,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @Composable
-fun SplashScreen(viewModel: SplashViewModel, navController: NavController) {
+fun SplashScreen(navController: NavController) {
+    val viewModel = hiltNavGraphViewModel<SplashViewModel>()
+
     LaunchedEffect(Unit) {
         launch {
             viewModel.getSideEffects().collect { handleActions(it, navController) }
