@@ -87,7 +87,10 @@ private fun TweetItem(tweet: Tweet) {
                 .padding(start = Dimens.space)
         ) {
             Row {
-                Row(modifier = Modifier.weight(1F)) {
+                Row(
+                    modifier = Modifier.weight(1F),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = tweet.user.name,
                         style = typography.subtitle2.copy(fontSize = Dimens.text_body),
@@ -99,11 +102,10 @@ private fun TweetItem(tweet: Tweet) {
                             id = R.string.user_handle_placeholder,
                             tweet.user.screenName
                         ),
-                        style = typography.body2,
+                        style = typography.body2.copy(fontSize = Dimens.text_caption),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
                         modifier = Modifier
-                            .padding(start = Dimens.space_small)
                             .alpha(USER_HANDLE_OPACITY)
                     )
                 }

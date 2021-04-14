@@ -11,7 +11,6 @@ import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.auth.AuthScreen
 import com.shkcodes.aurora.ui.home.HomeScreen
 import com.shkcodes.aurora.ui.login.LoginScreen
-import com.shkcodes.aurora.ui.splash.SplashScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,7 +26,7 @@ class MainActivity : AppCompatActivity() {
                     startDestination = Screen.SPLASH.name
                 ) {
                     composable(Screen.SPLASH.name) {
-                        SplashScreen(navController)
+                        HomeScreen()
                     }
                     composable(Screen.LOGIN.name) {
                         LoginScreen(navController)

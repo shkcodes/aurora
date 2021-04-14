@@ -9,5 +9,5 @@
     <string name="error_unknown">An unknown error has occurred</string>
     <string name="error_timeout">Could not reach the servers</string>
 
-    <string name="user_handle_placeholder">\@%1$s</string>
+    <string name="user_handle_placeholder">\u0020\@%1$s</string>
 </resources>
