@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,15 +12,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.theme.Dimens
-import com.shkcodes.aurora.theme.ThemedPreview
+import com.shkcodes.aurora.theme.typography
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.login.LoginContract.Intent.ShowAuthScreen
 import kotlinx.coroutines.flow.collect
@@ -47,22 +44,22 @@ private fun Content(login: () -> Unit) {
         Column(modifier = Modifier.fillMaxSize()) {
             Text(
                 text = stringResource(R.string.login_prompt),
-                style = MaterialTheme.typography.h5,
+                style = typography.h5,
                 modifier = Modifier.padding(
-                    vertical = Dimens.space_xxxlarge.dp,
-                    horizontal = Dimens.keyline_1.dp
+                    vertical = Dimens.space_xxxlarge,
+                    horizontal = Dimens.keyline_1
                 )
             )
             Spacer(modifier = Modifier.weight(1F))
             Button(
                 onClick = login,
                 modifier = Modifier
-                    .padding(Dimens.keyline_1.dp)
+                    .padding(Dimens.keyline_1)
                     .align(Alignment.End),
             ) {
                 Text(
                     text = stringResource(id = R.string.proceed).toUpperCase(Locale.ROOT),
-                    style = MaterialTheme.typography.button
+                    style = typography.button
                 )
             }
         }
@@ -74,13 +71,5 @@ private fun handleActions(sideEffect: SideEffect, navController: NavController) 
         is SideEffect.DisplayScreen<*> -> {
             navController.navigate((sideEffect.screen as Screen).name)
         }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewContent() {
-    ThemedPreview {
-        Content {}
     }
 }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +19,8 @@ import androidx.navigation.compose.navigate
 import androidx.navigation.compose.popUpTo
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.SideEffect
+import com.shkcodes.aurora.theme.colors
+import com.shkcodes.aurora.theme.typography
 import com.shkcodes.aurora.ui.Screen
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -44,7 +45,7 @@ fun SplashScreen(navController: NavController) {
         ) {
             Text(
                 text = stringResource(id = R.string.app_name),
-                style = MaterialTheme.typography.h3.copy(color = MaterialTheme.colors.primary),
+                style = typography.h3.copy(color = colors.primary),
                 fontStyle = FontStyle.Italic,
                 textDecoration = TextDecoration.Underline
             )

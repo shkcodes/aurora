@@ -2,6 +2,7 @@
 
 package com.shkcodes.aurora.theme
 
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Typography
@@ -13,6 +14,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import com.shkcodes.aurora.R
 
+val typography: Typography
+    @Composable
+    get() = MaterialTheme.typography
+
+val colors: Colors
+    @Composable
+    get() = MaterialTheme.colors
+
 private val fontFamily = FontFamily(
     Font(R.font.montserrat_thin, weight = FontWeight.Thin),
     Font(R.font.montserrat_extralight, weight = FontWeight.ExtraLight),
@@ -23,7 +32,7 @@ private val fontFamily = FontFamily(
     Font(R.font.montserrat_bold, weight = FontWeight.Bold),
 )
 
-private val typography = Typography(defaultFontFamily = fontFamily)
+private val themeTypography = Typography(defaultFontFamily = fontFamily)
 
 private val colorPalette = darkColors(
     primary = Color(0xFF0DE791),
@@ -46,7 +55,7 @@ fun AuroraTheme(
     MaterialTheme(
         colors = colorPalette,
         content = content,
-        typography = typography
+        typography = themeTypography
     )
 }
 

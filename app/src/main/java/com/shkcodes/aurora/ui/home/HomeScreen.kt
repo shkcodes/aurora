@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -20,14 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.api.response.Tweet
 import com.shkcodes.aurora.theme.Dimens
+import com.shkcodes.aurora.theme.typography
 import com.shkcodes.aurora.ui.common.TerminalError
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
@@ -74,7 +72,7 @@ fun HomeScreen() {
 
 @Composable
 private fun TweetItem(tweet: Tweet) {
-    Row(modifier = Modifier.padding(Dimens.keyline_1.dp)) {
+    Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         CoilImage(
             data = tweet.user.profileImageUrl,
             contentDescription = null,
@@ -82,17 +80,17 @@ private fun TweetItem(tweet: Tweet) {
             requestBuilder = {
                 transformations(CircleCropTransformation())
             },
-            modifier = Modifier.size(Dimens.tweet_profile_pic.dp)
+            modifier = Modifier.size(Dimens.tweet_profile_pic)
         )
         Column(
             modifier = Modifier
-                .padding(start = Dimens.space.dp)
+                .padding(start = Dimens.space)
         ) {
             Row {
                 Row(modifier = Modifier.weight(1F)) {
                     Text(
                         text = tweet.user.name,
-                        style = MaterialTheme.typography.subtitle2.copy(fontSize = Dimens.text_body.sp),
+                        style = typography.subtitle2.copy(fontSize = Dimens.text_body),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -101,28 +99,28 @@ private fun TweetItem(tweet: Tweet) {
                             id = R.string.user_handle_placeholder,
                             tweet.user.screenName
                         ),
-                        style = MaterialTheme.typography.body2,
+                        style = typography.body2,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
                         modifier = Modifier
-                            .padding(start = Dimens.space_small.dp)
+                            .padding(start = Dimens.space_small)
                             .alpha(USER_HANDLE_OPACITY)
                     )
                 }
                 Text(
                     text = tweet.createdAt.toPrettyTime(),
-                    style = MaterialTheme.typography.overline,
+                    style = typography.overline,
                     modifier = Modifier.padding(
-                        start = Dimens.space_small.dp,
-                        top = Dimens.space_small.dp
+                        start = Dimens.space_small,
+                        top = Dimens.space_small
                     )
                 )
             }
             Text(
                 text = tweet.content,
-                style = MaterialTheme.typography.body2,
+                style = typography.body2,
                 modifier = Modifier
-                    .padding(top = Dimens.space.dp)
+                    .padding(top = Dimens.space)
 
             )
         }
