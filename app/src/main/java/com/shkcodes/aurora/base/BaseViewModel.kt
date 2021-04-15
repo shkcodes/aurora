@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<S, I>(private val initialState: S) : ViewModel() {
+abstract class BaseViewModel<S, I>(initialState: S) : ViewModel() {
 
     protected abstract val dispatcherProvider: DispatcherProvider
 

@@ -10,6 +10,8 @@ import com.shkcodes.aurora.api.adapters.LocalDateTimeAdapter
 import com.shkcodes.aurora.api.adapters.ZonedDateTimeAdapter
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.StringProvider
+import com.shkcodes.aurora.service.DefaultTimeProvider
+import com.shkcodes.aurora.service.TimeProvider
 import com.shkcodes.aurora.util.ApiConstants
 import com.shkcodes.aurora.util.ApiConstants.API_TIMEOUT
 import com.squareup.moshi.Moshi
@@ -101,4 +103,8 @@ object ApiModule {
     @Provides
     @Singleton
     fun provideErrorHandler(errorHandler: NetworkErrorHandler): ErrorHandler = errorHandler
+
+    @Provides
+    @Singleton
+    fun provideTimeProvider(timeProvider: DefaultTimeProvider): TimeProvider = timeProvider
 }
