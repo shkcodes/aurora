@@ -34,9 +34,9 @@ data class User(
     @Json(name = "friends_count")
     val friendsCount: Int,
     @Json(name = "profile_background_color")
-    val profileBackgroundColor: String,
+    val profileBackgroundColor: String?,
     @Json(name = "profile_background_image_url_https")
-    val profileBackgroundImageUrl: String,
+    val profileBackgroundImageUrl: String?,
     @Json(name = "profile_background_tile")
     val profileBackgroundTile: Boolean,
     @Json(name = "profile_banner_url")

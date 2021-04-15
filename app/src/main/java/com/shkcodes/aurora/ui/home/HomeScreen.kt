@@ -23,7 +23,7 @@ import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
-import com.shkcodes.aurora.api.response.Tweet
+import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.theme.typography
 import com.shkcodes.aurora.ui.common.TerminalError
@@ -71,7 +71,7 @@ fun HomeScreen() {
 }
 
 @Composable
-private fun TweetItem(tweet: Tweet) {
+private fun TweetItem(tweet: TweetEntity) {
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         CoilImage(
             data = tweet.user.profileImageUrl,

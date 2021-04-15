@@ -1,9 +1,9 @@
 package com.shkcodes.aurora.home
 
 import com.shkcodes.aurora.api.Result
-import com.shkcodes.aurora.api.response.Tweet
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
+import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
@@ -21,8 +21,8 @@ class HomeViewModelTest : BaseTest() {
 
     private lateinit var viewModel: HomeViewModel
 
-    private val tweet = mockk<Tweet> {
-        every { id } returns 23121993
+    private val tweet = mockk<TweetEntity> {
+        every { tweetId } returns 23121993
         every { content } returns "Shouldn't have tweeted this"
     }
     private val userService: UserService = mockk(relaxUnitFun = true) {

@@ -6,7 +6,8 @@ import com.shkcodes.aurora.api.AuthInterceptor
 import com.shkcodes.aurora.api.NetworkErrorHandler
 import com.shkcodes.aurora.api.StringProviderImpl
 import com.shkcodes.aurora.api.UserApi
-import com.shkcodes.aurora.api.adapters.DateTimeAdapter
+import com.shkcodes.aurora.api.adapters.LocalDateTimeAdapter
+import com.shkcodes.aurora.api.adapters.ZonedDateTimeAdapter
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.StringProvider
 import com.shkcodes.aurora.util.ApiConstants
@@ -40,8 +41,14 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideMoshi(dateTimeAdapter: DateTimeAdapter): Moshi {
-        return Moshi.Builder().add(dateTimeAdapter).build()
+    fun provideMoshi(
+        zonedDateTimeAdapter: ZonedDateTimeAdapter,
+        localDateTimeAdapter: LocalDateTimeAdapter
+    ): Moshi {
+        return Moshi.Builder()
+            .add(zonedDateTimeAdapter)
+            .add(localDateTimeAdapter)
+            .build()
     }
 
     @Provides

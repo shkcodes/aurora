@@ -35,6 +35,7 @@ object Versions {
     const val accompanist = "0.7.0"
 
     const val desugarLib = "1.0.9"
+    const val room = "2.3.0-rc01"
 }
 
 object Dependencies {
@@ -85,6 +86,10 @@ object Dependencies {
     const val coil = "com.google.accompanist:accompanist-coil:${Versions.accompanist}"
 
     const val desugarLib = "com.android.tools:desugar_jdk_libs:${Versions.desugarLib}"
+
+    const val room = "androidx.room:room-runtime:${Versions.room}"
+    const val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
+    const val roomKtx = "androidx.room:room-ktx:${Versions.room}"
 
 }
 

@@ -33,7 +33,7 @@ inline fun <reified T> SharedPreferences.setData(key: String, data: T?, moshi: M
                 is Long -> putLong(key, data)
                 is Boolean -> putBoolean(key, data)
                 is Float -> putFloat(key, data)
-                else -> putString(key, moshi.adapter(T::class.java).toJson(data))
+                else -> putString(key, moshi.toJson(data))
             }
         }
     }

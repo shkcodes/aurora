@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import com.shkcodes.aurora.util.getData
 import com.shkcodes.aurora.util.setData
 import com.squareup.moshi.Moshi
+import java.time.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,11 +28,17 @@ class PreferenceManager @Inject constructor(
         }
     }
 
-    var isLoggedIn: Boolean = false
-        get() = getData(PrefKey.IS_LOGGED_IN) ?: false
+    var isLoggedIn: Boolean = getData(PrefKey.IS_LOGGED_IN) ?: false
         set(value) {
             field = value
             setData(PrefKey.IS_LOGGED_IN, value)
+        }
+
+    var timelineRefreshTime: LocalDateTime =
+        getData(PrefKey.HOME_TIMELINE_REFRESH_TIME) ?: LocalDateTime.MIN
+        set(value) {
+            field = value
+            setData(PrefKey.HOME_TIMELINE_REFRESH_TIME, value)
         }
 
     private inline fun <reified T> getData(key: String): T? = sharedPreferences.getData(key, moshi)
@@ -44,4 +51,5 @@ class PreferenceManager @Inject constructor(
 internal object PrefKey {
     const val SCHEMA_VERSION = "schema_version"
     const val IS_LOGGED_IN = "is_logged_in"
+    const val HOME_TIMELINE_REFRESH_TIME = "home_timeline_refresh_time"
 }

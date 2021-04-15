@@ -16,7 +16,14 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
+        }
+
     }
 
     buildTypes {
@@ -91,6 +98,10 @@ dependencies {
     implementation Dependencies.coil
 
     coreLibraryDesugaring Dependencies.desugarLib
+
+    implementation Dependencies.room
+    implementation Dependencies.roomKtx
+    kapt Dependencies.roomCompiler
 
     testImplementation TestDependencies.junit
     testImplementation TestDependencies.coroutines
