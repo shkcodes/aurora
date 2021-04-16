@@ -4,11 +4,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +31,7 @@ import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.theme.typography
 import com.shkcodes.aurora.ui.common.TerminalError
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
+import com.shkcodes.aurora.ui.home.HomeContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
 import com.shkcodes.aurora.ui.home.HomeContract.State
 import com.shkcodes.aurora.util.toPrettyTime
@@ -55,9 +59,21 @@ fun HomeScreen() {
                 }
             }
             is State.Content -> {
-                LazyColumn {
-                    items(state.tweets) {
-                        TweetItem(it)
+                val listState = rememberLazyListState()
+                val isNearingTheEnd = with(listState.layoutInfo) {
+                    visibleItemsInfo.isNotEmpty() && visibleItemsInfo.last().index == totalItemsCount - 1
+                }
+                if (isNearingTheEnd) {
+                    viewModel.handleIntent(LoadNextPage(state))
+                }
+                Box(contentAlignment = Alignment.BottomCenter) {
+                    LazyColumn(state = listState) {
+                        items(state.tweets) {
+                            TweetItem(it)
+                        }
+                    }
+                    if (state.isLoadingNextPage) {
+                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                     }
                 }
             }

@@ -5,7 +5,6 @@ import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.execute
 import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
-import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.cache.entities.toCachedTweets
 import java.time.Duration
 import javax.inject.Inject
@@ -28,17 +27,15 @@ class UserService @Inject constructor(
             return difference.toMinutes() >= TIMELINE_REFRESH_THRESHOLD
         }
 
-    suspend fun getTimelineTweets(): Result<CachedTweets> {
+    suspend fun fetchTimelineTweets(afterId: Long?): Result<Unit> {
         return execute {
-            val tweets = if (isTimelineStale) {
-                val freshTweets = userApi.getTimelineTweets().toCachedTweets()
+            if (isTimelineStale || afterId != null) {
+                val freshTweets = userApi.getTimelineTweets(afterId = afterId).toCachedTweets()
                 tweetsDao.saveTweets(freshTweets)
-                preferenceManager.timelineRefreshTime = timeProvider.now()
-                freshTweets
-            } else {
-                tweetsDao.getTweets()
+                if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()
             }
-            tweets
         }
     }
+
+    fun getTimelineTweets() = tweetsDao.getTweets()
 }
