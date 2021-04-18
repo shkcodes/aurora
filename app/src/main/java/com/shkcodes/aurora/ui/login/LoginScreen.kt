@@ -23,7 +23,6 @@ import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.login.LoginContract.Intent.ShowAuthScreen
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -58,7 +57,7 @@ private fun Content(login: () -> Unit) {
                     .align(Alignment.End),
             ) {
                 Text(
-                    text = stringResource(id = R.string.proceed).toUpperCase(Locale.ROOT),
+                    text = stringResource(id = R.string.proceed),
                     style = typography.button
                 )
             }

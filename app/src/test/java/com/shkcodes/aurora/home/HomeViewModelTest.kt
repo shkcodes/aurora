@@ -8,6 +8,7 @@ import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
+import com.shkcodes.aurora.ui.home.HomeContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
 import com.shkcodes.aurora.ui.home.HomeContract.State
 import com.shkcodes.aurora.ui.home.HomeViewModel
@@ -86,4 +87,24 @@ class HomeViewModelTest : BaseTest() {
             }
         }
     }
+
+    @Test
+    fun `state updates correctly on init in case of paginated failure`() {
+        coEvery { userService.fetchTimelineTweets(23121993) } returns Result.Failure(Exception())
+        viewModel.test(
+            intents = listOf(Init, LoadNextPage(State.Content(listOf(tweet), false))),
+            states = {
+                assert(expectItem() == State.Loading)
+                assert(expectItem() == State.Content(listOf(tweet), false))
+                assert(expectItem() == State.Content(listOf(tweet), isLoadingNextPage = true))
+                assert(
+                    expectItem() == State.Content(
+                        listOf(tweet),
+                        isLoadingNextPage = false,
+                        isPaginatedError = true
+                    )
+                )
+            })
+    }
+
 }

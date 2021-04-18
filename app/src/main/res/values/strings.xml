@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Aurora</string>
     <string name="login_prompt">You need to authorize Aurora to access your Twitter account</string>
-    <string name="proceed">Proceed</string>
-    <string name="retry">Retry</string>
+    <string name="proceed">PROCEED</string>
+    <string name="retry">RETRY</string>
 
     <!--errors-->
     <string name="error_no_internet">No internet connection</string>
@@ -10,4 +10,5 @@
     <string name="error_timeout">Could not reach the servers</string>
 
     <string name="user_handle_placeholder">\u0020\@%1$s</string>
+    <string name="tweets_pagination_error">Unable to load more tweets</string>
 </resources>

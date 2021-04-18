@@ -10,7 +10,12 @@ class HomeContract {
 
     sealed class State {
         object Loading : State()
-        data class Content(val tweets: CachedTweets, val isLoadingNextPage: Boolean) :
+
+        data class Content(
+            val tweets: CachedTweets,
+            val isLoadingNextPage: Boolean,
+            val isPaginatedError: Boolean = false
+        ) :
             State()
 
         data class Error(val message: String) : State()

@@ -14,7 +14,6 @@ import androidx.compose.ui.text.style.TextAlign
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.theme.typography
-import java.util.Locale
 
 @Composable
 fun TerminalError(message: String, action: () -> Unit) {
@@ -33,7 +32,7 @@ fun TerminalError(message: String, action: () -> Unit) {
             modifier = Modifier.padding(Dimens.space),
         ) {
             Text(
-                text = stringResource(id = R.string.retry).toUpperCase(Locale.ROOT),
+                text = stringResource(id = R.string.retry),
                 style = typography.button
             )
         }

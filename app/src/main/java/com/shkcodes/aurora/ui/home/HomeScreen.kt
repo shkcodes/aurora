@@ -8,19 +8,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import coil.transform.CircleCropTransformation
@@ -28,6 +35,7 @@ import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
+import com.shkcodes.aurora.theme.colors
 import com.shkcodes.aurora.theme.typography
 import com.shkcodes.aurora.ui.common.TerminalError
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
@@ -60,17 +68,21 @@ fun HomeScreen() {
             }
             is State.Content -> {
                 val listState = rememberLazyListState()
-                val isNearingTheEnd = with(listState.layoutInfo) {
-                    visibleItemsInfo.isNotEmpty() && visibleItemsInfo.last().index == totalItemsCount - 1
-                }
-                if (isNearingTheEnd) {
+                val shouldLoadMore = listState.isAtTheBottom && !state.isPaginatedError
+
+                if (shouldLoadMore) {
                     viewModel.handleIntent(LoadNextPage(state))
                 }
                 Box(contentAlignment = Alignment.BottomCenter) {
-                    LazyColumn(state = listState) {
-                        items(state.tweets) {
-                            TweetItem(it)
-                        }
+                    TweetsList(state, listState) {
+                        viewModel.handleIntent(
+                            LoadNextPage(
+                                State.Content(
+                                    state.tweets,
+                                    false
+                                )
+                            )
+                        )
                     }
                     if (state.isLoadingNextPage) {
                         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
@@ -82,6 +94,24 @@ fun HomeScreen() {
                     viewModel.handleIntent(Retry)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun TweetsList(state: State.Content, listState: LazyListState, retryAction: () -> Unit) {
+    val scope = rememberCoroutineScope()
+    LazyColumn(state = listState) {
+        items(state.tweets) {
+            TweetItem(it)
+        }
+        if (state.isPaginatedError) {
+            item { PaginatedError(retryAction) }
+        }
+    }
+    LaunchedEffect(state.isPaginatedError) {
+        if (state.isPaginatedError) scope.launch {
+            listState.animateScrollToItem(state.tweets.size - 1)
         }
     }
 }
@@ -144,3 +174,37 @@ private fun TweetItem(tweet: TweetEntity) {
         }
     }
 }
+
+@Composable
+private fun PaginatedError(action: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Divider(
+            color = colors.error,
+            modifier = Modifier.padding(horizontal = Dimens.space_large, vertical = Dimens.space)
+        )
+        Text(
+            text = stringResource(id = R.string.tweets_pagination_error),
+            style = typography.caption.copy(
+                fontSize = Dimens.text_large,
+                fontWeight = FontWeight.Medium
+            ),
+            textAlign = TextAlign.Center
+        )
+        Button(
+            onClick = action, modifier = Modifier.padding(Dimens.space),
+            colors = ButtonDefaults.buttonColors(backgroundColor = colors.error)
+        ) {
+            Text(text = stringResource(id = R.string.retry))
+        }
+    }
+}
+
+private val LazyListState.isAtTheBottom: Boolean
+    get() {
+        return with(layoutInfo) {
+            visibleItemsInfo.isNotEmpty() && visibleItemsInfo.last().index == totalItemsCount - 1
+        }
+    }
