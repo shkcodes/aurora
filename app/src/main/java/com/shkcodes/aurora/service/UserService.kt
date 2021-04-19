@@ -7,10 +7,12 @@ import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
 import com.shkcodes.aurora.cache.entities.toCachedTweets
 import java.time.Duration
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val TIMELINE_REFRESH_THRESHOLD = 5 // minutes
+private const val CACHE_FLUSH_THRESHOLD = 2L // days
 
 @Singleton
 class UserService @Inject constructor(
@@ -38,4 +40,8 @@ class UserService @Inject constructor(
     }
 
     fun getTimelineTweets() = tweetsDao.getTweets()
+
+    suspend fun flushTweetsCache() {
+        tweetsDao.removeTweets(ZonedDateTime.now().minusDays(CACHE_FLUSH_THRESHOLD))
+    }
 }

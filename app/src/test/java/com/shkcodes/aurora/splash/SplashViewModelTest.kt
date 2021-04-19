@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.AuthService
+import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.splash.SplashContract.Constants.SPLASH_TIMEOUT
 import com.shkcodes.aurora.ui.splash.SplashViewModel
@@ -19,11 +20,12 @@ class SplashViewModelTest : BaseTest() {
 
     private lateinit var viewModel: SplashViewModel
     private val authService: AuthService = mockk()
+    private val userService: UserService = mockk()
 
     @Before
     override fun setUp() {
         super.setUp()
-        viewModel = SplashViewModel(testDispatcherProvider, authService)
+        viewModel = SplashViewModel(testDispatcherProvider, authService, userService)
     }
 
     @Test

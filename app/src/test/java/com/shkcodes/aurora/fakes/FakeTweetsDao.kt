@@ -5,6 +5,7 @@ import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import java.time.ZonedDateTime
 
 class FakeTweetsDao : TweetsDao {
 
@@ -15,4 +16,6 @@ class FakeTweetsDao : TweetsDao {
     override suspend fun saveTweets(tweets: CachedTweets) {
         items.addAll(tweets)
     }
+
+    override suspend fun removeTweets(date: ZonedDateTime) {}
 }
