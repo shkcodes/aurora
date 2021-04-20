@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
@@ -133,28 +134,7 @@ private fun TweetItem(tweet: TweetEntity) {
                 .padding(start = Dimens.space)
         ) {
             Row {
-                Row(
-                    modifier = Modifier.weight(1F),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = tweet.user.name,
-                        style = typography.subtitle2.copy(fontSize = Dimens.text_body),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                        text = stringResource(
-                            id = R.string.user_handle_placeholder,
-                            tweet.user.screenName
-                        ),
-                        style = typography.body2.copy(fontSize = Dimens.text_caption),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        modifier = Modifier
-                            .alpha(USER_HANDLE_OPACITY)
-                    )
-                }
+                UserInfo(tweet.user.name, tweet.user.screenName, modifier = Modifier.weight(1F))
                 Text(
                     text = tweet.createdAt.toPrettyTime(),
                     style = typography.overline,
@@ -169,9 +149,52 @@ private fun TweetItem(tweet: TweetEntity) {
                 style = typography.body2,
                 modifier = Modifier
                     .padding(top = Dimens.space)
-
             )
+            tweet.quotedTweet?.run {
+                Card(
+                    modifier = Modifier
+                        .padding(top = Dimens.space, start = Dimens.space)
+                        .fillMaxWidth()
+                ) {
+                    Column(Modifier.padding(Dimens.keyline_1)) {
+                        UserInfo(
+                            quotedUser.quotedUserName,
+                            quotedUser.quotedUserScreenName
+                        )
+                        Text(
+                            text = quotedContent,
+                            style = typography.body2
+                        )
+                    }
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun UserInfo(name: String, handle: String, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = name,
+            style = typography.subtitle2.copy(fontSize = Dimens.text_body),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = stringResource(
+                id = R.string.user_handle_placeholder,
+                handle
+            ),
+            style = typography.body2.copy(fontSize = Dimens.text_caption),
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            modifier = Modifier
+                .alpha(USER_HANDLE_OPACITY)
+        )
     }
 }
 

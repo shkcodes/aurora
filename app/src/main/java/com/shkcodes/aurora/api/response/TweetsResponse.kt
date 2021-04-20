@@ -25,7 +25,7 @@ data class Tweet(
     @Json(name = "in_reply_to_user_id")
     val inReplyToUserId: String?,
     @Json(name = "is_quote_status")
-    val isQuoteStatus: Boolean,
+    val isQuoteTweet: Boolean,
     @Json(name = "possibly_sensitive")
     val possiblySensitive: Boolean = false,
     @Json(name = "retweet_count")
@@ -37,7 +37,9 @@ data class Tweet(
     @Json(name = "user")
     val user: User,
     @Json(name = "entities")
-    val entities: Entities
+    val entities: Entities,
+    @Json(name = "quoted_status")
+    val quotedTweet: Tweet?
 )
 
 @JsonClass(generateAdapter = true)
@@ -48,6 +50,6 @@ data class Entities(
 
 @JsonClass(generateAdapter = true)
 data class Url(
-    @Json(name = "url")
+    @Json(name = "display_url")
     val url: String
 )
