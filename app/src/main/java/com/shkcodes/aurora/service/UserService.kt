@@ -5,7 +5,6 @@ import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.execute
 import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
-import com.shkcodes.aurora.cache.entities.toCachedTweets
 import java.time.Duration
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -32,14 +31,14 @@ class UserService @Inject constructor(
     suspend fun fetchTimelineTweets(afterId: Long?): Result<Unit> {
         return execute {
             if (isTimelineStale || afterId != null) {
-                val freshTweets = userApi.getTimelineTweets(afterId = afterId).toCachedTweets()
-                tweetsDao.saveTweets(freshTweets)
+                val freshTweets = userApi.getTimelineTweets(afterId = afterId)
+                tweetsDao.cacheTimeline(freshTweets)
                 if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()
             }
         }
     }
 
-    fun getTimelineTweets() = tweetsDao.getTweets()
+    fun getTimelineTweets() = tweetsDao.getCachedTimeline()
 
     suspend fun flushTweetsCache() {
         tweetsDao.removeTweets(ZonedDateTime.now().minusDays(CACHE_FLUSH_THRESHOLD))

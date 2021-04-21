@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.shkcodes.aurora.api.evaluate
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
-import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.home.HomeContract.Intent
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
@@ -41,7 +40,7 @@ class HomeViewModel @Inject constructor(
 
             is LoadNextPage -> {
                 with(intent.currentState) {
-                    val afterId = tweets.last().tweetId
+                    val afterId = tweets.last().primaryTweet.tweetId
                     if (!isLoadingNextPage) {
                         emitState { Content(tweets, true) }
                         fetchTweets(tweets, afterId)
@@ -51,7 +50,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun fetchTweets(previousTweets: CachedTweets = emptyList(), afterId: Long? = null) {
+    private fun fetchTweets(
+        previousTweets: List<TimelineTweetItem> = emptyList(),
+        afterId: Long? = null
+    ) {
         viewModelScope.launch {
             userService.fetchTimelineTweets(afterId).evaluate({
                 if (afterId == null) observeCachedTweets()

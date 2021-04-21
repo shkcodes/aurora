@@ -1,20 +1,17 @@
 package com.shkcodes.aurora.cache.entities
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.shkcodes.aurora.api.response.Tweet
 import com.shkcodes.aurora.api.response.Tweets
-import com.shkcodes.aurora.api.response.User
 import java.time.ZonedDateTime
-
-private const val TWITTER_URL_REGEX = "https:(//t\\.co/([A-Za-z0-9]|[A-Za-z]){10})"
 
 @Entity(tableName = "tweets")
 data class TweetEntity(
     @PrimaryKey val tweetId: Long,
     val content: String,
     val createdAt: ZonedDateTime,
+    val isTimelineTweet: Boolean,
     val favoriteCount: Int,
     val inReplyToScreenName: String?,
     val inReplyToStatusId: String?,
@@ -24,15 +21,20 @@ data class TweetEntity(
     val retweetCount: Int,
     val retweeted: Boolean,
     val truncated: Boolean,
-    @Embedded val user: CachedUser,
+    val userId: Long,
+    val userName: String,
+    val userHandle: String,
+    val userProfileImageUrl: String,
     val mediaUrl: String,
-    @Embedded val quotedTweet: QuotedTweet?
+    val quotedTweetId: Long?,
+    val retweetedTweetId: Long?
 )
 
-private fun Tweet.toTweetEntity() = TweetEntity(
+private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEntity(
     tweetId = id,
     content = displayableContent,
     createdAt = createdAt,
+    isTimelineTweet = isTimelineTweet,
     favoriteCount = favoriteCount,
     inReplyToScreenName = inReplyToScreenName,
     inReplyToStatusId = inReplyToStatusId,
@@ -42,54 +44,21 @@ private fun Tweet.toTweetEntity() = TweetEntity(
     retweetCount = retweetCount,
     retweeted = retweeted,
     truncated = truncated,
-    user = user.toCachedUser(),
+    userId = user.id,
+    userName = user.name,
+    userHandle = user.screenName,
+    userProfileImageUrl = user.profileImageUrl,
     mediaUrl = entities.urls.firstOrNull()?.url.orEmpty(),
-    quotedTweet = quotedTweet?.toQuotedTweet()
+    quotedTweetId = quotedTweet?.id,
+    retweetedTweetId = retweetedTweet?.id
 )
 
-data class CachedUser(
-    val userId: Long,
-    val name: String,
-    val screenName: String,
-    val profileImageUrl: String
-)
-
-fun User.toCachedUser() = CachedUser(
-    userId = id,
-    name = name,
-    screenName = screenName,
-    profileImageUrl = profileImageUrl
-)
-
-data class QuotedTweet(
-    val quotedContent: String,
-    @Embedded val quotedUser: QuotedUser,
-    val quotedUrl: String?
-)
-
-private fun Tweet.toQuotedTweet() = QuotedTweet(
-    quotedContent = displayableContent,
-    quotedUser = user.toQuotedUser(),
-    quotedUrl = entities.urls.firstOrNull()?.url.orEmpty()
-)
-
-fun User.toQuotedUser() = QuotedUser(
-    quotedUserId = id,
-    quotedUserName = name,
-    quotedUserScreenName = screenName,
-    quotedUserProfileImageUrl = profileImageUrl
-)
-
-data class QuotedUser(
-    val quotedUserId: Long,
-    val quotedUserName: String,
-    val quotedUserScreenName: String,
-    val quotedUserProfileImageUrl: String
-)
-
-fun Tweets.toCachedTweets() = map { it.toTweetEntity() }
+fun Tweets.toCachedTweets(isTimelineTweet: Boolean = false) =
+    map { it.toTweetEntity(isTimelineTweet) }
 
 typealias CachedTweets = List<TweetEntity>
+
+private const val TWITTER_URL_REGEX = "https:(//t\\.co/([A-Za-z0-9]|[A-Za-z]){10})"
 
 private val Tweet.displayableContent: String
     get() = TWITTER_URL_REGEX.toRegex().replace(content, "")

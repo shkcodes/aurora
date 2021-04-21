@@ -8,6 +8,7 @@ import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.cache.entities.toCachedTweets
 import com.shkcodes.aurora.fakes.FakeTweetsDao
+import com.shkcodes.aurora.ui.home.TimelineTweetItem
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -26,6 +27,8 @@ class UserServiceTest : BaseTest() {
     private val freshTweet = mockk<Tweet>(relaxed = true) {
         every { id } returns 23121993
         every { content } returns "definitely shouldn't have tweeted this"
+        every { quotedTweet } returns null
+        every { retweetedTweet } returns null
     }
     private val staleTweet = mockk<TweetEntity> {
         every { tweetId } returns 6031994
@@ -37,7 +40,7 @@ class UserServiceTest : BaseTest() {
         coEvery { getTimelineTweets() } returns listOf(freshTweet)
     }
 
-    private val tweetsDao = FakeTweetsDao()
+    lateinit var tweetsDao: FakeTweetsDao
 
     private val fakeTimeProvider = mockk<TimeProvider> {
         every { now() } returns fakeTime
@@ -48,6 +51,7 @@ class UserServiceTest : BaseTest() {
     @Before
     override fun setUp() {
         super.setUp()
+        tweetsDao = FakeTweetsDao()
         userService = UserService(userApi, tweetsDao, preferenceManager, fakeTimeProvider)
     }
 
@@ -57,7 +61,10 @@ class UserServiceTest : BaseTest() {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
             val result = userService.fetchTimelineTweets(null)
             assert(result == Result.Success(Unit))
-            assert(tweetsDao.getTweets().toList().first() == listOf(freshTweet).toCachedTweets())
+            assert(
+                tweetsDao.getCachedTimeline().toList().first() == listOf(freshTweet).toCachedTweets(
+                    true
+                ).map { TimelineTweetItem(it, null, null) })
         }
 
     @Test
@@ -67,7 +74,9 @@ class UserServiceTest : BaseTest() {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(7)
             val result = userService.fetchTimelineTweets(null)
             assert(result == Result.Success(Unit))
-            assert(tweetsDao.getTweets().toList().first() == listOf(staleTweet))
+            assert(
+                tweetsDao.getCachedTimeline().toList()
+                    .first() == listOf(staleTweet).map { TimelineTweetItem(it, null, null) })
         }
 
 }

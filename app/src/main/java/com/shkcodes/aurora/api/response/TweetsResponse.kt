@@ -39,7 +39,9 @@ data class Tweet(
     @Json(name = "entities")
     val entities: Entities,
     @Json(name = "quoted_status")
-    val quotedTweet: Tweet?
+    val quotedTweet: Tweet?,
+    @Json(name = "retweeted_status")
+    val retweetedTweet: Tweet?
 )
 
 @JsonClass(generateAdapter = true)

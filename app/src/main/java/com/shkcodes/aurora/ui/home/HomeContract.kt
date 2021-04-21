@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.ui.home
 
 import com.shkcodes.aurora.base.BaseViewModel
-import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.ui.home.HomeContract.State.Content
 import com.shkcodes.aurora.ui.home.HomeContract.State.Loading
 
@@ -12,7 +11,7 @@ class HomeContract {
         object Loading : State()
 
         data class Content(
-            val tweets: CachedTweets,
+            val tweets: TimelineTweets,
             val isLoadingNextPage: Boolean,
             val isPaginatedError: Boolean = false
         ) :

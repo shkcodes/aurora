@@ -34,7 +34,6 @@ import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
-import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.theme.colors
 import com.shkcodes.aurora.theme.typography
@@ -118,10 +117,11 @@ private fun TweetsList(state: State.Content, listState: LazyListState, retryActi
 }
 
 @Composable
-private fun TweetItem(tweet: TweetEntity) {
+private fun TweetItem(timelineTweet: TimelineTweetItem) {
+    val tweet = timelineTweet.primaryTweet
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         CoilImage(
-            data = tweet.user.profileImageUrl,
+            data = tweet.userProfileImageUrl,
             contentDescription = null,
             fadeIn = true,
             requestBuilder = {
@@ -134,7 +134,7 @@ private fun TweetItem(tweet: TweetEntity) {
                 .padding(start = Dimens.space)
         ) {
             Row {
-                UserInfo(tweet.user.name, tweet.user.screenName, modifier = Modifier.weight(1F))
+                UserInfo(tweet.userName, tweet.userHandle, modifier = Modifier.weight(1F))
                 Text(
                     text = tweet.createdAt.toPrettyTime(),
                     style = typography.overline,
@@ -150,7 +150,7 @@ private fun TweetItem(tweet: TweetEntity) {
                 modifier = Modifier
                     .padding(top = Dimens.space)
             )
-            tweet.quotedTweet?.run {
+            timelineTweet.quotedTweet?.let {
                 Card(
                     modifier = Modifier
                         .padding(top = Dimens.space, start = Dimens.space)
@@ -158,11 +158,11 @@ private fun TweetItem(tweet: TweetEntity) {
                 ) {
                     Column(Modifier.padding(Dimens.keyline_1)) {
                         UserInfo(
-                            quotedUser.quotedUserName,
-                            quotedUser.quotedUserScreenName
+                            it.userName,
+                            it.userHandle
                         )
                         Text(
-                            text = quotedContent,
+                            text = it.content,
                             style = typography.body2
                         )
                     }
