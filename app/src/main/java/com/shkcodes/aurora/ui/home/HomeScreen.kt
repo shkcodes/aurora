@@ -11,12 +11,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Scaffold
@@ -42,6 +44,7 @@ import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
 import com.shkcodes.aurora.ui.home.HomeContract.State
+import com.shkcodes.aurora.util.contentFormatter
 import com.shkcodes.aurora.util.toPrettyTime
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -144,12 +147,7 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                     )
                 )
             }
-            Text(
-                text = tweet.content,
-                style = typography.body2,
-                modifier = Modifier
-                    .padding(top = Dimens.space)
-            )
+            RichContent(tweet.content)
             timelineTweet.quotedTweet?.let {
                 Card(
                     modifier = Modifier
@@ -169,6 +167,24 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun RichContent(content: String) {
+    val styledContent = contentFormatter(text = content)
+    ClickableText(
+        text = styledContent,
+        style = typography.body2.copy(color = LocalContentColor.current),
+        modifier = Modifier
+            .padding(top = Dimens.space)
+    ) {
+        styledContent
+            .getStringAnnotations(start = it, end = it)
+            .firstOrNull()
+            ?.let { annotation ->
+                println("clicked ${annotation.item}")
+            }
     }
 }
 
