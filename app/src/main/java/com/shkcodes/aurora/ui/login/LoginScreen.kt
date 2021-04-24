@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +19,6 @@ import androidx.navigation.compose.navigate
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.theme.Dimens
-import com.shkcodes.aurora.theme.typography
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.login.LoginContract.Intent.ShowAuthScreen
 import kotlinx.coroutines.flow.collect

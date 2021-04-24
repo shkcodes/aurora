@@ -17,6 +17,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -35,8 +37,6 @@ import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.theme.Dimens
-import com.shkcodes.aurora.theme.colors
-import com.shkcodes.aurora.theme.typography
 import com.shkcodes.aurora.ui.common.TerminalError
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.LoadNextPage
