@@ -9,14 +9,14 @@ object Versions {
     const val coreKtx = "1.3.2"
     const val appCompat = "1.2.0"
 
-    const val compose = "1.0.0-beta03"
+    const val compose = "1.0.0-beta05"
     const val composeActivity = "1.3.0-alpha05"
     const val composeViewModel = "1.0.0-alpha03"
     const val composeNavigation = "1.0.0-alpha09"
 
     const val viewModel = "2.3.0"
 
-    const val hilt = "2.33-beta"
+    const val hilt = "2.35"
     const val hiltJetpack = "1.0.0-alpha03"
     const val hiltComposeNavigation = "1.0.0-alpha01"
 
@@ -35,7 +35,7 @@ object Versions {
     const val accompanist = "0.7.0"
 
     const val desugarLib = "1.0.9"
-    const val room = "2.3.0-rc01"
+    const val room = "2.3.0"
 }
 
 object Dependencies {
