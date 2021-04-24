@@ -3,6 +3,7 @@ package com.shkcodes.aurora.util
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -11,13 +12,23 @@ import androidx.compose.ui.text.buildAnnotatedString
 
 // Regex containing the syntax tokens
 val symbolPattern by lazy {
-    Regex("""(https?://[^\s\t\n]+)|(`[^`]+`)|(@\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)""")
+    Regex("""(https?://[^\s\t\n]+)|(`[^`]+`)|(@\w+)|(#\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)""")
 }
 
 // Accepted annotations for the ClickableTextWrapper
 enum class SymbolAnnotationType {
-    PERSON, LINK
+    PERSON, HASHTAG, LINK
 }
+
+private fun symbolAnnotationFor(char: Char): SymbolAnnotationType? {
+    return when (char) {
+        '@' -> SymbolAnnotationType.PERSON
+        '#' -> SymbolAnnotationType.HASHTAG
+        'h' -> SymbolAnnotationType.LINK
+        else -> null
+    }
+}
+
 typealias StringAnnotation = AnnotatedString.Range<String>
 // Pair returning styled content and annotation for ClickableText when matching syntax token
 typealias SymbolAnnotation = Pair<AnnotatedString, StringAnnotation?>
@@ -75,35 +86,34 @@ private fun getSymbolAnnotation(
     matchResult: MatchResult,
     colors: Colors
 ): SymbolAnnotation {
-    return when (matchResult.value.first()) {
-        '@' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value,
-                spanStyle = SpanStyle(
-                    color = colors.primary,
-                )
-            ),
-            StringAnnotation(
-                item = matchResult.value.substring(1),
-                start = matchResult.range.first,
-                end = matchResult.range.last,
-                tag = SymbolAnnotationType.PERSON.name
-            )
-        )
-        'h' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value,
-                spanStyle = SpanStyle(
-                    color = colors.primary
-                )
-            ),
-            StringAnnotation(
-                item = matchResult.value,
-                start = matchResult.range.first,
-                end = matchResult.range.last,
-                tag = SymbolAnnotationType.LINK.name
-            )
-        )
-        else -> SymbolAnnotation(AnnotatedString(matchResult.value), null)
+    val type = symbolAnnotationFor(matchResult.value.first())
+    return if (type != null) {
+        annotationForType(type, matchResult, colors.primary)
+    } else {
+        SymbolAnnotation(AnnotatedString(matchResult.value), null)
     }
+}
+
+private fun annotationForType(
+    type: SymbolAnnotationType, result: MatchResult, highlightColor: Color
+): SymbolAnnotation {
+    val value = if (type == SymbolAnnotationType.LINK) {
+        result.value
+    } else {
+        result.value.substring(1)
+    }
+    return SymbolAnnotation(
+        AnnotatedString(
+            text = result.value,
+            spanStyle = SpanStyle(
+                color = highlightColor
+            )
+        ),
+        StringAnnotation(
+            item = value,
+            start = result.range.first,
+            end = result.range.last,
+            tag = type.name
+        )
+    )
 }
