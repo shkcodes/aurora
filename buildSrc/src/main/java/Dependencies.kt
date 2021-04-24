@@ -49,7 +49,8 @@ object Dependencies {
     const val composeTooling = "androidx.compose.ui:ui-tooling:${Versions.compose}"
     const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.compose}"
     const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
-    const val composeIcons = "androidx.compose.material:material-icons-core:${Versions.compose}"
+    const val composeIconsCore = "androidx.compose.material:material-icons-core:${Versions.compose}"
+    const val composeIconsExtended = "androidx.compose.material:material-icons-extended:${Versions.compose}"
     const val composeActivity =
         "androidx.activity:activity-compose:${Versions.composeActivity}"
     const val composeViewModel =

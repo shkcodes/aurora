@@ -70,7 +70,8 @@ dependencies {
     implementation Dependencies.composeTooling
     implementation Dependencies.composeFoundation
     implementation Dependencies.composeMaterial
-    implementation Dependencies.composeIcons
+    implementation Dependencies.composeIconsCore
+    implementation Dependencies.composeIconsExtended
     implementation Dependencies.composeActivity
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeNavigation

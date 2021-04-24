@@ -1,5 +1,6 @@
 package com.shkcodes.aurora.ui.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,8 @@ import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -121,7 +125,7 @@ private fun TweetsList(state: State.Content, listState: LazyListState, retryActi
 
 @Composable
 private fun TweetItem(timelineTweet: TimelineTweetItem) {
-    val tweet = timelineTweet.primaryTweet
+    val tweet = timelineTweet.retweetedTweet ?: timelineTweet.primaryTweet
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         CoilImage(
             data = tweet.userProfileImageUrl,
@@ -166,7 +170,30 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                     }
                 }
             }
+            if (timelineTweet.retweetedTweet != null) {
+                RetweetIndicator(timelineTweet.primaryTweet.userName)
+            }
         }
+    }
+}
+
+@Composable
+private fun RetweetIndicator(userName: String) {
+    Row(modifier = Modifier.padding(top = Dimens.space)) {
+        Image(
+            imageVector = Icons.Default.Repeat,
+            contentDescription = stringResource(id = R.string.accessibility_retweet_icon),
+            modifier = Modifier.size(Dimens.keyline_1),
+            colorFilter = ColorFilter.tint(
+                colors.secondary
+            )
+        )
+        Text(
+            text = stringResource(id = R.string.retweet_indicator_placeholder, userName),
+            modifier = Modifier.padding(start = Dimens.space),
+            style = typography.caption,
+            color = colors.secondary
+        )
     }
 }
 
