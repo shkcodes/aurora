@@ -95,7 +95,9 @@ private fun getSymbolAnnotation(
 }
 
 private fun annotationForType(
-    type: SymbolAnnotationType, result: MatchResult, highlightColor: Color
+    type: SymbolAnnotationType,
+    result: MatchResult,
+    highlightColor: Color
 ): SymbolAnnotation {
     val value = if (type == SymbolAnnotationType.LINK) {
         result.value

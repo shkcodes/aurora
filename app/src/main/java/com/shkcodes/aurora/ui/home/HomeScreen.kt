@@ -1,11 +1,13 @@
 package com.shkcodes.aurora.ui.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,14 +36,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
 import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
+import com.shkcodes.aurora.cache.entities.MediaEntity
+import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.common.TerminalError
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
@@ -129,7 +136,7 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         CoilImage(
             data = tweet.userProfileImageUrl,
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.accessibility_user_profile_image),
             fadeIn = true,
             requestBuilder = {
                 transformations(CircleCropTransformation())
@@ -167,13 +174,51 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                             text = it.content,
                             style = typography.body2
                         )
+                        SharedUrl(tweet = it)
                     }
                 }
             }
+            SharedUrl(tweet = tweet)
+            TweetMedia(timelineTweet.media)
             if (timelineTweet.retweetedTweet != null) {
                 RetweetIndicator(timelineTweet.primaryTweet.userName)
             }
         }
+    }
+}
+
+private const val MEDIA_CORNER_RADIUS = 4F
+
+@Composable
+private fun TweetMedia(media: List<MediaEntity>) {
+    if (media.isNotEmpty()) {
+        CoilImage(
+            data = media.first().imageUrl,
+            contentDescription = null,
+            fadeIn = true,
+            contentScale = ContentScale.FillWidth,
+            requestBuilder = {
+                transformations(RoundedCornersTransformation(radius = MEDIA_CORNER_RADIUS))
+            },
+            modifier = Modifier
+                .padding(top = Dimens.space)
+                .fillMaxWidth()
+                .height(Dimens.tweet_single_media_height)
+        )
+    }
+}
+
+@Composable
+private fun SharedUrl(tweet: TweetEntity) {
+    val uriHandler = LocalUriHandler.current
+    if (tweet.displayableSharedUrl != null) {
+        Text(
+            text = tweet.displayableSharedUrl,
+            style = typography.body2.copy(color = colors.primary),
+            modifier = Modifier.clickable {
+                uriHandler.openUri(tweet.sharedUrl.orEmpty())
+            }
+        )
     }
 }
 

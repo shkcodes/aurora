@@ -7,8 +7,10 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.shkcodes.aurora.api.response.Tweets
 import com.shkcodes.aurora.cache.entities.CachedTweets
+import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.cache.entities.toCachedTweets
+import com.shkcodes.aurora.cache.entities.toMediaEntity
 import com.shkcodes.aurora.ui.home.TimelineTweets
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
@@ -26,15 +28,20 @@ abstract class TweetsDao {
     suspend fun cacheTimeline(tweets: Tweets) {
         val quoteTweets = tweets.mapNotNull { it.quotedTweet }
         val retweets = tweets.mapNotNull { it.retweetedTweet }
+        val media = tweets.mapNotNull { it.toMediaEntity() }.flatten()
         saveTweets(
             tweets.toCachedTweets(true) +
-                quoteTweets.toCachedTweets() +
-                retweets.toCachedTweets()
+                    quoteTweets.toCachedTweets() +
+                    retweets.toCachedTweets()
         )
+        saveMedia(media)
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun saveTweets(users: CachedTweets)
+    abstract suspend fun saveTweets(tweets: CachedTweets)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun saveMedia(media: List<MediaEntity>)
 
     @Query("DELETE FROM tweets WHERE createdAt <= :date")
     abstract suspend fun removeTweets(date: ZonedDateTime)

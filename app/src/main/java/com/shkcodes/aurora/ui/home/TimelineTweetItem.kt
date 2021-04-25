@@ -2,6 +2,7 @@ package com.shkcodes.aurora.ui.home
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
 
 data class TimelineTweetItem(
@@ -15,7 +16,12 @@ data class TimelineTweetItem(
         parentColumn = "retweetedTweetId",
         entityColumn = "tweetId"
     )
-    val retweetedTweet: TweetEntity?
+    val retweetedTweet: TweetEntity?,
+    @Relation(
+        parentColumn = "tweetId",
+        entityColumn = "tweetId"
+    )
+    val media: List<MediaEntity>
 )
 
 typealias TimelineTweets = List<TimelineTweetItem>

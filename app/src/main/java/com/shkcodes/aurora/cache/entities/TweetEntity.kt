@@ -25,7 +25,8 @@ data class TweetEntity(
     val userName: String,
     val userHandle: String,
     val userProfileImageUrl: String,
-    val mediaUrl: String,
+    val sharedUrl: String?,
+    val displayableSharedUrl: String?,
     val quotedTweetId: Long?,
     val retweetedTweetId: Long?
 )
@@ -48,7 +49,8 @@ private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEn
     userName = user.name,
     userHandle = user.screenName,
     userProfileImageUrl = user.profileImageUrl,
-    mediaUrl = entities.urls.firstOrNull()?.url.orEmpty(),
+    sharedUrl = entities.urls.firstOrNull()?.url,
+    displayableSharedUrl = entities.urls.firstOrNull()?.displayUrl,
     quotedTweetId = quotedTweet?.id,
     retweetedTweetId = retweetedTweet?.id
 )

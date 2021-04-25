@@ -64,7 +64,7 @@ class UserServiceTest : BaseTest() {
             assert(
                 tweetsDao.getCachedTimeline().toList().first() == listOf(freshTweet).toCachedTweets(
                     true
-                ).map { TimelineTweetItem(it, null, null) })
+                ).map { TimelineTweetItem(it, null, null, emptyList()) })
         }
 
     @Test
@@ -76,7 +76,14 @@ class UserServiceTest : BaseTest() {
             assert(result == Result.Success(Unit))
             assert(
                 tweetsDao.getCachedTimeline().toList()
-                    .first() == listOf(staleTweet).map { TimelineTweetItem(it, null, null) })
+                    .first() == listOf(staleTweet).map {
+                    TimelineTweetItem(
+                        it,
+                        null,
+                        null,
+                        emptyList()
+                    )
+                })
         }
 
 }

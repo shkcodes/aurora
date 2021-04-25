@@ -12,5 +12,8 @@
     <string name="user_handle_placeholder">\u0020\@%1$s</string>
     <string name="tweets_pagination_error">Unable to load more tweets</string>
     <string name="retweet_indicator_placeholder">%1$s retweeted</string>
+
+
     <string name="accessibility_retweet_icon">Retweet Icon</string>
+    <string name="accessibility_user_profile_image">User Profile Image</string>
 </resources>

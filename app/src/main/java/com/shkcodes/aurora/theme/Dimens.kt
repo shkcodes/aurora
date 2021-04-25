@@ -14,8 +14,10 @@ object Dimens {
 
     val keyline_1: Dp @Composable get() = 16.dp
 
-    val tweet_profile_pic: Dp @Composable get() = 32.dp
     val text_body: TextUnit @Composable get() = 16.sp
     val text_caption: TextUnit @Composable get() = 12.sp
     val text_large: TextUnit @Composable get() = 18.sp
+
+    val tweet_profile_pic: Dp @Composable get() = 32.dp
+    val tweet_single_media_height: Dp @Composable get() = 170.dp
 }

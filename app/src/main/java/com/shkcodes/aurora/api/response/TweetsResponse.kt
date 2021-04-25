@@ -38,6 +38,8 @@ data class Tweet(
     val user: User,
     @Json(name = "entities")
     val entities: Entities,
+    @Json(name = "extended_entities")
+    val extendedEntities: ExtendedEntities?,
     @Json(name = "quoted_status")
     val quotedTweet: Tweet?,
     @Json(name = "retweeted_status")
@@ -47,11 +49,60 @@ data class Tweet(
 @JsonClass(generateAdapter = true)
 data class Entities(
     @Json(name = "urls")
-    val urls: List<Url>
+    val urls: List<Url>,
+    @Json(name = "media")
+    val media: List<Media>?
+)
+
+@JsonClass(generateAdapter = true)
+data class ExtendedEntities(
+    @Json(name = "media")
+    val media: List<Media>
 )
 
 @JsonClass(generateAdapter = true)
 data class Url(
     @Json(name = "display_url")
+    val displayUrl: String,
+    @Json(name = "expanded_url")
     val url: String
+)
+
+enum class MediaType {
+    @Json(name = "video")
+    VIDEO,
+
+    @Json(name = "photo")
+    PHOTO,
+
+    @Json(name = "animated_gif")
+    GIF
+}
+
+@JsonClass(generateAdapter = true)
+data class Media(
+    @Json(name = "id")
+    val id: Long,
+    @Json(name = "media_url_https")
+    val url: String,
+    @Json(name = "type")
+    val type: MediaType,
+    @Json(name = "video_info")
+    val videoInfo: VideoInfo?,
+)
+
+@JsonClass(generateAdapter = true)
+data class VideoInfo(
+    @Json(name = "duration_millis")
+    val duration: Long = 0,
+    @Json(name = "variants")
+    val variants: List<VideoVariant>
+)
+
+@JsonClass(generateAdapter = true)
+data class VideoVariant(
+    @Json(name = "bitrate")
+    val bitrate: Long = 0,
+    @Json(name = "url")
+    val url: String,
 )
