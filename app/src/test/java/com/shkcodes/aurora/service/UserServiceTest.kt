@@ -27,11 +27,11 @@ class UserServiceTest : BaseTest() {
     private val freshTweet = mockk<Tweet>(relaxed = true) {
         every { id } returns 23121993
         every { content } returns "definitely shouldn't have tweeted this"
-        every { quotedTweet } returns null
-        every { retweetedTweet } returns null
+        every { quoteTweet } returns null
+        every { retweet } returns null
     }
     private val staleTweet = mockk<TweetEntity> {
-        every { tweetId } returns 6031994
+        every { id } returns 6031994
         every { content } returns "old tweet"
     }
     private val fakeTime = LocalDateTime.of(2021, 4, 16, 23, 10)
@@ -64,7 +64,7 @@ class UserServiceTest : BaseTest() {
             assert(
                 tweetsDao.getCachedTimeline().toList().first() == listOf(freshTweet).toCachedTweets(
                     true
-                ).map { TimelineTweetItem(it, null, null, emptyList()) })
+                ).map { TimelineTweetItem(it) })
         }
 
     @Test
@@ -77,12 +77,7 @@ class UserServiceTest : BaseTest() {
             assert(
                 tweetsDao.getCachedTimeline().toList()
                     .first() == listOf(staleTweet).map {
-                    TimelineTweetItem(
-                        it,
-                        null,
-                        null,
-                        emptyList()
-                    )
+                    TimelineTweetItem(it)
                 })
         }
 

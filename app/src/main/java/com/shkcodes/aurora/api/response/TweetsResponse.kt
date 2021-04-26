@@ -41,11 +41,11 @@ data class Tweet(
     @Json(name = "extended_entities")
     val extendedEntities: ExtendedEntities?,
     @Json(name = "quoted_status")
-    val quotedTweet: Tweet?,
+    val quoteTweet: Tweet?,
     @Json(name = "quoted_status_permalink")
-    val quotedTweetInfo: QuotedTweetInfo?,
+    val quoteTweetInfo: QuoteTweetInfo?,
     @Json(name = "retweeted_status")
-    val retweetedTweet: Tweet?
+    val retweet: Tweet?
 )
 
 @JsonClass(generateAdapter = true)
@@ -114,7 +114,7 @@ data class VideoVariant(
 )
 
 @JsonClass(generateAdapter = true)
-data class QuotedTweetInfo(
+data class QuoteTweetInfo(
     @Json(name = "url")
     val url: String
 )

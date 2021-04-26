@@ -14,7 +14,7 @@ class FakeTweetsDao : TweetsDao() {
     private val savedMedia = mutableListOf<MediaEntity>()
 
     override suspend fun getTweet(tweetId: Long): TweetEntity {
-        return savedTweets.first { it.tweetId == tweetId }
+        return savedTweets.first { it.id == tweetId }
     }
 
     override suspend fun saveTweets(tweets: CachedTweets) {
@@ -22,8 +22,7 @@ class FakeTweetsDao : TweetsDao() {
     }
 
     override fun getCachedTimeline(isTimelineTweet: Boolean) =
-        flowOf(savedTweets.map { TimelineTweetItem(it, null, null, emptyList()) })
-
+        flowOf(savedTweets.map { TimelineTweetItem(it) })
 
     override suspend fun removeTweets(date: ZonedDateTime) {}
 

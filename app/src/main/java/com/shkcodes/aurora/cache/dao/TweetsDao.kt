@@ -22,19 +22,21 @@ abstract class TweetsDao {
     @Query("SELECT * FROM tweets where isTimelineTweet = :isTimelineTweet ORDER BY createdAt DESC")
     abstract fun getCachedTimeline(isTimelineTweet: Boolean = true): Flow<TimelineTweets>
 
-    @Query("SELECT * FROM tweets where tweetId = :tweetId")
+    @Query("SELECT * FROM tweets where id = :tweetId")
     abstract suspend fun getTweet(tweetId: Long): TweetEntity
 
     suspend fun cacheTimeline(tweets: Tweets) {
-        val quoteTweets = tweets.mapNotNull { it.quotedTweet }
-        val retweets = tweets.mapNotNull { it.retweetedTweet }
+        val quoteTweets = tweets.mapNotNull { it.quoteTweet }
+        val retweets = tweets.mapNotNull { it.retweet }
         val media = tweets.mapNotNull { it.toMediaEntity() }.flatten()
+        val quoteTweetsMedia = quoteTweets.mapNotNull { it.toMediaEntity() }.flatten()
+        val retweetsMedia = retweets.mapNotNull { it.toMediaEntity() }.flatten()
         saveTweets(
             tweets.toCachedTweets(true) +
                     quoteTweets.toCachedTweets() +
                     retweets.toCachedTweets()
         )
-        saveMedia(media)
+        saveMedia(media + quoteTweetsMedia + retweetsMedia)
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

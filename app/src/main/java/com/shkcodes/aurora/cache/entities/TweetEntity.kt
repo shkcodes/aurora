@@ -9,7 +9,7 @@ import java.time.ZonedDateTime
 
 @Entity(tableName = "tweets")
 data class TweetEntity(
-    @PrimaryKey val tweetId: Long,
+    @PrimaryKey val id: Long,
     val content: String,
     val createdAt: ZonedDateTime,
     val isTimelineTweet: Boolean,
@@ -27,12 +27,12 @@ data class TweetEntity(
     val userHandle: String,
     val userProfileImageUrl: String,
     val sharedUrls: List<Url>,
-    val quotedTweetId: Long?,
-    val retweetedTweetId: Long?
+    val quoteTweetId: Long?,
+    val retweetId: Long?
 )
 
 private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEntity(
-    tweetId = id,
+    id = id,
     content = displayableContent,
     createdAt = createdAt,
     isTimelineTweet = isTimelineTweet,
@@ -50,8 +50,8 @@ private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEn
     userHandle = user.screenName,
     userProfileImageUrl = user.profileImageUrl,
     sharedUrls = entities.urls,
-    quotedTweetId = quotedTweet?.id,
-    retweetedTweetId = retweetedTweet?.id
+    quoteTweetId = quoteTweet?.id,
+    retweetId = retweet?.id
 )
 
 fun Tweets.toCachedTweets(isTimelineTweet: Boolean = false) =
@@ -64,7 +64,7 @@ private val Tweet.displayableContent: String
         val irrelevantUrls =
             entities.media?.map { it.shortenedUrl }
                 .orEmpty() + extendedEntities?.media?.map { it.shortenedUrl }
-                .orEmpty() + quotedTweetInfo?.url.orEmpty()
+                .orEmpty() + quoteTweetInfo?.url.orEmpty()
         return if (irrelevantUrls.isNotEmpty()) {
             content.replace(irrelevantUrls.joinToString("|").toRegex(), "")
         } else content

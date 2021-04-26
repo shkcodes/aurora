@@ -130,7 +130,13 @@ private fun TweetsList(state: State.Content, listState: LazyListState, retryActi
 
 @Composable
 private fun TweetItem(timelineTweet: TimelineTweetItem) {
-    val tweet = timelineTweet.retweetedTweet ?: timelineTweet.primaryTweet
+    val tweet = timelineTweet.retweet ?: timelineTweet.primaryTweet
+    val media =
+        if (timelineTweet.retweet != null) {
+            timelineTweet.retweetMedia
+        } else {
+            timelineTweet.media
+        }
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         CoilImage(
             data = tweet.userProfileImageUrl,
@@ -157,7 +163,7 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                 )
             }
             RichContent(tweet.content, tweet.sharedUrls)
-            timelineTweet.quotedTweet?.let {
+            timelineTweet.quoteTweet?.let {
                 Card(
                     modifier = Modifier
                         .padding(top = Dimens.space)
@@ -175,8 +181,8 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                     }
                 }
             }
-            TweetMedia(timelineTweet.media)
-            if (timelineTweet.retweetedTweet != null) {
+            TweetMedia(media)
+            if (timelineTweet.retweet != null) {
                 RetweetIndicator(timelineTweet.primaryTweet.userName)
             }
         }
@@ -197,7 +203,7 @@ private fun TweetMedia(media: List<MediaEntity>) {
                 transformations(RoundedCornersTransformation(radius = MEDIA_CORNER_RADIUS))
             },
             modifier = Modifier
-                .padding(top = Dimens.space)
+                .padding(top = Dimens.keyline_1)
                 .fillMaxWidth()
                 .height(Dimens.tweet_single_media_height)
         )
@@ -206,7 +212,7 @@ private fun TweetMedia(media: List<MediaEntity>) {
 
 @Composable
 private fun RetweetIndicator(userName: String) {
-    Row(modifier = Modifier.padding(top = Dimens.space)) {
+    Row(modifier = Modifier.padding(top = Dimens.keyline_1)) {
         Image(
             imageVector = Icons.Default.Repeat,
             contentDescription = stringResource(id = R.string.accessibility_retweet_icon),

@@ -8,20 +8,30 @@ import com.shkcodes.aurora.cache.entities.TweetEntity
 data class TimelineTweetItem(
     @Embedded val primaryTweet: TweetEntity,
     @Relation(
-        parentColumn = "quotedTweetId",
-        entityColumn = "tweetId"
+        parentColumn = "quoteTweetId",
+        entityColumn = "id"
     )
-    val quotedTweet: TweetEntity?,
+    val quoteTweet: TweetEntity? = null,
     @Relation(
-        parentColumn = "retweetedTweetId",
-        entityColumn = "tweetId"
+        parentColumn = "retweetId",
+        entityColumn = "id"
     )
-    val retweetedTweet: TweetEntity?,
+    val retweet: TweetEntity? = null,
     @Relation(
-        parentColumn = "tweetId",
+        parentColumn = "id",
         entityColumn = "tweetId"
     )
-    val media: List<MediaEntity>
+    val media: List<MediaEntity> = emptyList(),
+    @Relation(
+        parentColumn = "quoteTweetId",
+        entityColumn = "tweetId"
+    )
+    val quoteTweetMedia: List<MediaEntity> = emptyList(),
+    @Relation(
+        parentColumn = "retweetId",
+        entityColumn = "tweetId"
+    )
+    val retweetMedia: List<MediaEntity> = emptyList()
 )
 
 typealias TimelineTweets = List<TimelineTweetItem>

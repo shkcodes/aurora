@@ -30,7 +30,7 @@ class HomeViewModelTest : BaseTest() {
     private lateinit var viewModel: HomeViewModel
 
     private val tweetEntity = mockk<TweetEntity> {
-        every { tweetId } returns 23121993
+        every { id } returns 23121993
         every { content } returns "Shouldn't have tweeted this"
     }
 

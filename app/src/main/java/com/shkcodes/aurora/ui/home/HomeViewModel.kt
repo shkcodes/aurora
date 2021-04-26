@@ -40,7 +40,7 @@ class HomeViewModel @Inject constructor(
 
             is LoadNextPage -> {
                 with(intent.currentState) {
-                    val afterId = tweets.last().primaryTweet.tweetId
+                    val afterId = tweets.last().primaryTweet.id
                     if (!isLoadingNextPage) {
                         emitState { Content(tweets, true) }
                         fetchTweets(tweets, afterId)
