@@ -61,8 +61,11 @@ typealias CachedTweets = List<TweetEntity>
 
 private val Tweet.displayableContent: String
     get() {
-        val media = entities.media.orEmpty() + extendedEntities?.media.orEmpty()
-        return if (media.isNotEmpty()) {
-            content.replace(media.joinToString("|") { it.shortenedUrl }.toRegex(), "")
+        val irrelevantUrls =
+            entities.media?.map { it.shortenedUrl }
+                .orEmpty() + extendedEntities?.media?.map { it.shortenedUrl }
+                .orEmpty() + quotedTweetInfo?.url.orEmpty()
+        return if (irrelevantUrls.isNotEmpty()) {
+            content.replace(irrelevantUrls.joinToString("|").toRegex(), "")
         } else content
     }

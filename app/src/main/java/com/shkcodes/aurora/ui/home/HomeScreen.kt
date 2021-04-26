@@ -160,7 +160,7 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
             timelineTweet.quotedTweet?.let {
                 Card(
                     modifier = Modifier
-                        .padding(top = Dimens.space, start = Dimens.space)
+                        .padding(top = Dimens.space)
                         .fillMaxWidth()
                 ) {
                     Column(Modifier.padding(Dimens.keyline_1)) {
