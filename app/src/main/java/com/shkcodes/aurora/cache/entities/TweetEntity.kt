@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.shkcodes.aurora.api.response.Tweet
 import com.shkcodes.aurora.api.response.Tweets
+import com.shkcodes.aurora.api.response.Url
 import java.time.ZonedDateTime
 
 @Entity(tableName = "tweets")
@@ -25,8 +26,7 @@ data class TweetEntity(
     val userName: String,
     val userHandle: String,
     val userProfileImageUrl: String,
-    val sharedUrl: String?,
-    val displayableSharedUrl: String?,
+    val sharedUrls: List<Url>,
     val quotedTweetId: Long?,
     val retweetedTweetId: Long?
 )
@@ -49,8 +49,7 @@ private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEn
     userName = user.name,
     userHandle = user.screenName,
     userProfileImageUrl = user.profileImageUrl,
-    sharedUrl = entities.urls.firstOrNull()?.url,
-    displayableSharedUrl = entities.urls.firstOrNull()?.displayUrl,
+    sharedUrls = entities.urls,
     quotedTweetId = quotedTweet?.id,
     retweetedTweetId = retweetedTweet?.id
 )
@@ -60,7 +59,10 @@ fun Tweets.toCachedTweets(isTimelineTweet: Boolean = false) =
 
 typealias CachedTweets = List<TweetEntity>
 
-private const val TWITTER_URL_REGEX = "https:(//t\\.co/([A-Za-z0-9]|[A-Za-z]){10})"
-
 private val Tweet.displayableContent: String
-    get() = TWITTER_URL_REGEX.toRegex().replace(content, "")
+    get() {
+        val media = entities.media.orEmpty() + extendedEntities?.media.orEmpty()
+        return if (media.isNotEmpty()) {
+            content.replace(media.joinToString("|") { it.shortenedUrl }.toRegex(), "")
+        } else content
+    }

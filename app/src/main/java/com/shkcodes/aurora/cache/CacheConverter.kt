@@ -1,6 +1,9 @@
 package com.shkcodes.aurora.cache
 
 import androidx.room.TypeConverter
+import com.shkcodes.aurora.api.response.Url
+import com.shkcodes.aurora.util.fromJsonArray
+import com.shkcodes.aurora.util.toJson
 import com.squareup.moshi.Moshi
 import java.time.ZonedDateTime
 
@@ -13,4 +16,10 @@ class CacheConverter {
 
     @TypeConverter
     fun toDateTime(dateTime: String): ZonedDateTime = ZonedDateTime.parse(dateTime)
+
+    @TypeConverter
+    fun fromUrls(url: List<Url>): String = moshi.toJson(url)
+
+    @TypeConverter
+    fun toUrls(urls: String): List<Url> = moshi.fromJsonArray(urls)
 }

@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import com.shkcodes.aurora.api.response.Url
 
 // from https://github.com/android/compose-samples/blob/main/Jetchat/app/src/main/java/com/example/compose/jetchat/conversation/MessageFormatter.kt
 
@@ -16,15 +17,22 @@ val symbolPattern by lazy {
 }
 
 // Accepted annotations for the ClickableTextWrapper
-enum class SymbolAnnotationType {
-    PERSON, HASHTAG, LINK
+sealed class SymbolAnnotationType {
+    abstract val data: String
+
+    data class Person(override val data: String) : SymbolAnnotationType()
+    data class HashTag(override val data: String) : SymbolAnnotationType()
+    data class Link(val displayableUrl: String, override val data: String) : SymbolAnnotationType()
 }
 
-private fun symbolAnnotationFor(char: Char): SymbolAnnotationType? {
-    return when (char) {
-        '@' -> SymbolAnnotationType.PERSON
-        '#' -> SymbolAnnotationType.HASHTAG
-        'h' -> SymbolAnnotationType.LINK
+private fun symbolAnnotationFor(result: String, urls: List<Url>): SymbolAnnotationType? {
+    return when (result.first()) {
+        '@' -> SymbolAnnotationType.Person(result)
+        '#' -> SymbolAnnotationType.HashTag(result)
+        'h' -> {
+            val relevantUrl = urls.first { result.contains(it.shortenedUrl) }
+            SymbolAnnotationType.Link(relevantUrl.displayUrl, relevantUrl.url)
+        }
         else -> null
     }
 }
@@ -43,7 +51,8 @@ typealias SymbolAnnotation = Pair<AnnotatedString, StringAnnotation?>
  */
 @Composable
 fun contentFormatter(
-    text: String
+    text: String,
+    urls: List<Url>
 ): AnnotatedString {
     val tokens = symbolPattern.findAll(text)
 
@@ -57,6 +66,7 @@ fun contentFormatter(
             val (annotatedString, stringAnnotation) = getSymbolAnnotation(
                 matchResult = token,
                 colors = MaterialTheme.colors,
+                urls = urls
             )
             append(annotatedString)
 
@@ -84,9 +94,10 @@ fun contentFormatter(
  */
 private fun getSymbolAnnotation(
     matchResult: MatchResult,
+    urls: List<Url>,
     colors: Colors
 ): SymbolAnnotation {
-    val type = symbolAnnotationFor(matchResult.value.first())
+    val type = symbolAnnotationFor(matchResult.value, urls)
     return if (type != null) {
         annotationForType(type, matchResult, colors.primary)
     } else {
@@ -99,14 +110,14 @@ private fun annotationForType(
     result: MatchResult,
     highlightColor: Color
 ): SymbolAnnotation {
-    val value = if (type == SymbolAnnotationType.LINK) {
-        result.value
+    val value = if (type is SymbolAnnotationType.Link) {
+        type.displayableUrl
     } else {
-        result.value.substring(1)
+        result.value
     }
     return SymbolAnnotation(
         AnnotatedString(
-            text = result.value,
+            text = value,
             spanStyle = SpanStyle(
                 color = highlightColor
             )
@@ -115,7 +126,7 @@ private fun annotationForType(
             item = value,
             start = result.range.first,
             end = result.range.last,
-            tag = type.name
+            tag = type.data
         )
     )
 }

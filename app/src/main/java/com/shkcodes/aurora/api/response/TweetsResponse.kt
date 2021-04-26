@@ -62,6 +62,8 @@ data class ExtendedEntities(
 
 @JsonClass(generateAdapter = true)
 data class Url(
+    @Json(name = "url")
+    val shortenedUrl: String,
     @Json(name = "display_url")
     val displayUrl: String,
     @Json(name = "expanded_url")
@@ -83,6 +85,8 @@ enum class MediaType {
 data class Media(
     @Json(name = "id")
     val id: Long,
+    @Json(name = "url")
+    val shortenedUrl: String,
     @Json(name = "media_url_https")
     val url: String,
     @Json(name = "type")

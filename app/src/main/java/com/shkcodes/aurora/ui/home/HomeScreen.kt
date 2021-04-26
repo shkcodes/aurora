@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.ui.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,8 +45,8 @@ import coil.transform.CircleCropTransformation
 import coil.transform.RoundedCornersTransformation
 import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
+import com.shkcodes.aurora.api.response.Url
 import com.shkcodes.aurora.cache.entities.MediaEntity
-import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.common.TerminalError
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
@@ -158,7 +156,7 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                     )
                 )
             }
-            RichContent(tweet.content)
+            RichContent(tweet.content, tweet.sharedUrls)
             timelineTweet.quotedTweet?.let {
                 Card(
                     modifier = Modifier
@@ -174,11 +172,9 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                             text = it.content,
                             style = typography.body2
                         )
-                        SharedUrl(tweet = it)
                     }
                 }
             }
-            SharedUrl(tweet = tweet)
             TweetMedia(timelineTweet.media)
             if (timelineTweet.retweetedTweet != null) {
                 RetweetIndicator(timelineTweet.primaryTweet.userName)
@@ -209,20 +205,6 @@ private fun TweetMedia(media: List<MediaEntity>) {
 }
 
 @Composable
-private fun SharedUrl(tweet: TweetEntity) {
-    val uriHandler = LocalUriHandler.current
-    if (tweet.displayableSharedUrl != null) {
-        Text(
-            text = tweet.displayableSharedUrl,
-            style = typography.body2.copy(color = colors.primary),
-            modifier = Modifier.clickable {
-                uriHandler.openUri(tweet.sharedUrl.orEmpty())
-            }
-        )
-    }
-}
-
-@Composable
 private fun RetweetIndicator(userName: String) {
     Row(modifier = Modifier.padding(top = Dimens.space)) {
         Image(
@@ -243,8 +225,8 @@ private fun RetweetIndicator(userName: String) {
 }
 
 @Composable
-private fun RichContent(content: String) {
-    val styledContent = contentFormatter(text = content)
+private fun RichContent(content: String, sharedUrls: List<Url>) {
+    val styledContent = contentFormatter(text = content, sharedUrls)
     ClickableText(
         text = styledContent,
         style = typography.body2.copy(color = LocalContentColor.current),
@@ -255,7 +237,7 @@ private fun RichContent(content: String) {
             .getStringAnnotations(start = it, end = it)
             .firstOrNull()
             ?.let { annotation ->
-                println("clicked ${annotation.item}")
+                println("clicked ${annotation.tag}")
             }
     }
 }
