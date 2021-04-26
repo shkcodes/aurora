@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,18 +34,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import coil.transform.CircleCropTransformation
-import coil.transform.RoundedCornersTransformation
 import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.api.response.Url
-import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.common.TerminalError
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
@@ -162,7 +158,7 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                     )
                 )
             }
-            RichContent(tweet.content, tweet.sharedUrls)
+            if (tweet.content.isNotEmpty()) RichContent(tweet.content, tweet.sharedUrls)
             timelineTweet.quoteTweet?.let {
                 Card(
                     modifier = Modifier
@@ -186,27 +182,6 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                 RetweetIndicator(timelineTweet.primaryTweet.userName)
             }
         }
-    }
-}
-
-private const val MEDIA_CORNER_RADIUS = 4F
-
-@Composable
-private fun TweetMedia(media: List<MediaEntity>) {
-    if (media.isNotEmpty()) {
-        CoilImage(
-            data = media.first().imageUrl,
-            contentDescription = null,
-            fadeIn = true,
-            contentScale = ContentScale.FillWidth,
-            requestBuilder = {
-                transformations(RoundedCornersTransformation(radius = MEDIA_CORNER_RADIUS))
-            },
-            modifier = Modifier
-                .padding(top = Dimens.keyline_1)
-                .fillMaxWidth()
-                .height(Dimens.tweet_single_media_height)
-        )
     }
 }
 

@@ -7,6 +7,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object Dimens {
+    val zero_dp: Dp @Composable get() = 0.dp
+    val two_dp: Dp @Composable get() = 2.dp
     val space_small: Dp @Composable get() = 4.dp
     val space: Dp @Composable get() = 8.dp
     val space_large: Dp @Composable get() = 24.dp
@@ -19,5 +21,6 @@ object Dimens {
     val text_large: TextUnit @Composable get() = 18.sp
 
     val tweet_profile_pic: Dp @Composable get() = 32.dp
-    val tweet_single_media_height: Dp @Composable get() = 170.dp
+    val single_row_media_height: Dp @Composable get() = 170.dp
+    val multi_row_media_height: Dp @Composable get() = 100.dp
 }
