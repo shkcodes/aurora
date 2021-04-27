@@ -43,6 +43,7 @@ import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.api.response.Url
+import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.common.TerminalError
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
@@ -127,6 +128,11 @@ private fun TweetsList(state: State.Content, listState: LazyListState, retryActi
 @Composable
 private fun TweetItem(timelineTweet: TimelineTweetItem) {
     val tweet = timelineTweet.retweet ?: timelineTweet.primaryTweet
+    val quoteTweet = if (timelineTweet.retweet != null) {
+        timelineTweet.retweetQuote
+    } else {
+        timelineTweet.quoteTweet
+    }
     val media =
         if (timelineTweet.retweet != null) {
             timelineTweet.retweetMedia
@@ -159,27 +165,29 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                 )
             }
             if (tweet.content.isNotEmpty()) RichContent(tweet.content, tweet.sharedUrls)
-            timelineTweet.quoteTweet?.let {
-                Card(
-                    modifier = Modifier
-                        .padding(top = Dimens.space)
-                        .fillMaxWidth()
-                ) {
-                    Column(Modifier.padding(Dimens.keyline_1)) {
-                        UserInfo(
-                            it.userName,
-                            it.userHandle
-                        )
-                        Text(
-                            text = it.content,
-                            style = typography.body2
-                        )
-                    }
-                }
-            }
+            QuoteTweet(quoteTweet)
             TweetMedia(media)
             if (timelineTweet.retweet != null) {
                 RetweetIndicator(timelineTweet.primaryTweet.userName)
+            }
+        }
+    }
+}
+
+@Composable
+private fun QuoteTweet(tweet: TweetEntity?) {
+    tweet?.let {
+        Card(
+            modifier = Modifier
+                .padding(top = Dimens.space)
+                .fillMaxWidth()
+        ) {
+            Column(Modifier.padding(Dimens.keyline_1)) {
+                UserInfo(
+                    it.userName,
+                    it.userHandle
+                )
+                RichContent(content = it.content, sharedUrls = it.sharedUrls)
             }
         }
     }

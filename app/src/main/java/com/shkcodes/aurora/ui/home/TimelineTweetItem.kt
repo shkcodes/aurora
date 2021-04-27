@@ -18,6 +18,11 @@ data class TimelineTweetItem(
     )
     val retweet: TweetEntity? = null,
     @Relation(
+        parentColumn = "retweetQuoteId",
+        entityColumn = "id"
+    )
+    val retweetQuote: TweetEntity? = null,
+    @Relation(
         parentColumn = "id",
         entityColumn = "tweetId"
     )

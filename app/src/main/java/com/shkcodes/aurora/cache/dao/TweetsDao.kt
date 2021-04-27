@@ -31,10 +31,11 @@ abstract class TweetsDao {
         val media = tweets.mapNotNull { it.toMediaEntity() }.flatten()
         val quoteTweetsMedia = quoteTweets.mapNotNull { it.toMediaEntity() }.flatten()
         val retweetsMedia = retweets.mapNotNull { it.toMediaEntity() }.flatten()
+        val retweetQuoteTweets = retweets.mapNotNull { it.quoteTweet }
         saveTweets(
             tweets.toCachedTweets(true) +
                     quoteTweets.toCachedTweets() +
-                    retweets.toCachedTweets()
+                    retweets.toCachedTweets() + retweetQuoteTweets.toCachedTweets()
         )
         saveMedia(media + quoteTweetsMedia + retweetsMedia)
     }
