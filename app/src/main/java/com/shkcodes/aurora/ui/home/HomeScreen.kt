@@ -164,7 +164,11 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                     )
                 )
             }
-            if (tweet.content.isNotEmpty()) RichContent(tweet.content, tweet.sharedUrls)
+            if (tweet.content.isNotEmpty()) RichContent(
+                tweet.content,
+                tweet.sharedUrls,
+                tweet.hashtags
+            )
             QuoteTweet(quoteTweet)
             TweetMedia(media)
             if (timelineTweet.retweet != null) {
@@ -187,7 +191,11 @@ private fun QuoteTweet(tweet: TweetEntity?) {
                     it.userName,
                     it.userHandle
                 )
-                RichContent(content = it.content, sharedUrls = it.sharedUrls)
+                RichContent(
+                    content = it.content,
+                    sharedUrls = it.sharedUrls,
+                    hashtags = it.hashtags
+                )
             }
         }
     }
@@ -214,8 +222,8 @@ private fun RetweetIndicator(userName: String) {
 }
 
 @Composable
-private fun RichContent(content: String, sharedUrls: List<Url>) {
-    val styledContent = contentFormatter(text = content, sharedUrls)
+private fun RichContent(content: String, sharedUrls: List<Url>, hashtags: List<String>) {
+    val styledContent = contentFormatter(content, sharedUrls, hashtags)
     ClickableText(
         text = styledContent,
         style = typography.body2.copy(color = LocalContentColor.current),

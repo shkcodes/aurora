@@ -53,7 +53,9 @@ data class Entities(
     @Json(name = "urls")
     val urls: List<Url>,
     @Json(name = "media")
-    val media: List<Media>?
+    val media: List<Media>?,
+    @Json(name = "hashtags")
+    val hashtags: List<Hashtag>,
 )
 
 @JsonClass(generateAdapter = true)
@@ -117,4 +119,10 @@ data class VideoVariant(
 data class QuoteTweetInfo(
     @Json(name = "url")
     val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Hashtag(
+    @Json(name = "text")
+    val text: String
 )

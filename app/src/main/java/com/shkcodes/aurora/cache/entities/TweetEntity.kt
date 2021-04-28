@@ -29,7 +29,8 @@ data class TweetEntity(
     val sharedUrls: List<Url>,
     val quoteTweetId: Long?,
     val retweetId: Long?,
-    val retweetQuoteId: Long?
+    val retweetQuoteId: Long?,
+    val hashtags: List<String>
 )
 
 private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEntity(
@@ -53,7 +54,8 @@ private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEn
     sharedUrls = entities.urls,
     quoteTweetId = quoteTweet?.id,
     retweetId = retweet?.id,
-    retweetQuoteId = retweet?.quoteTweet?.id
+    retweetQuoteId = retweet?.quoteTweet?.id,
+    hashtags = entities.hashtags.map { it.text }
 )
 
 fun Tweets.toCachedTweets(isTimelineTweet: Boolean = false) =

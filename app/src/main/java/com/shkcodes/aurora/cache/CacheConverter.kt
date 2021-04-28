@@ -22,4 +22,10 @@ class CacheConverter {
 
     @TypeConverter
     fun toUrls(urls: String): List<Url> = moshi.fromJsonArray(urls)
+
+    @TypeConverter
+    fun fromHashtags(hashtags: List<String>): String = moshi.toJson(hashtags)
+
+    @TypeConverter
+    fun toHashtags(hashtags: String): List<String> = moshi.fromJsonArray(hashtags)
 }

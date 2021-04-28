@@ -13,7 +13,7 @@ import com.shkcodes.aurora.api.response.Url
 
 // Regex containing the syntax tokens
 val symbolPattern by lazy {
-    Regex("""(https?://[^\s\t\n]+)|(`[^`]+`)|(@\w+)|(#\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)""")
+    Regex("""(https?://[^\s\t\n]+)|(@\w+)|(#\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)""")
 }
 
 // Accepted annotations for the ClickableTextWrapper
@@ -25,10 +25,18 @@ sealed class SymbolAnnotationType {
     data class Link(val displayableUrl: String, override val data: String) : SymbolAnnotationType()
 }
 
-private fun symbolAnnotationFor(result: String, urls: List<Url>): SymbolAnnotationType? {
+private fun symbolAnnotationFor(
+    result: String,
+    urls: List<Url>,
+    hashtags: List<String>
+): SymbolAnnotationType? {
     return when (result.first()) {
         '@' -> SymbolAnnotationType.Person(result)
-        '#' -> SymbolAnnotationType.HashTag(result)
+        '#' -> {
+            if (hashtags.contains(result.substring(1))) {
+                SymbolAnnotationType.HashTag(result)
+            } else null
+        }
         'h' -> {
             val relevantUrl = urls.first { result.contains(it.shortenedUrl) }
             SymbolAnnotationType.Link(relevantUrl.displayUrl, relevantUrl.url)
@@ -52,7 +60,8 @@ typealias SymbolAnnotation = Pair<AnnotatedString, StringAnnotation?>
 @Composable
 fun contentFormatter(
     text: String,
-    urls: List<Url>
+    urls: List<Url>,
+    hashtags: List<String>
 ): AnnotatedString {
     val tokens = symbolPattern.findAll(text)
 
@@ -66,7 +75,8 @@ fun contentFormatter(
             val (annotatedString, stringAnnotation) = getSymbolAnnotation(
                 matchResult = token,
                 colors = MaterialTheme.colors,
-                urls = urls
+                urls = urls,
+                hashtags = hashtags
             )
             append(annotatedString)
 
@@ -95,9 +105,10 @@ fun contentFormatter(
 private fun getSymbolAnnotation(
     matchResult: MatchResult,
     urls: List<Url>,
+    hashtags: List<String>,
     colors: Colors
 ): SymbolAnnotation {
-    val type = symbolAnnotationFor(matchResult.value, urls)
+    val type = symbolAnnotationFor(matchResult.value, urls, hashtags)
     return if (type != null) {
         annotationForType(type, matchResult, colors.primary)
     } else {
