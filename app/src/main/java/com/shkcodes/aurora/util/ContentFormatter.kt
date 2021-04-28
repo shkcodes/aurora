@@ -63,14 +63,15 @@ fun contentFormatter(
     urls: List<Url>,
     hashtags: List<String>
 ): AnnotatedString {
-    val tokens = symbolPattern.findAll(text)
+    val cleanedText = text.replace("&amp;", "&")
+    val tokens = symbolPattern.findAll(cleanedText)
 
     return buildAnnotatedString {
 
         var cursorPosition = 0
 
         for (token in tokens) {
-            append(text.slice(cursorPosition until token.range.first))
+            append(cleanedText.slice(cursorPosition until token.range.first))
 
             val (annotatedString, stringAnnotation) = getSymbolAnnotation(
                 matchResult = token,
@@ -89,9 +90,9 @@ fun contentFormatter(
         }
 
         if (!tokens.none()) {
-            append(text.slice(cursorPosition..text.lastIndex))
+            append(cleanedText.slice(cursorPosition..cleanedText.lastIndex))
         } else {
-            append(text)
+            append(cleanedText)
         }
     }
 }
