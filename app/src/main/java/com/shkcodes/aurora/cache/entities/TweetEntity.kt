@@ -30,7 +30,8 @@ data class TweetEntity(
     val quoteTweetId: Long?,
     val retweetId: Long?,
     val retweetQuoteId: Long?,
-    val hashtags: List<String>
+    val hashtags: List<String>,
+    val repliedToUsers: List<String>
 )
 
 private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEntity(
@@ -55,21 +56,11 @@ private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEn
     quoteTweetId = quoteTweet?.id,
     retweetId = retweet?.id,
     retweetQuoteId = retweet?.quoteTweet?.id,
-    hashtags = entities.hashtags.map { it.text }
+    hashtags = hashTags,
+    repliedToUsers = repliedToUsers
 )
 
 fun Tweets.toCachedTweets(isTimelineTweet: Boolean = false) =
     map { it.toTweetEntity(isTimelineTweet) }
 
 typealias CachedTweets = List<TweetEntity>
-
-private val Tweet.displayableContent: String
-    get() {
-        val irrelevantUrls =
-            entities.media?.map { it.shortenedUrl }
-                .orEmpty() + extendedEntities?.media?.map { it.shortenedUrl }
-                .orEmpty() + quoteTweetInfo?.url.orEmpty()
-        return if (irrelevantUrls.isNotEmpty()) {
-            content.replace(irrelevantUrls.joinToString("|").toRegex(), "")
-        } else content
-    }

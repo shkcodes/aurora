@@ -34,7 +34,7 @@ class HomeViewModelTest : BaseTest() {
         every { content } returns "Shouldn't have tweeted this"
     }
 
-    private val timelineTweet = TimelineTweetItem(tweetEntity, null, null, emptyList())
+    private val timelineTweet = TimelineTweetItem(tweetEntity, null, null)
 
     private val userService: UserService = mockk(relaxUnitFun = true) {
         coEvery { fetchTimelineTweets(any()) } returns Result.Success(Unit)

@@ -14,6 +14,8 @@ data class Tweet(
     val createdAt: ZonedDateTime,
     @Json(name = "full_text")
     val content: String,
+    @Json(name = "display_text_range")
+    val displayRange: List<Int>,
     @Json(name = "favorite_count")
     val favoriteCount: Int,
     @Json(name = "favorited")
@@ -46,7 +48,30 @@ data class Tweet(
     val quoteTweetInfo: QuoteTweetInfo?,
     @Json(name = "retweeted_status")
     val retweet: Tweet?
-)
+) {
+    private fun String.purgeUrls(): String {
+        val irrelevantUrls =
+            entities.media?.map { it.shortenedUrl }
+                .orEmpty() + extendedEntities?.media?.map { it.shortenedUrl }
+                .orEmpty() + quoteTweetInfo?.url.orEmpty()
+        return if (irrelevantUrls.isNotEmpty()) {
+            replace(irrelevantUrls.joinToString("|").toRegex(), "")
+        } else this
+    }
+
+    val displayableContent = content.purgeUrls().substring(displayRange.first()).trim()
+
+    val hashTags = entities.hashtags.map { it.text }
+
+    val repliedToUsers: List<String>
+        get() {
+            val hiddenHandles = content.purgeUrls().substring(0, displayRange.first())
+            val mentions = entities.mentions.map { it.handle }
+            return (mentions.filter { hiddenHandles.contains(it) } + listOfNotNull(
+                inReplyToScreenName
+            )).distinct()
+        }
+}
 
 @JsonClass(generateAdapter = true)
 data class Entities(
@@ -56,6 +81,8 @@ data class Entities(
     val media: List<Media>?,
     @Json(name = "hashtags")
     val hashtags: List<Hashtag>,
+    @Json(name = "user_mentions")
+    val mentions: List<UserMention>,
 )
 
 @JsonClass(generateAdapter = true)
@@ -125,4 +152,10 @@ data class QuoteTweetInfo(
 data class Hashtag(
     @Json(name = "text")
     val text: String
+)
+
+@JsonClass(generateAdapter = true)
+data class UserMention(
+    @Json(name = "screen_name")
+    val handle: String
 )

@@ -164,6 +164,9 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                     )
                 )
             }
+            if (tweet.repliedToUsers.isNotEmpty()) {
+                RepliedToUsers(tweet.repliedToUsers)
+            }
             if (tweet.content.isNotEmpty()) RichContent(
                 tweet.content,
                 tweet.sharedUrls,
@@ -176,6 +179,29 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
             }
         }
     }
+}
+
+@Composable
+private fun RepliedToUsers(users: List<String>) {
+    val content = when (users.size) {
+        1 -> stringResource(R.string.single_replied_placeholder, users.single())
+        2 -> stringResource(
+            id = R.string.two_users_replied_placeholder,
+            users.first(),
+            users.last()
+        )
+        else -> stringResource(
+            id = R.string.multiple_users_replied_placeholder,
+            users[0], users[1], users.size - 2
+        )
+    }
+
+    Text(
+        text = stringResource(id = R.string.users_replied_placeholder, content),
+        style = typography.caption,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+    )
 }
 
 @Composable

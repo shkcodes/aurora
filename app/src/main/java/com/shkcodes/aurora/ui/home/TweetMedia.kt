@@ -69,7 +69,7 @@ private fun MediaRow(
 ) {
     Row(
         modifier = Modifier
-            .padding(top = if (isBottomRow) Dimens.zero_dp else Dimens.keyline_1)
+            .padding(top = if (isBottomRow) Dimens.space_small else Dimens.zero_dp)
             .height(if (isGridRow) Dimens.multi_row_media_height else Dimens.single_row_media_height)
     ) {
         MediaImage(
