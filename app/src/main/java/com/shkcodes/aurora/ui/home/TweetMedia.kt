@@ -23,7 +23,7 @@ fun TweetMedia(media: List<MediaEntity>) {
             MediaImage(
                 url = media.first().imageUrl,
                 modifier = Modifier
-                    .padding(top = Dimens.keyline_1)
+                    .padding(top = Dimens.space)
                     .fillMaxWidth()
                     .height(Dimens.single_row_media_height)
             )
@@ -69,7 +69,7 @@ private fun MediaRow(
 ) {
     Row(
         modifier = Modifier
-            .padding(top = if (isBottomRow) Dimens.space_small else Dimens.zero_dp)
+            .padding(top = if (isBottomRow) Dimens.space_small else Dimens.space)
             .height(if (isGridRow) Dimens.multi_row_media_height else Dimens.single_row_media_height)
     ) {
         MediaImage(
