@@ -42,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
+import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.common.TerminalError
@@ -138,6 +139,11 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
         } else {
             timelineTweet.media
         }
+    val quoteTweetMedia = if (timelineTweet.retweet != null) {
+        timelineTweet.retweetQuoteMedia
+    } else {
+        timelineTweet.quoteTweetMedia
+    }
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         CoilImage(
             data = tweet.userProfileImageUrl,
@@ -167,7 +173,7 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                 RepliedToUsers(tweet.repliedToUsers)
             }
             if (tweet.content.isNotEmpty()) RichContent(tweet)
-            QuoteTweet(quoteTweet)
+            QuoteTweet(quoteTweet, quoteTweetMedia)
             if (tweet.sharedUrls.isNotEmpty() && media.isEmpty() && quoteTweet == null) {
                 LinkPreview(tweet.sharedUrls.first().url)
             }
@@ -204,7 +210,7 @@ private fun RepliedToUsers(users: List<String>) {
 }
 
 @Composable
-private fun QuoteTweet(tweet: TweetEntity?) {
+private fun QuoteTweet(tweet: TweetEntity?, media: List<MediaEntity>) {
     tweet?.let {
         Card(
             modifier = Modifier
@@ -217,6 +223,7 @@ private fun QuoteTweet(tweet: TweetEntity?) {
                     it.userHandle
                 )
                 RichContent(it)
+                TweetMedia(media = media)
             }
         }
     }

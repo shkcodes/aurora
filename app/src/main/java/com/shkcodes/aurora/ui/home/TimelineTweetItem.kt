@@ -36,7 +36,12 @@ data class TimelineTweetItem(
         parentColumn = "retweetId",
         entityColumn = "tweetId"
     )
-    val retweetMedia: List<MediaEntity> = emptyList()
+    val retweetMedia: List<MediaEntity> = emptyList(),
+    @Relation(
+        parentColumn = "retweetQuoteId",
+        entityColumn = "tweetId"
+    )
+    val retweetQuoteMedia: List<MediaEntity> = emptyList()
 )
 
 typealias TimelineTweets = List<TimelineTweetItem>
