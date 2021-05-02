@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -144,6 +145,7 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
     } else {
         timelineTweet.quoteTweetMedia
     }
+    val uriHandler = LocalUriHandler.current
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         CoilImage(
             data = tweet.userProfileImageUrl,
@@ -172,10 +174,10 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
             if (tweet.repliedToUsers.isNotEmpty()) {
                 RepliedToUsers(tweet.repliedToUsers)
             }
-            if (tweet.content.isNotEmpty()) RichContent(tweet)
-            QuoteTweet(quoteTweet, quoteTweetMedia)
+            if (tweet.content.isNotEmpty()) RichContent(tweet, uriHandler)
+            QuoteTweet(quoteTweet, quoteTweetMedia, uriHandler)
             if (tweet.sharedUrls.isNotEmpty() && media.isEmpty() && quoteTweet == null) {
-                LinkPreview(tweet.sharedUrls.first().url)
+                LinkPreview(tweet.sharedUrls.first().url) { uriHandler.openUri(it) }
             }
 
             TweetMedia(media)
@@ -210,7 +212,7 @@ private fun RepliedToUsers(users: List<String>) {
 }
 
 @Composable
-private fun QuoteTweet(tweet: TweetEntity?, media: List<MediaEntity>) {
+private fun QuoteTweet(tweet: TweetEntity?, media: List<MediaEntity>, uriHandler: UriHandler) {
     tweet?.let {
         Card(
             modifier = Modifier
@@ -222,7 +224,7 @@ private fun QuoteTweet(tweet: TweetEntity?, media: List<MediaEntity>) {
                     it.userName,
                     it.userHandle
                 )
-                RichContent(it)
+                RichContent(it, uriHandler)
                 TweetMedia(media = media)
             }
         }
@@ -250,9 +252,8 @@ private fun RetweetIndicator(userName: String) {
 }
 
 @Composable
-private fun RichContent(tweet: TweetEntity) {
+private fun RichContent(tweet: TweetEntity, uriHandler: UriHandler) {
     val styledContent = contentFormatter(tweet.content, tweet.sharedUrls, tweet.hashtags)
-    val uriHandler = LocalUriHandler.current
     CustomClickableText(
         text = styledContent,
         style = typography.body2.copy(color = LocalContentColor.current),

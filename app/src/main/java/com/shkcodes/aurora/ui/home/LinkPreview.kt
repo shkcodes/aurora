@@ -1,5 +1,6 @@
 package com.shkcodes.aurora.ui.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +38,7 @@ private data class MetaData(
 )
 
 @Composable
-fun LinkPreview(url: String) {
+fun LinkPreview(url: String, onClick: (String) -> Unit) {
     var metaData by remember { mutableStateOf(MetaData()) }
     LaunchedEffect(Unit) {
         launch(Dispatchers.IO) {
@@ -49,6 +50,7 @@ fun LinkPreview(url: String) {
             .height(Dimens.link_preview_height)
             .clip(RoundedCornerShape(Dimens.corner_radius))
             .padding(top = Dimens.space)
+            .clickable { onClick(url) }
     ) {
         Row {
             if (metaData.imageUrl.isNotEmpty()) {
