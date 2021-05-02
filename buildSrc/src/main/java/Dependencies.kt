@@ -36,6 +36,8 @@ object Versions {
 
     const val desugarLib = "1.0.9"
     const val room = "2.3.0"
+
+    const val jsoup = "1.13.1"
 }
 
 object Dependencies {
@@ -91,6 +93,8 @@ object Dependencies {
     const val room = "androidx.room:room-runtime:${Versions.room}"
     const val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
     const val roomKtx = "androidx.room:room-ktx:${Versions.room}"
+
+    const val jsoup = "org.jsoup:jsoup:${Versions.jsoup}"
 
 }
 

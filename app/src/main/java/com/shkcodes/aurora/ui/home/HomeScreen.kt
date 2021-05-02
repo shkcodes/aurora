@@ -42,7 +42,6 @@ import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.CoilImage
 import com.shkcodes.aurora.R
-import com.shkcodes.aurora.api.response.Url
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.common.TerminalError
@@ -167,12 +166,12 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
             if (tweet.repliedToUsers.isNotEmpty()) {
                 RepliedToUsers(tweet.repliedToUsers)
             }
-            if (tweet.content.isNotEmpty()) RichContent(
-                tweet.content,
-                tweet.sharedUrls,
-                tweet.hashtags
-            )
+            if (tweet.content.isNotEmpty()) RichContent(tweet)
             QuoteTweet(quoteTweet)
+            if (tweet.sharedUrls.isNotEmpty() && media.isEmpty() && quoteTweet == null) {
+                LinkPreview(tweet.sharedUrls.first().url)
+            }
+
             TweetMedia(media)
             if (timelineTweet.retweet != null) {
                 RetweetIndicator(timelineTweet.primaryTweet.userName)
@@ -217,11 +216,7 @@ private fun QuoteTweet(tweet: TweetEntity?) {
                     it.userName,
                     it.userHandle
                 )
-                RichContent(
-                    content = it.content,
-                    sharedUrls = it.sharedUrls,
-                    hashtags = it.hashtags
-                )
+                RichContent(it)
             }
         }
     }
@@ -248,8 +243,8 @@ private fun RetweetIndicator(userName: String) {
 }
 
 @Composable
-private fun RichContent(content: String, sharedUrls: List<Url>, hashtags: List<String>) {
-    val styledContent = contentFormatter(content, sharedUrls, hashtags)
+private fun RichContent(tweet: TweetEntity) {
+    val styledContent = contentFormatter(tweet.content, tweet.sharedUrls, tweet.hashtags)
     ClickableText(
         text = styledContent,
         style = typography.body2.copy(color = LocalContentColor.current),

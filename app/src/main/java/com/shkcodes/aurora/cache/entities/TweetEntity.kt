@@ -52,7 +52,7 @@ private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEn
     userName = user.name,
     userHandle = user.screenName,
     userProfileImageUrl = user.profileImageUrl,
-    sharedUrls = entities.urls,
+    sharedUrls = entities.urls.filterNot { it.shortenedUrl == quoteTweetInfo?.url },
     quoteTweetId = quoteTweet?.id,
     retweetId = retweet?.id,
     retweetQuoteId = retweet?.quoteTweet?.id,

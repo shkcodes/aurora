@@ -20,7 +20,10 @@ object Dimens {
     val text_caption: TextUnit @Composable get() = 12.sp
     val text_large: TextUnit @Composable get() = 18.sp
 
+    val corner_radius: Dp @Composable get() = 4.dp
+
     val tweet_profile_pic: Dp @Composable get() = 32.dp
     val single_row_media_height: Dp @Composable get() = 170.dp
     val multi_row_media_height: Dp @Composable get() = 100.dp
+    val link_preview_height: Dp @Composable get() = 75.dp
 }

@@ -104,6 +104,8 @@ dependencies {
     implementation Dependencies.roomKtx
     kapt Dependencies.roomCompiler
 
+    implementation Dependencies.jsoup
+
     testImplementation TestDependencies.junit
     testImplementation TestDependencies.coroutines
     testImplementation TestDependencies.mockk
