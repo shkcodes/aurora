@@ -8,6 +8,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import com.shkcodes.aurora.api.response.Url
+import org.jsoup.Jsoup
 
 // from https://github.com/android/compose-samples/blob/main/Jetchat/app/src/main/java/com/example/compose/jetchat/conversation/MessageFormatter.kt
 
@@ -63,7 +64,7 @@ fun contentFormatter(
     urls: List<Url>,
     hashtags: List<String>
 ): AnnotatedString {
-    val cleanedText = text.replace("&amp;", "&")
+    val cleanedText = Jsoup.parse(text).wholeText()
     val tokens = symbolPattern.findAll(cleanedText)
 
     return buildAnnotatedString {
