@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
@@ -34,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -252,7 +252,8 @@ private fun RetweetIndicator(userName: String) {
 @Composable
 private fun RichContent(tweet: TweetEntity) {
     val styledContent = contentFormatter(tweet.content, tweet.sharedUrls, tweet.hashtags)
-    ClickableText(
+    val uriHandler = LocalUriHandler.current
+    CustomClickableText(
         text = styledContent,
         style = typography.body2.copy(color = LocalContentColor.current),
         modifier = Modifier
@@ -262,6 +263,7 @@ private fun RichContent(tweet: TweetEntity) {
             .getStringAnnotations(start = it, end = it)
             .firstOrNull()
             ?.let { annotation ->
+                uriHandler.openUri(annotation.tag)
                 println("clicked ${annotation.tag}")
             }
     }
