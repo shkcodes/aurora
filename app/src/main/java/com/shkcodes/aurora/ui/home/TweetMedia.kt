@@ -2,6 +2,7 @@
 
 package com.shkcodes.aurora.ui.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -10,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil.transform.RoundedCornersTransformation
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.theme.Dimens
 
@@ -89,14 +90,16 @@ private fun MediaRow(
 
 @Composable
 private fun MediaImage(url: String, modifier: Modifier = Modifier) {
-    CoilImage(
-        data = url,
+    Image(
+        painter = rememberCoilPainter(
+            request = url,
+            fadeIn = true,
+            requestBuilder = {
+                transformations(RoundedCornersTransformation(radius = MEDIA_CORNER_RADIUS))
+            },
+        ),
         contentDescription = null,
-        fadeIn = true,
         contentScale = ContentScale.FillWidth,
-        requestBuilder = {
-            transformations(RoundedCornersTransformation(radius = MEDIA_CORNER_RADIUS))
-        },
         modifier = modifier
     )
 }

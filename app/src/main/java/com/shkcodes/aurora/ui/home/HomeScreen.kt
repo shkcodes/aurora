@@ -41,7 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import coil.transform.CircleCropTransformation
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
@@ -147,30 +147,21 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
     }
     val uriHandler = LocalUriHandler.current
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
-        CoilImage(
-            data = tweet.userProfileImageUrl,
+        Image(
+            painter = rememberCoilPainter(
+                request = tweet.userProfileImageUrl, fadeIn = true,
+                requestBuilder = {
+                    transformations(CircleCropTransformation())
+                },
+            ),
             contentDescription = stringResource(id = R.string.accessibility_user_profile_image),
-            fadeIn = true,
-            requestBuilder = {
-                transformations(CircleCropTransformation())
-            },
             modifier = Modifier.size(Dimens.tweet_profile_pic)
         )
         Column(
             modifier = Modifier
                 .padding(start = Dimens.space)
         ) {
-            Row {
-                UserInfo(tweet.userName, tweet.userHandle, modifier = Modifier.weight(1F))
-                Text(
-                    text = tweet.createdAt.toPrettyTime(),
-                    style = typography.overline,
-                    modifier = Modifier.padding(
-                        start = Dimens.space_small,
-                        top = Dimens.space_small
-                    )
-                )
-            }
+            TweetItemHeader(tweet)
             if (tweet.repliedToUsers.isNotEmpty()) {
                 RepliedToUsers(tweet.repliedToUsers)
             }
@@ -185,6 +176,21 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
                 RetweetIndicator(timelineTweet.primaryTweet.userName)
             }
         }
+    }
+}
+
+@Composable
+private fun TweetItemHeader(tweet: TweetEntity) {
+    Row {
+        UserInfo(tweet.userName, tweet.userHandle, modifier = Modifier.weight(1F))
+        Text(
+            text = tweet.createdAt.toPrettyTime(),
+            style = typography.overline,
+            modifier = Modifier.padding(
+                start = Dimens.space_small,
+                top = Dimens.space_small
+            )
+        )
     }
 }
 

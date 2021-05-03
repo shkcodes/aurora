@@ -1,5 +1,6 @@
 package com.shkcodes.aurora.ui.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import com.shkcodes.aurora.theme.Dimens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,11 +55,13 @@ fun LinkPreview(url: String, onClick: (String) -> Unit) {
     ) {
         Row {
             if (metaData.imageUrl.isNotEmpty()) {
-                CoilImage(
-                    data = metaData.imageUrl,
-                    fadeIn = true,
-                    contentDescription = null,
+                Image(
+                    painter = rememberCoilPainter(
+                        request = metaData.imageUrl,
+                        fadeIn = true
+                    ),
                     contentScale = ContentScale.Crop,
+                    contentDescription = null,
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(IMAGE_WEIGHT)

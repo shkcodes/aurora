@@ -32,7 +32,7 @@ object Versions {
     const val okhttp = "4.9.0"
     const val moshi = "1.12.0"
 
-    const val accompanist = "0.7.0"
+    const val accompanist = "0.8.1"
 
     const val desugarLib = "1.0.9"
     const val room = "2.3.0"
