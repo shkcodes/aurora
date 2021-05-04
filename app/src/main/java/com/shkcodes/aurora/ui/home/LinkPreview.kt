@@ -44,7 +44,7 @@ fun LinkPreview(url: String, onClick: (String) -> Unit) {
     var metaData by remember { mutableStateOf(MetaData()) }
     LaunchedEffect(Unit) {
         launch(Dispatchers.IO) {
-            metaData = getMetadata(url.replace("http://", "https://"))
+            metaData = getMetadata(url.fixScheme())
         }
     }
     Card(
@@ -102,8 +102,13 @@ fun LinkPreview(url: String, onClick: (String) -> Unit) {
 private fun getMetadata(url: String): MetaData {
     val document = Jsoup.connect(url).get()
     val title = getMetaTagContent(document, "meta[property=og:title]") ?: document.title()
-    val imageUrl = getMetaTagContent(document, "meta[property=og:image]")
+    val imageUrl =
+        getMetaTagContent(document, "meta[property=og:image]")?.fixScheme()
     return MetaData(title, imageUrl.orEmpty())
+}
+
+private fun String.fixScheme(): String {
+    return replace("http://", "https://")
 }
 
 private fun getMetaTagContent(document: Document, query: String): String? {
