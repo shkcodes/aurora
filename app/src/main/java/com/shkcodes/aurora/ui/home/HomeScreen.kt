@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -110,7 +109,6 @@ fun HomeScreen() {
 
 @Composable
 private fun TweetsList(state: State.Content, listState: LazyListState, retryAction: () -> Unit) {
-    val scope = rememberCoroutineScope()
     LazyColumn(state = listState) {
         items(state.items) {
             TweetItem(it)
@@ -120,9 +118,7 @@ private fun TweetsList(state: State.Content, listState: LazyListState, retryActi
         }
     }
     LaunchedEffect(state.isPaginatedError) {
-        if (state.isPaginatedError) scope.launch {
-            listState.animateScrollToItem(state.items.size - 1)
-        }
+        if (state.isPaginatedError) listState.animateScrollToItem(state.items.size - 1)
     }
 }
 
