@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -58,7 +59,7 @@ class HomeViewModel @Inject constructor(
             userService.fetchTimelineTweets(afterId).evaluate({
                 if (afterId == null) observeCachedTweets()
             }, {
-                it.printStackTrace()
+                Timber.e(it)
                 val errorState = if (afterId == null) {
                     Error(errorHandler.getErrorMessage(it))
                 } else {

@@ -38,6 +38,8 @@ object Versions {
     const val room = "2.3.0"
 
     const val jsoup = "1.13.1"
+
+    const val timber = "4.7.1"
 }
 
 object Dependencies {
@@ -95,6 +97,8 @@ object Dependencies {
     const val roomKtx = "androidx.room:room-ktx:${Versions.room}"
 
     const val jsoup = "org.jsoup:jsoup:${Versions.jsoup}"
+
+    const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 
 }
 
