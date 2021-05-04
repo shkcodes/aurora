@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import timber.log.Timber
 import java.net.URL
 
 private const val IMAGE_WEIGHT = 0.2F
@@ -99,12 +100,17 @@ fun LinkPreview(url: String, onClick: (String) -> Unit) {
     }
 }
 
+@Suppress("TooGenericExceptionCaught")
 private fun getMetadata(url: String): MetaData {
-    val document = Jsoup.connect(url).get()
-    val title = getMetaTagContent(document, "meta[property=og:title]") ?: document.title()
-    val imageUrl =
-        getMetaTagContent(document, "meta[property=og:image]")?.fixScheme()
-    return MetaData(title, imageUrl.orEmpty())
+    return try {
+        val document = Jsoup.connect(url).get()
+        val title = getMetaTagContent(document, "meta[property=og:title]") ?: document.title()
+        val imageUrl = getMetaTagContent(document, "meta[property=og:image]")?.fixScheme()
+        MetaData(title, imageUrl.orEmpty())
+    } catch (e: Exception) {
+        Timber.e(e)
+        MetaData()
+    }
 }
 
 private fun String.fixScheme(): String {
