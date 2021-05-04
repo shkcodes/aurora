@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -77,6 +78,7 @@ fun LinkPreview(url: String, onClick: (String) -> Unit) {
                 Text(
                     text = metaData.title,
                     color = Color.White,
+                    style = typography.body2,
                     modifier = Modifier.padding(horizontal = Dimens.space),
                     fontWeight = FontWeight.Medium,
                     maxLines = 2,
