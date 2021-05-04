@@ -11,7 +11,7 @@ class HomeContract {
         object Loading : State()
 
         data class Content(
-            val tweets: TimelineTweets,
+            val items: TimelineItems,
             val isLoadingNextPage: Boolean,
             val isPaginatedError: Boolean = false
         ) :

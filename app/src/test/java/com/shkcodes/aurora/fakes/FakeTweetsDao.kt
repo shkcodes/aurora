@@ -4,7 +4,7 @@ import com.shkcodes.aurora.cache.dao.TweetsDao
 import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
-import com.shkcodes.aurora.ui.home.TimelineTweetItem
+import com.shkcodes.aurora.ui.home.TimelineItem
 import kotlinx.coroutines.flow.flowOf
 import java.time.ZonedDateTime
 
@@ -22,7 +22,7 @@ class FakeTweetsDao : TweetsDao() {
     }
 
     override fun getCachedTimeline(isTimelineTweet: Boolean) =
-        flowOf(savedTweets.map { TimelineTweetItem(it) })
+        flowOf(savedTweets.map { TimelineItem(it) })
 
     override suspend fun removeTweets(date: ZonedDateTime) {}
 

@@ -11,8 +11,8 @@ import com.shkcodes.aurora.ui.home.HomeContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
 import com.shkcodes.aurora.ui.home.HomeContract.State
 import com.shkcodes.aurora.ui.home.HomeViewModel
-import com.shkcodes.aurora.ui.home.TimelineTweetItem
-import com.shkcodes.aurora.ui.home.TimelineTweets
+import com.shkcodes.aurora.ui.home.TimelineItem
+import com.shkcodes.aurora.ui.home.TimelineItems
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -29,16 +29,16 @@ class HomeViewModelTest : BaseTest() {
 
     private lateinit var viewModel: HomeViewModel
 
-    private val tweetEntity = mockk<TweetEntity> {
+    private val tweetEntity = mockk<TweetEntity>(relaxed = true) {
         every { id } returns 23121993
         every { content } returns "Shouldn't have tweeted this"
     }
 
-    private val timelineTweet = TimelineTweetItem(tweetEntity, null, null)
+    private val timelineItem = TimelineItem(tweetEntity, emptyList())
 
     private val userService: UserService = mockk(relaxUnitFun = true) {
         coEvery { fetchTimelineTweets(any()) } returns Result.Success(Unit)
-        coEvery { getTimelineTweets() } returns flowOf(listOf(timelineTweet))
+        coEvery { getTimelineTweets() } returns flowOf(listOf(timelineItem))
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -54,7 +54,7 @@ class HomeViewModelTest : BaseTest() {
     fun `state updates correctly on init in case of success`() =
         viewModel.test(intents = listOf(Init), states = {
             assert(expectItem() == State.Loading)
-            assert(expectItem() == State.Content(listOf(timelineTweet), false))
+            assert(expectItem() == State.Content(listOf(timelineItem), false))
         })
 
     @Test
@@ -70,7 +70,7 @@ class HomeViewModelTest : BaseTest() {
     @Test
     fun `state updates correctly on retry`() {
         coEvery { userService.fetchTimelineTweets(any()) } returns Result.Failure(Exception())
-        val cache = BroadcastChannel<TimelineTweets>(2)
+        val cache = BroadcastChannel<TimelineItems>(2)
         coEvery { userService.getTimelineTweets() } returns cache.asFlow()
         val states = viewModel.getState()
         testDispatcher.runBlockingTest {
@@ -83,10 +83,10 @@ class HomeViewModelTest : BaseTest() {
                 coEvery { userService.fetchTimelineTweets(any()) } returns Result.Success(Unit)
 
                 viewModel.handleIntent(Retry)
-                cache.send(listOf(timelineTweet))
+                cache.send(listOf(timelineItem))
 
                 assert(expectItem() == State.Loading)
-                assert(expectItem() == State.Content(listOf(timelineTweet), false))
+                assert(expectItem() == State.Content(listOf(timelineItem), false))
 
             }
         }
@@ -96,19 +96,19 @@ class HomeViewModelTest : BaseTest() {
     fun `state updates correctly on init in case of paginated failure`() {
         coEvery { userService.fetchTimelineTweets(23121993) } returns Result.Failure(Exception())
         viewModel.test(
-            intents = listOf(Init, LoadNextPage(State.Content(listOf(timelineTweet), false))),
+            intents = listOf(Init, LoadNextPage(State.Content(listOf(timelineItem), false))),
             states = {
                 assert(expectItem() == State.Loading)
-                assert(expectItem() == State.Content(listOf(timelineTweet), false))
+                assert(expectItem() == State.Content(listOf(timelineItem), false))
                 assert(
                     expectItem() == State.Content(
-                        listOf(timelineTweet),
+                        listOf(timelineItem),
                         isLoadingNextPage = true
                     )
                 )
                 assert(
                     expectItem() == State.Content(
-                        listOf(timelineTweet),
+                        listOf(timelineItem),
                         isLoadingNextPage = false,
                         isPaginatedError = true
                     )

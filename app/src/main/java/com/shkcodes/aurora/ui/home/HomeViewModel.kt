@@ -40,10 +40,10 @@ class HomeViewModel @Inject constructor(
 
             is LoadNextPage -> {
                 with(intent.currentState) {
-                    val afterId = tweets.last().primaryTweet.id
+                    val afterId = items.last().tweetId
                     if (!isLoadingNextPage) {
-                        emitState { Content(tweets, true) }
-                        fetchTweets(tweets, afterId)
+                        emitState { Content(items, true) }
+                        fetchTweets(items, afterId)
                     }
                 }
             }
@@ -51,7 +51,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun fetchTweets(
-        previousTweets: List<TimelineTweetItem> = emptyList(),
+        previousItems: TimelineItems = emptyList(),
         afterId: Long? = null
     ) {
         viewModelScope.launch {
@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor(
                 val errorState = if (afterId == null) {
                     Error(errorHandler.getErrorMessage(it))
                 } else {
-                    Content(previousTweets, isLoadingNextPage = false, isPaginatedError = true)
+                    Content(previousItems, isLoadingNextPage = false, isPaginatedError = true)
                 }
                 emitState { errorState }
             })

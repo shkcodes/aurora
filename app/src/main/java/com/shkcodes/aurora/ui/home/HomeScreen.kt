@@ -88,7 +88,7 @@ fun HomeScreen() {
                         viewModel.handleIntent(
                             LoadNextPage(
                                 State.Content(
-                                    state.tweets,
+                                    state.items,
                                     false
                                 )
                             )
@@ -112,7 +112,7 @@ fun HomeScreen() {
 private fun TweetsList(state: State.Content, listState: LazyListState, retryAction: () -> Unit) {
     val scope = rememberCoroutineScope()
     LazyColumn(state = listState) {
-        items(state.tweets) {
+        items(state.items) {
             TweetItem(it)
         }
         if (state.isPaginatedError) {
@@ -121,31 +121,20 @@ private fun TweetsList(state: State.Content, listState: LazyListState, retryActi
     }
     LaunchedEffect(state.isPaginatedError) {
         if (state.isPaginatedError) scope.launch {
-            listState.animateScrollToItem(state.tweets.size - 1)
+            listState.animateScrollToItem(state.items.size - 1)
         }
     }
 }
 
 @Composable
-private fun TweetItem(timelineTweet: TimelineTweetItem) {
-    val tweet = timelineTweet.retweet ?: timelineTweet.primaryTweet
-    val quoteTweet = if (timelineTweet.retweet != null) {
-        timelineTweet.retweetQuote
-    } else {
-        timelineTweet.quoteTweet
-    }
-    val media =
-        if (timelineTweet.retweet != null) {
-            timelineTweet.retweetMedia
-        } else {
-            timelineTweet.media
-        }
-    val quoteTweetMedia = if (timelineTweet.retweet != null) {
-        timelineTweet.retweetQuoteMedia
-    } else {
-        timelineTweet.quoteTweetMedia
-    }
+private fun TweetItem(timelineItem: TimelineItem) {
+    val tweet = timelineItem.tweet
+    val quoteTweet = timelineItem.quoteTweet
+    val media = timelineItem.tweetMedia
+    val quoteTweetMedia = timelineItem.quoteTweetMedia
+
     val uriHandler = LocalUriHandler.current
+
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         Image(
             painter = rememberCoilPainter(
@@ -172,8 +161,8 @@ private fun TweetItem(timelineTweet: TimelineTweetItem) {
             }
 
             TweetMedia(media)
-            if (timelineTweet.retweet != null) {
-                RetweetIndicator(timelineTweet.primaryTweet.userName)
+            if (timelineItem.isRetweet) {
+                RetweetIndicator(timelineItem.retweeter)
             }
         }
     }

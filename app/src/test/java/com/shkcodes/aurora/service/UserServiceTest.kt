@@ -8,7 +8,7 @@ import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.cache.entities.toCachedTweets
 import com.shkcodes.aurora.fakes.FakeTweetsDao
-import com.shkcodes.aurora.ui.home.TimelineTweetItem
+import com.shkcodes.aurora.ui.home.TimelineItem
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -30,7 +30,7 @@ class UserServiceTest : BaseTest() {
         every { quoteTweet } returns null
         every { retweet } returns null
     }
-    private val staleTweet = mockk<TweetEntity> {
+    private val staleTweet = mockk<TweetEntity>(relaxed = true) {
         every { id } returns 6031994
         every { content } returns "old tweet"
     }
@@ -64,7 +64,7 @@ class UserServiceTest : BaseTest() {
             assert(
                 tweetsDao.getCachedTimeline().toList().first() == listOf(freshTweet).toCachedTweets(
                     true
-                ).map { TimelineTweetItem(it) })
+                ).map { TimelineItem(it) })
         }
 
     @Test
@@ -77,7 +77,7 @@ class UserServiceTest : BaseTest() {
             assert(
                 tweetsDao.getCachedTimeline().toList()
                     .first() == listOf(staleTweet).map {
-                    TimelineTweetItem(it)
+                    TimelineItem(it)
                 })
         }
 
