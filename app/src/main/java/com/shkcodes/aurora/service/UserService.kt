@@ -28,9 +28,9 @@ class UserService @Inject constructor(
             return difference.toMinutes() >= TIMELINE_REFRESH_THRESHOLD
         }
 
-    suspend fun fetchTimelineTweets(afterId: Long?): Result<Unit> {
+    suspend fun fetchTimelineTweets(forceRefresh: Boolean, afterId: Long?): Result<Unit> {
         return execute {
-            if (isTimelineStale || afterId != null) {
+            if (isTimelineStale || afterId != null || forceRefresh) {
                 val freshTweets = userApi.getTimelineTweets(afterId = afterId)
                 tweetsDao.cacheTimeline(freshTweets)
                 if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()

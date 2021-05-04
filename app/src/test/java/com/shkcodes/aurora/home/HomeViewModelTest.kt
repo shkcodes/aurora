@@ -37,7 +37,7 @@ class HomeViewModelTest : BaseTest() {
     private val timelineItem = TimelineItem(tweetEntity, emptyList())
 
     private val userService: UserService = mockk(relaxUnitFun = true) {
-        coEvery { fetchTimelineTweets(any()) } returns Result.Success(Unit)
+        coEvery { fetchTimelineTweets(any(), any()) } returns Result.Success(Unit)
         coEvery { getTimelineTweets() } returns flowOf(listOf(timelineItem))
     }
     private val errorHandler: ErrorHandler = mockk {
@@ -53,23 +53,30 @@ class HomeViewModelTest : BaseTest() {
     @Test
     fun `state updates correctly on init in case of success`() =
         viewModel.test(intents = listOf(Init), states = {
-            assert(expectItem() == State.Loading)
-            assert(expectItem() == State.Content(listOf(timelineItem), false))
+            assert(expectItem() == State.Content(true))
+            assert(expectItem() == State.Content(false, listOf(timelineItem), false))
         })
 
     @Test
     fun `state updates correctly on init in case of failure`() {
-        coEvery { userService.fetchTimelineTweets(any()) } returns Result.Failure(Exception())
+        coEvery {
+            userService.fetchTimelineTweets(
+                any(),
+                any()
+            )
+        } returns Result.Failure(Exception())
         coEvery { userService.getTimelineTweets() } returns flowOf(emptyList())
         viewModel.test(intents = listOf(Init), states = {
-            assert(expectItem() == State.Loading)
+            assert(expectItem() == State.Content(true))
             assert(expectItem() == State.Error("error"))
         })
     }
 
     @Test
     fun `state updates correctly on retry`() {
-        coEvery { userService.fetchTimelineTweets(any()) } returns Result.Failure(Exception())
+        coEvery {
+            userService.fetchTimelineTweets(any(), any())
+        } returns Result.Failure(Exception())
         val cache = BroadcastChannel<TimelineItems>(2)
         coEvery { userService.getTimelineTweets() } returns cache.asFlow()
         val states = viewModel.getState()
@@ -77,16 +84,18 @@ class HomeViewModelTest : BaseTest() {
             states.test {
                 viewModel.handleIntent(Init)
 
-                assert(expectItem() == State.Loading)
+                assert(expectItem() == State.Content(true))
                 assert(expectItem() == State.Error("error"))
 
-                coEvery { userService.fetchTimelineTweets(any()) } returns Result.Success(Unit)
+                coEvery { userService.fetchTimelineTweets(any(), any()) } returns Result.Success(
+                    Unit
+                )
 
                 viewModel.handleIntent(Retry)
                 cache.send(listOf(timelineItem))
 
-                assert(expectItem() == State.Loading)
-                assert(expectItem() == State.Content(listOf(timelineItem), false))
+                assert(expectItem() == State.Content(true))
+                assert(expectItem() == State.Content(false, listOf(timelineItem), false))
 
             }
         }
@@ -94,22 +103,26 @@ class HomeViewModelTest : BaseTest() {
 
     @Test
     fun `state updates correctly on init in case of paginated failure`() {
-        coEvery { userService.fetchTimelineTweets(23121993) } returns Result.Failure(Exception())
+        coEvery { userService.fetchTimelineTweets(false, 23121993) } returns Result.Failure(
+            Exception()
+        )
         viewModel.test(
-            intents = listOf(Init, LoadNextPage(State.Content(listOf(timelineItem), false))),
+            intents = listOf(Init, LoadNextPage(State.Content(false, listOf(timelineItem), false))),
             states = {
-                assert(expectItem() == State.Loading)
-                assert(expectItem() == State.Content(listOf(timelineItem), false))
+                assert(expectItem() == State.Content(true))
+                assert(expectItem() == State.Content(false, listOf(timelineItem), false))
                 assert(
                     expectItem() == State.Content(
+                        false,
                         listOf(timelineItem),
-                        isLoadingNextPage = true
+                        isPaginatedLoading = true
                     )
                 )
                 assert(
                     expectItem() == State.Content(
+                        false,
                         listOf(timelineItem),
-                        isLoadingNextPage = false,
+                        isPaginatedLoading = false,
                         isPaginatedError = true
                     )
                 )

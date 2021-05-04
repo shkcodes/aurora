@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,7 +14,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalContentColor
@@ -41,6 +39,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.rememberCoilPainter
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
@@ -48,6 +48,7 @@ import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.common.TerminalError
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.home.HomeContract.Intent.Refresh
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
 import com.shkcodes.aurora.ui.home.HomeContract.State
 import com.shkcodes.aurora.util.contentFormatter
@@ -70,30 +71,17 @@ fun HomeScreen() {
 
     Scaffold {
         when (val state = viewModel.getState().collectAsState().value) {
-            is State.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
             is State.Content -> {
                 val listState = rememberLazyListState()
-                val shouldLoadMore = listState.isAtTheBottom && !state.isPaginatedError
+                val shouldLoadMore =
+                    listState.isAtTheBottom && !state.isPaginatedError && state.items.isNotEmpty()
 
                 if (shouldLoadMore) {
                     viewModel.handleIntent(LoadNextPage(state))
                 }
                 Box(contentAlignment = Alignment.BottomCenter) {
-                    TweetsList(state, listState) {
-                        viewModel.handleIntent(
-                            LoadNextPage(
-                                State.Content(
-                                    state.items,
-                                    false
-                                )
-                            )
-                        )
-                    }
-                    if (state.isLoadingNextPage) {
+                    TweetsList(state, listState, viewModel)
+                    if (state.isPaginatedLoading) {
                         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                     }
                 }
@@ -108,13 +96,21 @@ fun HomeScreen() {
 }
 
 @Composable
-private fun TweetsList(state: State.Content, listState: LazyListState, retryAction: () -> Unit) {
-    LazyColumn(state = listState) {
-        items(state.items) {
-            TweetItem(it)
-        }
-        if (state.isPaginatedError) {
-            item { PaginatedError(retryAction) }
+private fun TweetsList(state: State.Content, listState: LazyListState, viewModel: HomeViewModel) {
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing = state.isLoading),
+        onRefresh = { viewModel.handleIntent(Refresh(state)) }) {
+        LazyColumn(state = listState, modifier = Modifier.fillMaxWidth()) {
+            items(state.items) {
+                TweetItem(it)
+            }
+            if (state.isPaginatedError) {
+                item {
+                    PaginatedError {
+                        viewModel.handleIntent(LoadNextPage(state))
+                    }
+                }
+            }
         }
     }
     LaunchedEffect(state.isPaginatedError) {

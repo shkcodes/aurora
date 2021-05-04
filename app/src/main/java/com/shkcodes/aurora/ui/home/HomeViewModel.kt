@@ -8,10 +8,10 @@ import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.home.HomeContract.Intent
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.home.HomeContract.Intent.Refresh
 import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
 import com.shkcodes.aurora.ui.home.HomeContract.State.Content
 import com.shkcodes.aurora.ui.home.HomeContract.State.Error
-import com.shkcodes.aurora.ui.home.HomeContract.State.Loading
 import com.shkcodes.aurora.ui.home.HomeContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filter
@@ -35,35 +35,46 @@ class HomeViewModel @Inject constructor(
             }
 
             is Retry -> {
-                emitState { Loading }
+                emitState { Content(isLoading = true) }
                 fetchTweets()
             }
 
             is LoadNextPage -> {
                 with(intent.currentState) {
                     val afterId = items.last().tweetId
-                    if (!isLoadingNextPage) {
-                        emitState { Content(items, true) }
+                    if (!isPaginatedLoading) {
+                        emitState { copy(isPaginatedLoading = true) }
                         fetchTweets(items, afterId)
                     }
                 }
+            }
+
+            is Refresh -> {
+                emitState { intent.currentState.copy(isLoading = true) }
+                fetchTweets(forceRefresh = true)
             }
         }
     }
 
     private fun fetchTweets(
         previousItems: TimelineItems = emptyList(),
-        afterId: Long? = null
+        afterId: Long? = null,
+        forceRefresh: Boolean = false
     ) {
         viewModelScope.launch {
-            userService.fetchTimelineTweets(afterId).evaluate({
+            userService.fetchTimelineTweets(forceRefresh, afterId).evaluate({
                 if (afterId == null) observeCachedTweets()
             }, {
                 Timber.e(it)
                 val errorState = if (afterId == null) {
                     Error(errorHandler.getErrorMessage(it))
                 } else {
-                    Content(previousItems, isLoadingNextPage = false, isPaginatedError = true)
+                    Content(
+                        false,
+                        previousItems,
+                        isPaginatedLoading = false,
+                        isPaginatedError = true
+                    )
                 }
                 emitState { errorState }
             })
@@ -72,7 +83,7 @@ class HomeViewModel @Inject constructor(
 
     private fun observeCachedTweets() {
         userService.getTimelineTweets().filter { it.isNotEmpty() }.onEach {
-            emitState { Content(it, false) }
+            emitState { Content(false, it, false) }
         }.launchIn(viewModelScope)
     }
 }

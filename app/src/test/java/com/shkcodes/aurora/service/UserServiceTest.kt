@@ -59,7 +59,19 @@ class UserServiceTest : BaseTest() {
     fun `get timeline tweets returns fresh tweets if cached data is stale`() =
         testDispatcher.runBlockingTest {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
-            val result = userService.fetchTimelineTweets(null)
+            val result = userService.fetchTimelineTweets(false, null)
+            assert(result == Result.Success(Unit))
+            assert(
+                tweetsDao.getCachedTimeline().toList().first() == listOf(freshTweet).toCachedTweets(
+                    true
+                ).map { TimelineItem(it) })
+        }
+
+    @Test
+    fun `get timeline tweets returns fresh tweets if forced to refresh`() =
+        testDispatcher.runBlockingTest {
+            every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
+            val result = userService.fetchTimelineTweets(true, null)
             assert(result == Result.Success(Unit))
             assert(
                 tweetsDao.getCachedTimeline().toList().first() == listOf(freshTweet).toCachedTweets(
@@ -72,7 +84,7 @@ class UserServiceTest : BaseTest() {
         testDispatcher.runBlockingTest {
             tweetsDao.saveTweets(listOf(staleTweet))
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(7)
-            val result = userService.fetchTimelineTweets(null)
+            val result = userService.fetchTimelineTweets(false, null)
             assert(result == Result.Success(Unit))
             assert(
                 tweetsDao.getCachedTimeline().toList()

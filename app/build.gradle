@@ -97,6 +97,7 @@ dependencies {
     kapt Dependencies.moshiCompiler
 
     implementation Dependencies.coil
+    implementation Dependencies.swipeRefresh
 
     coreLibraryDesugaring Dependencies.desugarLib
 

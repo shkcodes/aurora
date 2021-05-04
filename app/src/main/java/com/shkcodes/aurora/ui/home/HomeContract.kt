@@ -2,17 +2,15 @@ package com.shkcodes.aurora.ui.home
 
 import com.shkcodes.aurora.base.BaseViewModel
 import com.shkcodes.aurora.ui.home.HomeContract.State.Content
-import com.shkcodes.aurora.ui.home.HomeContract.State.Loading
 
 class HomeContract {
-    abstract class ViewModel : BaseViewModel<State, Intent>(Loading)
+    abstract class ViewModel : BaseViewModel<State, Intent>(Content(true))
 
     sealed class State {
-        object Loading : State()
-
         data class Content(
-            val items: TimelineItems,
-            val isLoadingNextPage: Boolean,
+            val isLoading: Boolean = false,
+            val items: TimelineItems = emptyList(),
+            val isPaginatedLoading: Boolean = false,
             val isPaginatedError: Boolean = false
         ) :
             State()
@@ -24,5 +22,6 @@ class HomeContract {
         object Init : Intent()
         object Retry : Intent()
         data class LoadNextPage(val currentState: Content) : Intent()
+        data class Refresh(val currentState: Content) : Intent()
     }
 }
