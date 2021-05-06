@@ -109,7 +109,7 @@ private fun getMetadata(url: String): MetaData {
         MetaData(title, imageUrl.orEmpty())
     } catch (e: Exception) {
         Timber.e(e)
-        MetaData()
+        MetaData(URL(url).host)
     }
 }
 
