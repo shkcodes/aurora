@@ -35,17 +35,25 @@ import java.net.URL
 
 private const val IMAGE_WEIGHT = 0.2F
 
-private data class MetaData(
+data class MetaData(
     val title: String = "",
     val imageUrl: String = ""
 )
 
 @Composable
-fun LinkPreview(url: String, onClick: (String) -> Unit) {
-    var metaData by remember { mutableStateOf(MetaData()) }
-    LaunchedEffect(Unit) {
-        launch(Dispatchers.IO) {
-            metaData = getMetadata(url.fixScheme())
+fun LinkPreview(
+    url: String,
+    cachedMetaData: MetaData?,
+    onMetadataLoaded: (MetaData) -> Unit,
+    onClick: (String) -> Unit
+) {
+    var metaData by remember { mutableStateOf(cachedMetaData ?: MetaData()) }
+    if (cachedMetaData == null) {
+        LaunchedEffect(Unit) {
+            launch(Dispatchers.IO) {
+                metaData = getMetadata(url.fixScheme())
+                onMetadataLoaded(metaData)
+            }
         }
     }
     Card(
@@ -69,33 +77,42 @@ fun LinkPreview(url: String, onClick: (String) -> Unit) {
                         .weight(IMAGE_WEIGHT)
                 )
             }
-            Column(
+            TextContent(
+                title = metaData.title,
+                url = url,
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1 - IMAGE_WEIGHT)
-                    .padding(start = Dimens.space),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = metaData.title,
-                    color = Color.White,
-                    style = typography.body2,
-                    modifier = Modifier.padding(horizontal = Dimens.space),
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (metaData.title.isNotEmpty()) {
-                    Text(
-                        text = URL(url).host.replace("www.", ""),
-                        color = Color.White,
-                        modifier = Modifier.padding(horizontal = Dimens.space),
-                        fontSize = Dimens.text_caption,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
+                    .padding(start = Dimens.space)
+            )
+        }
+    }
+}
+
+@Composable
+private fun TextContent(title: String, url: String, modifier: Modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = title,
+            color = Color.White,
+            style = typography.body2,
+            modifier = Modifier.padding(horizontal = Dimens.space),
+            fontWeight = FontWeight.Medium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        if (title.isNotEmpty()) {
+            Text(
+                text = URL(url).host.replace("www.", ""),
+                color = Color.White,
+                modifier = Modifier.padding(horizontal = Dimens.space),
+                fontSize = Dimens.text_caption,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

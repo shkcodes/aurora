@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -81,8 +82,10 @@ fun TweetsTimeline() {
                 if (shouldLoadMore) {
                     viewModel.handleIntent(LoadNextPage(state))
                 }
+
+                val urlsMetaData = remember { mutableMapOf<String, MetaData>() }
                 Box(contentAlignment = Alignment.BottomCenter) {
-                    TweetsList(state, listState, viewModel)
+                    TweetsList(state, urlsMetaData, listState, viewModel)
                     if (state.isPaginatedLoading) {
                         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                     }
@@ -100,6 +103,7 @@ fun TweetsTimeline() {
 @Composable
 private fun TweetsList(
     state: Content,
+    urlsMetaData: MutableMap<String, MetaData>,
     listState: LazyListState,
     viewModel: TimelineViewModel
 ) {
@@ -115,7 +119,7 @@ private fun TweetsList(
         }) {
         LazyColumn(state = listState, modifier = Modifier.fillMaxWidth()) {
             items(state.items) {
-                TweetItem(it)
+                TweetItem(it, urlsMetaData)
             }
             if (state.isPaginatedError) {
                 item {
@@ -132,7 +136,7 @@ private fun TweetsList(
 }
 
 @Composable
-private fun TweetItem(timelineItem: TimelineItem) {
+private fun TweetItem(timelineItem: TimelineItem, urlsMetaData: MutableMap<String, MetaData>) {
     val tweet = timelineItem.tweet
     val quoteTweet = timelineItem.quoteTweet
     val media = timelineItem.tweetMedia
@@ -162,7 +166,11 @@ private fun TweetItem(timelineItem: TimelineItem) {
             if (tweet.content.isNotEmpty()) RichContent(tweet, uriHandler)
             QuoteTweet(quoteTweet, quoteTweetMedia, uriHandler)
             if (tweet.sharedUrls.isNotEmpty() && media.isEmpty() && quoteTweet == null) {
-                LinkPreview(tweet.sharedUrls.first().url) { uriHandler.openUri(it) }
+                val url = tweet.sharedUrls.first().url
+                LinkPreview(
+                    url,
+                    urlsMetaData[url],
+                    { urlsMetaData[url] = it }, { uriHandler.openUri(it) })
             }
 
             TweetMedia(media)
