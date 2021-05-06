@@ -6,13 +6,13 @@ import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.UserService
-import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
-import com.shkcodes.aurora.ui.home.HomeContract.Intent.LoadNextPage
-import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
-import com.shkcodes.aurora.ui.home.HomeContract.State
-import com.shkcodes.aurora.ui.home.HomeViewModel
-import com.shkcodes.aurora.ui.home.TimelineItem
-import com.shkcodes.aurora.ui.home.TimelineItems
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Init
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
+import com.shkcodes.aurora.ui.timeline.TimelineContract.State
+import com.shkcodes.aurora.ui.timeline.TimelineItem
+import com.shkcodes.aurora.ui.timeline.TimelineItems
+import com.shkcodes.aurora.ui.timeline.TimelineViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -25,9 +25,9 @@ import org.junit.Test
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
-class HomeViewModelTest : BaseTest() {
+class TimelineViewModelTest : BaseTest() {
 
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var tweetsViewModel: TimelineViewModel
 
     private val tweetEntity = mockk<TweetEntity>(relaxed = true) {
         every { id } returns 23121993
@@ -47,12 +47,12 @@ class HomeViewModelTest : BaseTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        viewModel = HomeViewModel(testDispatcherProvider, userService, errorHandler)
+        tweetsViewModel = TimelineViewModel(testDispatcherProvider, userService, errorHandler)
     }
 
     @Test
     fun `state updates correctly on init in case of success`() =
-        viewModel.test(intents = listOf(Init), states = {
+        tweetsViewModel.test(intents = listOf(Init), states = {
             assert(expectItem() == State.Content(true))
             assert(expectItem() == State.Content(false, listOf(timelineItem), false))
         })
@@ -66,7 +66,7 @@ class HomeViewModelTest : BaseTest() {
             )
         } returns Result.Failure(Exception())
         coEvery { userService.getTimelineTweets() } returns flowOf(emptyList())
-        viewModel.test(intents = listOf(Init), states = {
+        tweetsViewModel.test(intents = listOf(Init), states = {
             assert(expectItem() == State.Content(true))
             assert(expectItem() == State.Error("error"))
         })
@@ -79,10 +79,10 @@ class HomeViewModelTest : BaseTest() {
         } returns Result.Failure(Exception())
         val cache = BroadcastChannel<TimelineItems>(2)
         coEvery { userService.getTimelineTweets() } returns cache.asFlow()
-        val states = viewModel.getState()
+        val states = tweetsViewModel.getState()
         testDispatcher.runBlockingTest {
             states.test {
-                viewModel.handleIntent(Init)
+                tweetsViewModel.handleIntent(Init)
 
                 assert(expectItem() == State.Content(true))
                 assert(expectItem() == State.Error("error"))
@@ -91,7 +91,7 @@ class HomeViewModelTest : BaseTest() {
                     Unit
                 )
 
-                viewModel.handleIntent(Retry)
+                tweetsViewModel.handleIntent(Retry)
                 cache.send(listOf(timelineItem))
 
                 assert(expectItem() == State.Content(true))
@@ -106,7 +106,7 @@ class HomeViewModelTest : BaseTest() {
         coEvery { userService.fetchTimelineTweets(false, 23121993) } returns Result.Failure(
             Exception()
         )
-        viewModel.test(
+        tweetsViewModel.test(
             intents = listOf(Init, LoadNextPage(State.Content(false, listOf(timelineItem), false))),
             states = {
                 assert(expectItem() == State.Content(true))

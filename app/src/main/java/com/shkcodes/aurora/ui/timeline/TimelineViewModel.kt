@@ -1,18 +1,18 @@
-package com.shkcodes.aurora.ui.home
+package com.shkcodes.aurora.ui.timeline
 
 import androidx.lifecycle.viewModelScope
 import com.shkcodes.aurora.api.evaluate
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.service.UserService
-import com.shkcodes.aurora.ui.home.HomeContract.Intent
-import com.shkcodes.aurora.ui.home.HomeContract.Intent.Init
-import com.shkcodes.aurora.ui.home.HomeContract.Intent.LoadNextPage
-import com.shkcodes.aurora.ui.home.HomeContract.Intent.Refresh
-import com.shkcodes.aurora.ui.home.HomeContract.Intent.Retry
-import com.shkcodes.aurora.ui.home.HomeContract.State.Content
-import com.shkcodes.aurora.ui.home.HomeContract.State.Error
-import com.shkcodes.aurora.ui.home.HomeContract.ViewModel
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Init
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
+import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Content
+import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Error
+import com.shkcodes.aurora.ui.timeline.TimelineContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -22,7 +22,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class TimelineViewModel @Inject constructor(
     override val dispatcherProvider: DispatcherProvider,
     private val userService: UserService,
     private val errorHandler: ErrorHandler

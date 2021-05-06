@@ -4,7 +4,7 @@ import com.shkcodes.aurora.cache.dao.TweetsDao
 import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
-import com.shkcodes.aurora.ui.home.TimelineItem
+import com.shkcodes.aurora.ui.timeline.TimelineItem
 import kotlinx.coroutines.flow.flowOf
 import java.time.ZonedDateTime
 

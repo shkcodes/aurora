@@ -1,9 +1,9 @@
-package com.shkcodes.aurora.ui.home
+package com.shkcodes.aurora.ui.timeline
 
 import com.shkcodes.aurora.base.BaseViewModel
-import com.shkcodes.aurora.ui.home.HomeContract.State.Content
+import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Content
 
-class HomeContract {
+class TimelineContract {
     abstract class ViewModel : BaseViewModel<State, Intent>(Content(true))
 
     sealed class State {

@@ -1,4 +1,4 @@
-package com.shkcodes.aurora.ui.home
+package com.shkcodes.aurora.ui.timeline
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.text.BasicText

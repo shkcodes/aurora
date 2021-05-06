@@ -8,7 +8,7 @@ import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.cache.entities.toCachedTweets
 import com.shkcodes.aurora.fakes.FakeTweetsDao
-import com.shkcodes.aurora.ui.home.TimelineItem
+import com.shkcodes.aurora.ui.timeline.TimelineItem
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

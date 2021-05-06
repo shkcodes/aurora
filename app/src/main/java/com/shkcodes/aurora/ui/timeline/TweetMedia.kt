@@ -1,6 +1,6 @@
 @file:Suppress("MagicNumber")
 
-package com.shkcodes.aurora.ui.home
+package com.shkcodes.aurora.ui.timeline
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
