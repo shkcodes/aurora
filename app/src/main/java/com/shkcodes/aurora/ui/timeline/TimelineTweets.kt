@@ -202,13 +202,21 @@ private fun RepliedToUsers(users: List<String>) {
             users[0], users[1], users.size - 2
         )
     }
+    val styledContent =
+        contentFormatter(text = stringResource(id = R.string.users_replied_placeholder, content))
 
-    Text(
-        text = stringResource(id = R.string.users_replied_placeholder, content),
-        style = MaterialTheme.typography.caption,
+    CustomClickableText(
+        text = styledContent,
+        style = typography.caption.copy(color = LocalContentColor.current),
         maxLines = 2,
-        overflow = TextOverflow.Ellipsis
-    )
+    ) {
+        styledContent
+            .getStringAnnotations(start = it, end = it)
+            .firstOrNull()
+            ?.let { annotation ->
+                println("clicked replied to ${annotation.tag}")
+            }
+    }
 }
 
 @Composable

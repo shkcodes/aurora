@@ -61,8 +61,8 @@ typealias SymbolAnnotation = Pair<AnnotatedString, StringAnnotation?>
 @Composable
 fun contentFormatter(
     text: String,
-    urls: List<Url>,
-    hashtags: List<String>
+    urls: List<Url> = emptyList(),
+    hashtags: List<String> = emptyList()
 ): AnnotatedString {
     val cleanedText = Jsoup.parse(text).wholeText()
     val tokens = symbolPattern.findAll(cleanedText)
