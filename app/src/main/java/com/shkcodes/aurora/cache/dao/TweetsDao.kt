@@ -48,4 +48,7 @@ abstract class TweetsDao {
 
     @Query("DELETE FROM tweets WHERE createdAt <= :date")
     abstract suspend fun removeTweets(date: ZonedDateTime)
+
+    @Query("SELECT * FROM media where tweetId = :tweetId")
+    abstract suspend fun getTweetMedia(tweetId: Long): List<MediaEntity>
 }

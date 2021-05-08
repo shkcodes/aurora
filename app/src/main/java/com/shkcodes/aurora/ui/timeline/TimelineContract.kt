@@ -23,5 +23,10 @@ class TimelineContract {
         object Retry : Intent()
         data class LoadNextPage(val currentState: Content) : Intent()
         data class Refresh(val currentState: Content) : Intent()
+        data class MediaClick(val index: Int, val tweetId: Long) : Intent()
+    }
+
+    sealed class Screen {
+        data class MediaViewer(val index: Int, val tweetId: Long) : Screen()
     }
 }

@@ -10,7 +10,8 @@ enum class Screen {
     SPLASH,
     LOGIN,
     AUTH,
-    HOME
+    HOME,
+    MEDIA_VIEWER
 }
 
 enum class BottomNavScreens(val icon: ImageVector) {

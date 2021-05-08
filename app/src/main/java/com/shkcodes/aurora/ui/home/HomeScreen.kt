@@ -28,7 +28,7 @@ import com.shkcodes.aurora.ui.timeline.TweetsTimeline
 import com.shkcodes.aurora.util.TempScreen
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(primaryNavController: NavController) {
     val navController = rememberNavController()
     Scaffold(bottomBar = {
         BottomNavBar(navController = navController)
@@ -39,7 +39,7 @@ fun HomeScreen() {
                 startDestination = TWEETS.name,
             ) {
                 composable(TWEETS.name) {
-                    TweetsTimeline()
+                    TweetsTimeline(primaryNavController)
                 }
                 composable(MENTIONS.name) {
                     TempScreen(content = MENTIONS.name)

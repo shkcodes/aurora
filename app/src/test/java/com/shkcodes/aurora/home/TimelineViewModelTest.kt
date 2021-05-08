@@ -4,11 +4,15 @@ import app.cash.turbine.test
 import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
+import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Init
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.timeline.TimelineContract.State
 import com.shkcodes.aurora.ui.timeline.TimelineItem
 import com.shkcodes.aurora.ui.timeline.TimelineItems
@@ -38,7 +42,12 @@ class TimelineViewModelTest : BaseTest() {
 
     private val userService: UserService = mockk(relaxUnitFun = true) {
         coEvery { fetchTimelineTweets(any(), any()) } returns Result.Success(Unit)
-        coEvery { getTimelineTweets() } returns flowOf(listOf(timelineItem))
+        coEvery { getTimelineTweets() } returns flowOf(listOf(timelineItem)) andThen flowOf(
+            listOf(
+                timelineItem,
+                timelineItem
+            )
+        )
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -125,6 +134,50 @@ class TimelineViewModelTest : BaseTest() {
                         isPaginatedLoading = false,
                         isPaginatedError = true
                     )
+                )
+            })
+    }
+
+    @Test
+    fun `state updates correctly on refresh`() {
+        tweetsViewModel.test(
+            intents = listOf(
+                Init,
+                Refresh(State.Content(items = listOf(timelineItem)))
+            ), states = {
+                assert(expectItem() == State.Content(true))
+                assert(expectItem() == State.Content(false, listOf(timelineItem), false))
+                assert(
+                    expectItem() == State.Content(
+                        true,
+                        listOf(timelineItem),
+                        false
+                    )
+                )
+                assert(
+                    expectItem() == State.Content(
+                        false,
+                        listOf(timelineItem, timelineItem),
+                        false
+                    )
+                )
+            })
+    }
+
+    @Test
+    fun `navigates to media viewer on media click`() {
+        tweetsViewModel.test(
+            intents = listOf(
+                MediaClick(3, 3333),
+            ),
+            sideEffects = {
+                assert(
+                    SideEffect.DisplayScreen(
+                        MediaViewer(
+                            3,
+                            3333
+                        )
+                    ) == expectItem()
                 )
             })
     }

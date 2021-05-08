@@ -29,4 +29,8 @@ class FakeTweetsDao : TweetsDao() {
     override suspend fun saveMedia(media: List<MediaEntity>) {
         savedMedia.addAll(media)
     }
+
+    override suspend fun getTweetMedia(tweetId: Long): List<MediaEntity> {
+        return savedMedia
+    }
 }

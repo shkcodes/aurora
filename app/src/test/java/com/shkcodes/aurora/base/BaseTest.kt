@@ -40,8 +40,8 @@ open class BaseTest {
     @ExperimentalTime
     fun <S, I> BaseViewModel<S, I>.test(
         intents: List<I> = emptyList(),
-        states: suspend FlowTurbine<S>.() -> Unit = {},
-        sideEffects: suspend FlowTurbine<SideEffect>.() -> Unit = {}
+        states: suspend FlowTurbine<S>.() -> Unit = { cancelAndIgnoreRemainingEvents() },
+        sideEffects: suspend FlowTurbine<SideEffect>.() -> Unit = { cancelAndIgnoreRemainingEvents() }
     ) {
         testDispatcher.runBlockingTest {
             getState().test {

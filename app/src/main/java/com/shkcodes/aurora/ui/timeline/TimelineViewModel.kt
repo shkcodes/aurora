@@ -4,12 +4,15 @@ import androidx.lifecycle.viewModelScope
 import com.shkcodes.aurora.api.evaluate
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
+import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Init
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Content
 import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Error
 import com.shkcodes.aurora.ui.timeline.TimelineContract.ViewModel
@@ -52,6 +55,17 @@ class TimelineViewModel @Inject constructor(
             is Refresh -> {
                 emitState { intent.currentState.copy(isLoading = true) }
                 fetchTweets(forceRefresh = true)
+            }
+
+            is MediaClick -> {
+                onSideEffect(
+                    SideEffect.DisplayScreen(
+                        MediaViewer(
+                            intent.index,
+                            intent.tweetId
+                        )
+                    )
+                )
             }
         }
     }

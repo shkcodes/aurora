@@ -3,6 +3,7 @@
 package com.shkcodes.aurora.ui.timeline
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,7 +19,7 @@ import com.shkcodes.aurora.theme.Dimens
 private const val MEDIA_CORNER_RADIUS = 4F
 
 @Composable
-fun TweetMedia(media: List<MediaEntity>) {
+fun TweetMedia(media: List<MediaEntity>, handler: (index: Int) -> Unit) {
     when (media.size) {
         1 -> {
             MediaImage(
@@ -27,18 +28,21 @@ fun TweetMedia(media: List<MediaEntity>) {
                     .padding(top = Dimens.space)
                     .fillMaxWidth()
                     .height(Dimens.single_row_media_height)
+                    .clickable { handler(0) }
             )
         }
         2 -> {
             MediaRow(
                 url1 = media.first().imageUrl,
                 url2 = media.last().imageUrl,
+                handler = handler
             )
         }
         3 -> {
             MediaRow(
                 url1 = media[0].imageUrl,
-                url2 = media[1].imageUrl, isGridRow = true
+                url2 = media[1].imageUrl, isGridRow = true,
+                handler = handler
             )
             MediaImage(
                 url = media[2].imageUrl,
@@ -46,16 +50,19 @@ fun TweetMedia(media: List<MediaEntity>) {
                     .padding(top = Dimens.space_small)
                     .fillMaxWidth()
                     .height(Dimens.multi_row_media_height)
+                    .clickable { handler(2) }
             )
         }
         4 -> {
             MediaRow(
                 url1 = media[0].imageUrl,
-                url2 = media[1].imageUrl, isGridRow = true
+                url2 = media[1].imageUrl, isGridRow = true,
+                handler = handler
             )
             MediaRow(
                 url1 = media[2].imageUrl,
-                url2 = media[3].imageUrl, isGridRow = true, isBottomRow = true
+                url2 = media[3].imageUrl, isGridRow = true, isBottomRow = true,
+                handler = handler
             )
         }
     }
@@ -65,6 +72,7 @@ fun TweetMedia(media: List<MediaEntity>) {
 private fun MediaRow(
     url1: String,
     url2: String,
+    handler: (index: Int) -> Unit,
     isGridRow: Boolean = false,
     isBottomRow: Boolean = false
 ) {
@@ -78,12 +86,14 @@ private fun MediaRow(
             modifier = Modifier
                 .padding(end = Dimens.two_dp)
                 .weight(1F)
+                .clickable { handler(if (isBottomRow) 2 else 0) }
         )
         MediaImage(
             url = url2,
             modifier = Modifier
                 .padding(start = Dimens.two_dp)
                 .weight(1F)
+                .clickable { handler(if (isBottomRow) 3 else 1) }
         )
     }
 }

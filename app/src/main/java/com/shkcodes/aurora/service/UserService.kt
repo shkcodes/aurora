@@ -5,6 +5,7 @@ import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.execute
 import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
+import com.shkcodes.aurora.cache.entities.MediaEntity
 import java.time.Duration
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -42,5 +43,9 @@ class UserService @Inject constructor(
 
     suspend fun flushTweetsCache() {
         tweetsDao.removeTweets(ZonedDateTime.now().minusDays(CACHE_FLUSH_THRESHOLD))
+    }
+
+    suspend fun getMediaForTweet(tweetId: Long): List<MediaEntity> {
+        return tweetsDao.getTweetMedia(tweetId)
     }
 }
