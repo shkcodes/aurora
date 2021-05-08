@@ -5,13 +5,33 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavType
+import androidx.navigation.compose.NamedNavArgument
+import androidx.navigation.compose.navArgument
 
-enum class Screen {
+enum class Screen(private val args: Map<String, NavType<*>> = emptyMap()) {
     SPLASH,
     LOGIN,
     AUTH,
     HOME,
-    MEDIA_VIEWER
+    MEDIA_VIEWER(mapOf("tweetId" to NavType.LongType, "index" to NavType.IntType));
+
+    val route: String = if (args.isNotEmpty()) {
+        "$name/${args.keys.joinToString("/") { "{$it}" }}"
+    } else {
+        name
+    }
+
+    val arguments: List<NamedNavArgument>
+        get() = args.map { navArgument(it.key) { it.value } }
+
+    fun createRoute(vararg screenArgs: Any): String {
+        assert(screenArgs.size == args.size)
+        val placeholders = "\\{(.*?)\\}".toRegex().findAll(route).toList()
+        return screenArgs.foldIndexed(route) { i, acc, argument ->
+            acc.replace(placeholders[i].value, argument.toString())
+        }
+    }
 }
 
 enum class BottomNavScreens(val icon: ImageVector) {

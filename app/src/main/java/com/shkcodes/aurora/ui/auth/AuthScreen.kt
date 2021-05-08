@@ -76,8 +76,8 @@ fun AuthScreen(navController: NavController) {
 private fun handleActions(sideEffect: SideEffect, navController: NavController) {
     when (sideEffect) {
         is SideEffect.DisplayScreen<*> -> {
-            navController.navigate((sideEffect.screen as Screen).name) {
-                popUpTo(Screen.LOGIN.name) { inclusive = true }
+            navController.navigate((sideEffect.screen as Screen).route) {
+                popUpTo(Screen.LOGIN.route) { inclusive = true }
             }
         }
     }

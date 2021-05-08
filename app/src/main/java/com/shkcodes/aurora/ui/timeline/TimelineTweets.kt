@@ -228,13 +228,7 @@ private fun handleActions(sideEffect: SideEffect, navController: NavController) 
         is SideEffect.DisplayScreen<*> -> {
             when (val screen = sideEffect.screen) {
                 is MediaViewer -> {
-                    val route = "${Screen.MEDIA_VIEWER.name}/{tweetId}/{index}".replace(
-                        "{tweetId}",
-                        screen.tweetId.toString()
-                    ).replace(
-                        "{index}",
-                        screen.index.toString()
-                    )
+                    val route = Screen.MEDIA_VIEWER.createRoute(screen.tweetId, screen.index)
                     navController.navigate(route)
                 }
             }

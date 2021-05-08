@@ -3,10 +3,8 @@ package com.shkcodes.aurora.ui.main
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.shkcodes.aurora.theme.AuroraTheme
 import com.shkcodes.aurora.ui.Screen
@@ -26,28 +24,27 @@ class MainActivity : AppCompatActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = Screen.SPLASH.name
+                    startDestination = Screen.SPLASH.route
                 ) {
-                    composable(Screen.SPLASH.name) {
+                    composable(Screen.SPLASH.route) {
                         HomeScreen(navController)
                     }
-                    composable(Screen.LOGIN.name) {
+                    composable(Screen.LOGIN.route) {
                         LoginScreen(navController)
                     }
-                    composable(Screen.AUTH.name) {
+                    composable(Screen.AUTH.route) {
                         AuthScreen(navController)
                     }
-                    composable(Screen.HOME.name) {
+                    composable(Screen.HOME.route) {
                         HomeScreen(navController)
                     }
                     composable(
-                        "${Screen.MEDIA_VIEWER.name}/{tweetId}/{index}",
-                        arguments = listOf(
-                            navArgument("tweetId") { type = NavType.LongType },
-                            navArgument("index") { type = NavType.IntType })
+                        Screen.MEDIA_VIEWER.route,
+                        Screen.MEDIA_VIEWER.arguments
                     ) {
-                        val index = it.arguments?.getInt("index")!!
-                        val tweetId = it.arguments?.getLong("tweetId")!!
+                        val index = it.arguments?.getString("index")!!.toInt()
+                        val tweetId = it.arguments?.getString("tweetId")!!
+                            .toLong() // TODO: investigate why we can't directly call getLong
                         MediaViewer(index, tweetId)
                     }
                 }

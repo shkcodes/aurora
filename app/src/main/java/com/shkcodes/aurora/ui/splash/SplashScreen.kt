@@ -56,8 +56,8 @@ fun SplashScreen(navController: NavController) {
 private fun handleActions(sideEffect: SideEffect, navController: NavController) {
     when (sideEffect) {
         is SideEffect.DisplayScreen<*> -> {
-            navController.navigate((sideEffect.screen as Screen).name) {
-                popUpTo(Screen.SPLASH.name) { inclusive = true }
+            navController.navigate((sideEffect.screen as Screen).route) {
+                popUpTo(Screen.SPLASH.route) { inclusive = true }
             }
         }
     }
