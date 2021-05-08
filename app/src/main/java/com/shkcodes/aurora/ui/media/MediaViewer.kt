@@ -6,7 +6,9 @@ import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,6 +25,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import com.google.accompanist.coil.rememberCoilPainter
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
+import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.media.MediaViewerContract.Intent.Init
 import com.shkcodes.aurora.ui.media.MediaViewerContract.State.Content
 import kotlinx.coroutines.flow.collect
@@ -31,6 +37,7 @@ import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MediaViewer(index: Int, tweetId: Long) {
     val viewModel = hiltNavGraphViewModel<MediaViewerViewModel>()
@@ -43,15 +50,26 @@ fun MediaViewer(index: Int, tweetId: Long) {
     Scaffold {
         when (val state = viewModel.getState().collectAsState().value) {
             is Content -> {
+                val pagerState = rememberPagerState(
+                    initialPage = state.initialIndex,
+                    pageCount = state.media.size
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Black),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.BottomCenter
                 ) {
-                    ZoomableImage(
-                        source = state.media[state.initialIndex].imageUrl,
-                        modifier = Modifier.fillMaxSize()
+                    HorizontalPager(state = pagerState) {
+                        ZoomableImage(
+                            source = state.media[it].imageUrl,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    Text(
+                        text = "${pagerState.currentPage + 1}/${pagerState.pageCount}",
+                        color = Color.White,
+                        modifier = Modifier.padding(Dimens.space)
                     )
                 }
             }
@@ -97,5 +115,5 @@ private fun ZoomableImage(source: String, modifier: Modifier = Modifier) {
     }
 }
 
-val Float.radians: Double
+private val Float.radians: Double
     get() = Math.toRadians(toDouble())

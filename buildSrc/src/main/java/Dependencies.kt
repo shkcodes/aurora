@@ -90,6 +90,7 @@ object Dependencies {
 
     const val coil = "com.google.accompanist:accompanist-coil:${Versions.accompanist}"
     const val swipeRefresh = "com.google.accompanist:accompanist-swiperefresh:${Versions.accompanist}"
+    const val viewPager = "com.google.accompanist:accompanist-pager:${Versions.accompanist}"
 
     const val desugarLib = "com.android.tools:desugar_jdk_libs:${Versions.desugarLib}"
 
