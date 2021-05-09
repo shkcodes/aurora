@@ -54,7 +54,7 @@ fun MediaViewer(index: Int, tweetId: Long) {
                     contentAlignment = Alignment.BottomCenter
                 ) {
                     HorizontalPager(state = pagerState) {
-                        ZoomableImage(source = state.media[it].imageUrl)
+                        PagerItem(source = state.media[it].url)
                     }
                     Text(
                         text = "${pagerState.currentPage + 1}/${pagerState.pageCount}",
@@ -68,7 +68,7 @@ fun MediaViewer(index: Int, tweetId: Long) {
 }
 
 @Composable
-private fun ZoomableImage(source: String) {
+private fun PagerItem(source: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         val coilPainter = rememberCoilPainter(request = source)
 

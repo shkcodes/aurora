@@ -26,4 +26,5 @@ object Dimens {
     val single_row_media_height: Dp @Composable get() = 170.dp
     val multi_row_media_height: Dp @Composable get() = 100.dp
     val link_preview_height: Dp @Composable get() = 75.dp
+    val gif_indicator_size: Dp @Composable get() = 28.dp
 }
