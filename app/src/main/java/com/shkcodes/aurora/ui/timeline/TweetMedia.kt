@@ -18,6 +18,7 @@ import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Gif
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -121,21 +122,38 @@ private const val ANIMATED_MEDIA_INDICATOR_OPACITY = 0.3F
 @Composable
 private fun MediaImage(media: MediaEntity, modifier: Modifier = Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.BottomEnd) {
-        Image(
-            painter = rememberCoilPainter(
-                request = media.thumbnail,
-                fadeIn = true,
-                requestBuilder = {
-                    transformations(RoundedCornersTransformation(radius = MEDIA_CORNER_RADIUS))
-                },
-            ),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier.fillMaxSize()
-        )
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Image(
+                painter = rememberCoilPainter(
+                    request = media.thumbnail,
+                    fadeIn = true,
+                    requestBuilder = {
+                        transformations(RoundedCornersTransformation(radius = MEDIA_CORNER_RADIUS))
+                    },
+                ),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.fillMaxSize()
+            )
+            if (media.mediaType == VIDEO)
+                PlayButton()
+        }
 
         AnimatedMediaIndicator(media.mediaType, media.duration)
     }
+}
+
+@Composable
+private fun PlayButton() {
+    Icon(
+        imageVector = Icons.Default.PlayArrow,
+        contentDescription = null,
+        tint = colors.secondary,
+        modifier = Modifier
+            .clip(RoundedCornerShape(Dimens.space_small))
+            .size(Dimens.play_icon_size)
+            .background(Color.Black.copy(ANIMATED_MEDIA_INDICATOR_OPACITY))
+    )
 }
 
 @Composable
