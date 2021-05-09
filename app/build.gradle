@@ -110,6 +110,8 @@ dependencies {
 
     implementation Dependencies.timber
 
+    implementation Dependencies.gestureView
+
     testImplementation TestDependencies.junit
     testImplementation TestDependencies.coroutines
     testImplementation TestDependencies.mockk

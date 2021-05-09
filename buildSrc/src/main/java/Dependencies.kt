@@ -40,6 +40,8 @@ object Versions {
     const val jsoup = "1.13.1"
 
     const val timber = "4.7.1"
+
+    const val gestureView = "2.7.1"
 }
 
 object Dependencies {
@@ -101,6 +103,8 @@ object Dependencies {
     const val jsoup = "org.jsoup:jsoup:${Versions.jsoup}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
+
+    const val gestureView = "com.alexvasilkov:gesture-views:${Versions.gestureView}"
 
 }
 

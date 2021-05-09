@@ -1,30 +1,26 @@
 package com.shkcodes.aurora.ui.media
 
-import androidx.compose.foundation.Image
+import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import com.alexvasilkov.gestures.views.GestureImageView
 import com.google.accompanist.coil.rememberCoilPainter
+import com.google.accompanist.imageloading.ImageLoadState.Loading
+import com.google.accompanist.imageloading.ImageLoadState.Success
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -33,9 +29,6 @@ import com.shkcodes.aurora.ui.media.MediaViewerContract.Intent.Init
 import com.shkcodes.aurora.ui.media.MediaViewerContract.State.Content
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlin.math.cos
-import kotlin.math.roundToInt
-import kotlin.math.sin
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -61,10 +54,7 @@ fun MediaViewer(index: Int, tweetId: Long) {
                     contentAlignment = Alignment.BottomCenter
                 ) {
                     HorizontalPager(state = pagerState) {
-                        ZoomableImage(
-                            source = state.media[it].imageUrl,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                        ZoomableImage(source = state.media[it].imageUrl)
                     }
                     Text(
                         text = "${pagerState.currentPage + 1}/${pagerState.pageCount}",
@@ -78,42 +68,22 @@ fun MediaViewer(index: Int, tweetId: Long) {
 }
 
 @Composable
-private fun ZoomableImage(source: String, modifier: Modifier = Modifier) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        var angle by remember { mutableStateOf(0F) }
-        var zoom by remember { mutableStateOf(1F) }
-        var offsetX by remember { mutableStateOf(0F) }
-        var offsetY by remember { mutableStateOf(0F) }
+private fun ZoomableImage(source: String) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        val coilPainter = rememberCoilPainter(request = source)
 
-        Image(
-            painter = rememberCoilPainter(
-                request = source,
-                fadeIn = true,
-            ),
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
-            modifier = modifier
-                .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-                .graphicsLayer(
-                    scaleX = zoom,
-                    scaleY = zoom,
-                    rotationZ = angle
-                )
-                .pointerInput(Unit) {
-                    detectTransformGestures(
-                        onGesture = { _, pan, gestureZoom, gestureRotate ->
-                            angle += gestureRotate
-                            zoom *= gestureZoom
-                            val x = pan.x * zoom
-                            val y = pan.y * zoom
-                            offsetX += (x * cos(angle.radians) - y * sin(angle.radians)).toFloat()
-                            offsetY += (x * sin(angle.radians) + y * cos(angle.radians)).toFloat()
-                        }
-                    )
-                }
-        )
+        when (val state = coilPainter.loadState) {
+            is Success -> {
+                AndroidView(factory = {
+                    GestureImageView(it).apply {
+                        layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+                        setImageDrawable(state.result)
+                    }
+                })
+            }
+            is Loading -> {
+                CircularProgressIndicator()
+            }
+        }
     }
 }
-
-private val Float.radians: Double
-    get() = Math.toRadians(toDouble())
