@@ -1,6 +1,7 @@
 package com.shkcodes.aurora.cache.entities
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.shkcodes.aurora.api.response.MediaType.GIF
 import com.shkcodes.aurora.api.response.MediaType.PHOTO
@@ -20,7 +21,10 @@ data class MediaEntity(
     val mediaType: MediaType,
     val url: String,
     val thumbnail: String
-)
+) {
+    @Ignore
+    val isAnimatedMedia = mediaType == MediaType.VIDEO || mediaType == MediaType.GIF
+}
 
 fun Tweet.toMediaEntity(): List<MediaEntity>? {
     return extendedEntities?.media?.map {
@@ -29,7 +33,7 @@ fun Tweet.toMediaEntity(): List<MediaEntity>? {
             tweetId = id,
             bitrate = it.videoInfo?.variants?.firstOrNull()?.bitrate,
             duration = it.videoInfo?.duration ?: 0,
-            url = it.videoInfo?.variants?.firstOrNull()?.url ?: it.url,
+            url = it.videoInfo?.variants?.maxByOrNull { it.bitrate }?.url ?: it.url,
             mediaType = it.type.toEntityMediaType(),
             thumbnail = it.url
         )

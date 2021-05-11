@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.exoplayer2.ui.PlayerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    app:controller_layout_id="@layout/layout_controller"
+    app:hide_on_touch="true"
+    app:resize_mode="fixed_width"
+    app:show_timeout="0">
+
+</com.google.android.exoplayer2.ui.PlayerView>

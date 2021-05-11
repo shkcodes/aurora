@@ -111,6 +111,7 @@ dependencies {
     implementation Dependencies.timber
 
     implementation Dependencies.gestureView
+    implementation Dependencies.exoplayer
 
     testImplementation TestDependencies.junit
     testImplementation TestDependencies.coroutines

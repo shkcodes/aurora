@@ -135,8 +135,9 @@ private fun MediaImage(media: MediaEntity, modifier: Modifier = Modifier) {
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier.fillMaxSize()
             )
-            if (media.mediaType == VIDEO)
+            if (media.mediaType == VIDEO) {
                 PlayButton()
+            }
         }
 
         AnimatedMediaIndicator(media.mediaType, media.duration)
@@ -179,10 +180,10 @@ private fun GifIndicator() {
 }
 
 @Composable
-fun VideoDuration(duration: Long) {
-    val duration = Duration.ofMillis(duration)
+fun VideoDuration(millis: Long) {
+    val duration = Duration.ofMillis(millis)
     Text(
-        text = "${"%02d".format(duration.toMinutes())}:${"%02d".format(duration.seconds)}",
+        text = "${"%02d".format(duration.toMinutes())}:${"%02d".format((duration.seconds % 60))}",
         fontWeight = FontWeight.Bold,
         color = colors.secondary,
         fontSize = Dimens.text_caption,
