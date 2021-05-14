@@ -21,17 +21,23 @@ import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.lifecycle.Lifecycle.Event
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import coil.transform.CircleCropTransformation
@@ -262,6 +268,8 @@ private fun VideoPlayer(exoPlayer: SimpleExoPlayer, tweet: TimelineItem?) {
         )
     }
 
+    val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
+
     LaunchedEffect(tweet) {
         exoPlayer.apply {
             if (tweet != null && tweet.tweetMedia.isNotEmpty()) {
@@ -274,6 +282,29 @@ private fun VideoPlayer(exoPlayer: SimpleExoPlayer, tweet: TimelineItem?) {
             } else {
                 stop()
             }
+        }
+    }
+    DisposableEffect(lifecycleOwner) {
+        val lifecycle = lifecycleOwner.lifecycle
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Event.ON_PAUSE -> {
+                    exoPlayer.playWhenReady = false
+                }
+                Event.ON_RESUME -> {
+                    exoPlayer.playWhenReady = true
+                }
+                Event.ON_DESTROY -> {
+                    exoPlayer.run {
+                        stop()
+                        release()
+                    }
+                }
+            }
+        }
+        lifecycle.addObserver(observer)
+        onDispose {
+            lifecycle.removeObserver(observer)
         }
     }
 }

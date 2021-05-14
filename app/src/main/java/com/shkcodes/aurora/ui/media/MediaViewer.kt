@@ -11,15 +11,21 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.lifecycle.Lifecycle.Event
+import androidx.lifecycle.LifecycleEventObserver
 import com.alexvasilkov.gestures.views.GestureImageView
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.imageloading.ImageLoadState.Loading
@@ -95,6 +101,29 @@ private fun VideoPlayer(media: MediaEntity) {
             }
         }
     )
+
+    val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
+    DisposableEffect(lifecycleOwner) {
+        val lifecycle = lifecycleOwner.lifecycle
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Event.ON_PAUSE -> {
+                    exoPlayer.playWhenReady = false
+                }
+                Event.ON_RESUME -> {
+                    exoPlayer.playWhenReady = true
+                }
+            }
+        }
+        lifecycle.addObserver(observer)
+        onDispose {
+            exoPlayer.run {
+                stop()
+                release()
+            }
+            lifecycle.removeObserver(observer)
+        }
+    }
 }
 
 @OptIn(ExperimentalPagerApi::class)
