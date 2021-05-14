@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
@@ -62,7 +63,8 @@ fun QuoteTweet(
     tweet: TweetEntity?,
     media: List<MediaEntity>,
     uriHandler: UriHandler,
-    viewModel: TimelineViewModel
+    viewModel: TimelineViewModel,
+    exoPlayer: SimpleExoPlayer,
 ) {
     tweet?.let {
         Card(
@@ -76,7 +78,7 @@ fun QuoteTweet(
                     it.userHandle
                 )
                 RichContent(it, uriHandler)
-                TweetMedia(media) { index ->
+                TweetMedia(media, exoPlayer, false) { index ->
                     viewModel.handleIntent(TimelineContract.Intent.MediaClick(index, it.id))
                 }
             }
@@ -122,6 +124,7 @@ fun RichContent(tweet: TweetEntity, uriHandler: UriHandler) {
             }
     }
 }
+
 private const val USER_HANDLE_OPACITY = 0.5F
 
 @Composable

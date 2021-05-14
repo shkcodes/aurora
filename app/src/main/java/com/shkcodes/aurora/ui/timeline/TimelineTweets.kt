@@ -1,5 +1,6 @@
 package com.shkcodes.aurora.ui.timeline
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +39,12 @@ import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.util.Util
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
@@ -54,6 +62,7 @@ import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Error
 import com.shkcodes.aurora.util.toPrettyTime
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 @Composable
 fun TweetsTimeline(navController: NavController) {
@@ -101,6 +110,18 @@ private fun TweetsList(
     listState: LazyListState,
     viewModel: TimelineViewModel
 ) {
+
+    val context = LocalContext.current
+    val exoPlayer = remember {
+        SimpleExoPlayer.Builder(context).build().apply {
+            repeatMode = Player.REPEAT_MODE_ALL
+        }
+    }
+
+    val currentlyPlayingItem = getCurrentlyPlayingItem(listState, state.items)
+
+    VideoPlayer(exoPlayer, currentlyPlayingItem)
+
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = state.isLoading),
         onRefresh = { viewModel.handleIntent(Refresh(state)) },
@@ -113,7 +134,7 @@ private fun TweetsList(
         }) {
         LazyColumn(state = listState, modifier = Modifier.fillMaxWidth()) {
             items(state.items) {
-                TweetItem(it, urlsMetaData, viewModel)
+                TweetItem(it, urlsMetaData, viewModel, exoPlayer, currentlyPlayingItem == it)
             }
             if (state.isPaginatedError) {
                 item {
@@ -133,7 +154,9 @@ private fun TweetsList(
 private fun TweetItem(
     timelineItem: TimelineItem,
     urlsMetaData: MutableMap<String, MetaData>,
-    viewModel: TimelineViewModel
+    viewModel: TimelineViewModel,
+    exoPlayer: SimpleExoPlayer,
+    isVideoPlaying: Boolean
 ) {
     val tweet = timelineItem.tweet
     val quoteTweet = timelineItem.quoteTweet
@@ -162,7 +185,13 @@ private fun TweetItem(
                 RepliedToUsers(tweet.repliedToUsers)
             }
             if (tweet.content.isNotEmpty()) RichContent(tweet, uriHandler)
-            QuoteTweet(quoteTweet, quoteTweetMedia, uriHandler, viewModel)
+            QuoteTweet(
+                quoteTweet,
+                quoteTweetMedia,
+                uriHandler,
+                viewModel,
+                exoPlayer
+            )
             if (tweet.sharedUrls.isNotEmpty() && media.isEmpty() && quoteTweet == null) {
                 val url = tweet.sharedUrls.first().url
                 LinkPreview(
@@ -171,7 +200,7 @@ private fun TweetItem(
                     { urlsMetaData[url] = it }, { uriHandler.openUri(it) })
             }
 
-            TweetMedia(media) { index ->
+            TweetMedia(media, exoPlayer, isVideoPlaying) { index ->
                 viewModel.handleIntent(MediaClick(index, tweet.id))
             }
             if (timelineItem.isRetweet) {
@@ -220,6 +249,45 @@ private fun PaginatedError(action: () -> Unit) {
         ) {
             Text(text = stringResource(id = R.string.retry))
         }
+    }
+}
+
+@Composable
+private fun VideoPlayer(exoPlayer: SimpleExoPlayer, tweet: TimelineItem?) {
+    val context = LocalContext.current
+    val dataSourceFactory = remember {
+        DefaultDataSourceFactory(
+            context,
+            Util.getUserAgent(context, context.packageName)
+        )
+    }
+
+    LaunchedEffect(tweet) {
+        exoPlayer.apply {
+            if (tweet != null && tweet.tweetMedia.isNotEmpty()) {
+                val source = ProgressiveMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(Uri.parse(tweet.tweetMedia.first().url)))
+
+                setMediaSource(source)
+                prepare()
+                playWhenReady = true
+            } else {
+                stop()
+            }
+        }
+    }
+}
+
+private fun getCurrentlyPlayingItem(listState: LazyListState, items: TimelineItems): TimelineItem? {
+    val layoutInfo = listState.layoutInfo
+    val visibleTweets = layoutInfo.visibleItemsInfo.map { items[it.index] }
+    return if (visibleTweets.filter { it.tweetMedia.any { it.isAnimatedMedia } }.size == 1) {
+        visibleTweets.first { it.tweetMedia.any { it.isAnimatedMedia } }
+    } else {
+        val midPoint = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+        val midItem =
+            layoutInfo.visibleItemsInfo.minByOrNull { abs((it.offset + it.size / 2) - midPoint) }
+        midItem?.let { items[it.index] }
     }
 }
 

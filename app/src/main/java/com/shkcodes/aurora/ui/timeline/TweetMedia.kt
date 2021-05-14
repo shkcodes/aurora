@@ -26,21 +26,33 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.viewinterop.AndroidView
 import com.google.accompanist.coil.rememberCoilPainter
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ui.PlayerView
+import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.MediaType
 import com.shkcodes.aurora.cache.entities.MediaType.GIF
 import com.shkcodes.aurora.cache.entities.MediaType.VIDEO
 import com.shkcodes.aurora.theme.Dimens
+import com.shkcodes.aurora.util.inflate
 import java.time.Duration
 
-private const val MEDIA_CORNER_RADIUS = 4F
+private const val MEDIA_CORNER_RADIUS = 8F
 
 @Composable
-fun TweetMedia(media: List<MediaEntity>, handler: (index: Int) -> Unit) {
-    when (media.size) {
-        1 -> {
-            MediaImage(
+fun TweetMedia(
+    media: List<MediaEntity>,
+    exoPlayer: SimpleExoPlayer,
+    isVideoPlaying: Boolean,
+    handler: (index: Int) -> Unit
+) {
+    if (media.isNotEmpty() && media.first().isAnimatedMedia) {
+        if (isVideoPlaying) {
+            TweetVideo(exoPlayer)
+        } else {
+            TweetImage(
                 media = media.first(),
                 modifier = Modifier
                     .padding(top = Dimens.space)
@@ -49,21 +61,59 @@ fun TweetMedia(media: List<MediaEntity>, handler: (index: Int) -> Unit) {
                     .clickable { handler(0) }
             )
         }
+    } else {
+        TweetImages(media, handler)
+    }
+}
+
+@Composable
+fun TweetVideo(exoPlayer: SimpleExoPlayer) {
+    Box(
+        modifier = Modifier
+            .padding(top = Dimens.space)
+            .fillMaxWidth()
+            .height(Dimens.single_row_media_height)
+            .clip(RoundedCornerShape(MEDIA_CORNER_RADIUS))
+    ) {
+        AndroidView(
+            factory = { context ->
+                context.inflate<PlayerView>(R.layout.player_view).apply {
+                    player = exoPlayer
+                    useController = false
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun TweetImages(images: List<MediaEntity>, handler: (index: Int) -> Unit) {
+    when (images.size) {
+        1 -> {
+            TweetImage(
+                media = images.first(),
+                modifier = Modifier
+                    .padding(top = Dimens.space)
+                    .fillMaxWidth()
+                    .height(Dimens.single_row_media_height)
+                    .clickable { handler(0) }
+            )
+        }
         2 -> {
-            MediaRow(
-                media1 = media.first(),
-                media2 = media.last(),
+            ImagesRow(
+                media1 = images.first(),
+                media2 = images.last(),
                 handler = handler
             )
         }
         3 -> {
-            MediaRow(
-                media1 = media[0],
-                media2 = media[1], isGridRow = true,
+            ImagesRow(
+                media1 = images[0],
+                media2 = images[1], isGridRow = true,
                 handler = handler
             )
-            MediaImage(
-                media = media[2],
+            TweetImage(
+                media = images[2],
                 modifier = Modifier
                     .padding(top = Dimens.space_small)
                     .fillMaxWidth()
@@ -72,14 +122,14 @@ fun TweetMedia(media: List<MediaEntity>, handler: (index: Int) -> Unit) {
             )
         }
         4 -> {
-            MediaRow(
-                media1 = media[0],
-                media2 = media[1], isGridRow = true,
+            ImagesRow(
+                media1 = images[0],
+                media2 = images[1], isGridRow = true,
                 handler = handler
             )
-            MediaRow(
-                media1 = media[2],
-                media2 = media[3], isGridRow = true, isBottomRow = true,
+            ImagesRow(
+                media1 = images[2],
+                media2 = images[3], isGridRow = true, isBottomRow = true,
                 handler = handler
             )
         }
@@ -87,7 +137,7 @@ fun TweetMedia(media: List<MediaEntity>, handler: (index: Int) -> Unit) {
 }
 
 @Composable
-private fun MediaRow(
+private fun ImagesRow(
     media1: MediaEntity,
     media2: MediaEntity,
     handler: (index: Int) -> Unit,
@@ -99,14 +149,14 @@ private fun MediaRow(
             .padding(top = if (isBottomRow) Dimens.space_small else Dimens.space)
             .height(if (isGridRow) Dimens.multi_row_media_height else Dimens.single_row_media_height)
     ) {
-        MediaImage(
+        TweetImage(
             media = media1,
             modifier = Modifier
                 .padding(end = Dimens.two_dp)
                 .weight(1F)
                 .clickable { handler(if (isBottomRow) 2 else 0) }
         )
-        MediaImage(
+        TweetImage(
             media = media2,
             modifier = Modifier
                 .padding(start = Dimens.two_dp)
@@ -119,7 +169,7 @@ private fun MediaRow(
 private const val ANIMATED_MEDIA_INDICATOR_OPACITY = 0.3F
 
 @Composable
-private fun MediaImage(media: MediaEntity, modifier: Modifier = Modifier) {
+private fun TweetImage(media: MediaEntity, modifier: Modifier = Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.BottomEnd) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Image(
@@ -160,6 +210,8 @@ fun AnimatedMediaIndicator(type: MediaType, duration: Long) {
     when (type) {
         GIF -> GifIndicator()
         VIDEO -> VideoDuration(duration)
+        else -> {
+        }
     }
 }
 
