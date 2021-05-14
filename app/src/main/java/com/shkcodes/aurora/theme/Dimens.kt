@@ -28,4 +28,5 @@ object Dimens {
     val link_preview_height: Dp @Composable get() = 75.dp
     val gif_indicator_size: Dp @Composable get() = 28.dp
     val play_icon_size: Dp @Composable get() = 36.dp
+    val video_player_max_height: Dp @Composable get() = 200.dp
 }

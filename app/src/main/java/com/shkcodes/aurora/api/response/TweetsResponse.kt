@@ -124,14 +124,19 @@ data class Media(
     val type: MediaType,
     @Json(name = "video_info")
     val videoInfo: VideoInfo?,
-)
+) {
+    val aspectRatio =
+        videoInfo?.let { it.aspectRatio.first().toDouble() / it.aspectRatio.last() } ?: 0.0
+}
 
 @JsonClass(generateAdapter = true)
 data class VideoInfo(
     @Json(name = "duration_millis")
     val duration: Long = 0,
     @Json(name = "variants")
-    val variants: List<VideoVariant>
+    val variants: List<VideoVariant>,
+    @Json(name = "aspect_ratio")
+    val aspectRatio: List<Int>,
 )
 
 @JsonClass(generateAdapter = true)

@@ -20,7 +20,8 @@ data class MediaEntity(
     val duration: Long,
     val mediaType: MediaType,
     val url: String,
-    val thumbnail: String
+    val thumbnail: String,
+    val aspectRatio: Double
 ) {
     @Ignore
     val isAnimatedMedia = mediaType == MediaType.VIDEO || mediaType == MediaType.GIF
@@ -35,7 +36,8 @@ fun Tweet.toMediaEntity(): List<MediaEntity>? {
             duration = it.videoInfo?.duration ?: 0,
             url = it.videoInfo?.variants?.maxByOrNull { it.bitrate }?.url ?: it.url,
             mediaType = it.type.toEntityMediaType(),
-            thumbnail = it.url
+            thumbnail = it.url,
+            aspectRatio = it.aspectRatio
         )
     }
 }

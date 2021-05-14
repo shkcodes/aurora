@@ -2,6 +2,8 @@
 
 package com.shkcodes.aurora.ui.timeline
 
+import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.accompanist.coil.rememberCoilPainter
@@ -41,6 +44,8 @@ import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.util.inflate
 import kotlinx.coroutines.delay
 import java.time.Duration
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 private const val MEDIA_CORNER_RADIUS = 8F
 private const val ANIMATED_MEDIA_INDICATOR_OPACITY = 0.6F
@@ -53,11 +58,22 @@ fun TweetMedia(
     handler: (index: Int) -> Unit
 ) {
     if (media.isNotEmpty() && media.first().isAnimatedMedia) {
+        val maxHeight = Dimens.video_player_max_height
         val modifier = Modifier
             .padding(top = Dimens.space)
             .fillMaxWidth()
-            .height(Dimens.single_row_media_height)
             .clickable { handler(0) }
+            .layout { measurable, constraints ->
+                val videoHeight = constraints.maxWidth / media.first().aspectRatio
+                val videoPlayerHeight = min(maxHeight.roundToPx(), videoHeight.roundToInt())
+                val childConstraints = constraints.copy(maxHeight = videoPlayerHeight)
+
+                val placeable = measurable.measure(childConstraints)
+
+                layout(constraints.maxWidth, videoPlayerHeight) {
+                    placeable.place(0, 0)
+                }
+            }
         if (isVideoPlaying) {
             TweetVideo(exoPlayer, modifier, media.first())
         } else {
@@ -81,6 +97,7 @@ fun TweetVideo(exoPlayer: SimpleExoPlayer, modifier: Modifier, media: MediaEntit
         AndroidView(
             factory = { context ->
                 context.inflate<PlayerView>(R.layout.player_view).apply {
+                    layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
                     player = exoPlayer
                     useController = false
                 }
