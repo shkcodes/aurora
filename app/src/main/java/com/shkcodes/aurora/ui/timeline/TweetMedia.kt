@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import coil.transform.RoundedCornersTransformation
 import com.google.accompanist.coil.rememberCoilPainter
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.MediaType
@@ -126,14 +125,13 @@ private fun MediaImage(media: MediaEntity, modifier: Modifier = Modifier) {
             Image(
                 painter = rememberCoilPainter(
                     request = media.thumbnail,
-                    fadeIn = true,
-                    requestBuilder = {
-                        transformations(RoundedCornersTransformation(radius = MEDIA_CORNER_RADIUS))
-                    },
+                    fadeIn = true
                 ),
                 contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier.fillMaxSize()
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(MEDIA_CORNER_RADIUS))
             )
             if (media.mediaType == VIDEO) {
                 PlayButton()
