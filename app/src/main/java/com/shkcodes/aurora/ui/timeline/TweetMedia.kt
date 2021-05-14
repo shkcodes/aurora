@@ -49,16 +49,16 @@ fun TweetMedia(
     handler: (index: Int) -> Unit
 ) {
     if (media.isNotEmpty() && media.first().isAnimatedMedia) {
+        val modifier = Modifier
+            .padding(top = Dimens.space)
+            .fillMaxWidth()
+            .height(Dimens.single_row_media_height)
         if (isVideoPlaying) {
-            TweetVideo(exoPlayer)
+            TweetVideo(exoPlayer, modifier)
         } else {
             TweetImage(
                 media = media.first(),
-                modifier = Modifier
-                    .padding(top = Dimens.space)
-                    .fillMaxWidth()
-                    .height(Dimens.single_row_media_height)
-                    .clickable { handler(0) }
+                modifier = modifier.clickable { handler(0) }
             )
         }
     } else {
@@ -67,14 +67,8 @@ fun TweetMedia(
 }
 
 @Composable
-fun TweetVideo(exoPlayer: SimpleExoPlayer) {
-    Box(
-        modifier = Modifier
-            .padding(top = Dimens.space)
-            .fillMaxWidth()
-            .height(Dimens.single_row_media_height)
-            .clip(RoundedCornerShape(MEDIA_CORNER_RADIUS))
-    ) {
+fun TweetVideo(exoPlayer: SimpleExoPlayer, modifier: Modifier) {
+    Box(modifier = modifier.clip(RoundedCornerShape(MEDIA_CORNER_RADIUS))) {
         AndroidView(
             factory = { context ->
                 context.inflate<PlayerView>(R.layout.player_view).apply {
