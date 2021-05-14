@@ -57,12 +57,13 @@ fun TweetMedia(
             .padding(top = Dimens.space)
             .fillMaxWidth()
             .height(Dimens.single_row_media_height)
+            .clickable { handler(0) }
         if (isVideoPlaying) {
             TweetVideo(exoPlayer, modifier, media.first())
         } else {
             TweetImage(
                 media = media.first(),
-                modifier = modifier.clickable { handler(0) }
+                modifier = modifier
             )
         }
     } else {
