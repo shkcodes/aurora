@@ -20,6 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Gif
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,9 +39,11 @@ import com.shkcodes.aurora.cache.entities.MediaType.GIF
 import com.shkcodes.aurora.cache.entities.MediaType.VIDEO
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.util.inflate
+import kotlinx.coroutines.delay
 import java.time.Duration
 
 private const val MEDIA_CORNER_RADIUS = 8F
+private const val ANIMATED_MEDIA_INDICATOR_OPACITY = 0.6F
 
 @Composable
 fun TweetMedia(
@@ -54,7 +58,7 @@ fun TweetMedia(
             .fillMaxWidth()
             .height(Dimens.single_row_media_height)
         if (isVideoPlaying) {
-            TweetVideo(exoPlayer, modifier)
+            TweetVideo(exoPlayer, modifier, media.first())
         } else {
             TweetImage(
                 media = media.first(),
@@ -67,8 +71,12 @@ fun TweetMedia(
 }
 
 @Composable
-fun TweetVideo(exoPlayer: SimpleExoPlayer, modifier: Modifier) {
-    Box(modifier = modifier.clip(RoundedCornerShape(MEDIA_CORNER_RADIUS))) {
+fun TweetVideo(exoPlayer: SimpleExoPlayer, modifier: Modifier, media: MediaEntity) {
+    val playbackTime = playbackTime(exoPlayer)
+    Box(
+        modifier = modifier.clip(RoundedCornerShape(MEDIA_CORNER_RADIUS)),
+        contentAlignment = Alignment.BottomEnd
+    ) {
         AndroidView(
             factory = { context ->
                 context.inflate<PlayerView>(R.layout.player_view).apply {
@@ -77,11 +85,27 @@ fun TweetVideo(exoPlayer: SimpleExoPlayer, modifier: Modifier) {
                 }
             }
         )
+        val playTimeRemaining = if (playbackTime.value > 0L) playbackTime.value else media.duration
+        if (media.mediaType == GIF) {
+            GifIndicator()
+        } else {
+            VideoDuration(millis = playTimeRemaining)
+        }
     }
 }
 
 @Composable
-fun TweetImages(images: List<MediaEntity>, handler: (index: Int) -> Unit) {
+fun playbackTime(exoPlayer: SimpleExoPlayer): State<Long> {
+    return produceState(0L) {
+        while (true) {
+            value = exoPlayer.contentDuration - exoPlayer.currentPosition
+            delay(1000)
+        }
+    }
+}
+
+@Composable
+private fun TweetImages(images: List<MediaEntity>, handler: (index: Int) -> Unit) {
     when (images.size) {
         1 -> {
             TweetImage(
@@ -160,8 +184,6 @@ private fun ImagesRow(
     }
 }
 
-private const val ANIMATED_MEDIA_INDICATOR_OPACITY = 0.3F
-
 @Composable
 private fun TweetImage(media: MediaEntity, modifier: Modifier = Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.BottomEnd) {
@@ -200,7 +222,7 @@ private fun PlayButton() {
 }
 
 @Composable
-fun AnimatedMediaIndicator(type: MediaType, duration: Long) {
+private fun AnimatedMediaIndicator(type: MediaType, duration: Long) {
     when (type) {
         GIF -> GifIndicator()
         VIDEO -> VideoDuration(duration)
@@ -224,7 +246,7 @@ private fun GifIndicator() {
 }
 
 @Composable
-fun VideoDuration(millis: Long) {
+private fun VideoDuration(millis: Long) {
     val duration = Duration.ofMillis(millis)
     Text(
         text = "${"%02d".format(duration.toMinutes())}:${"%02d".format((duration.seconds % 60))}",
