@@ -32,12 +32,8 @@ class SettingsViewModelTest : BaseTest() {
 
     @Test
     fun `state updated correctly on toggle auto play`() = viewModel.test(listOf(
-        ToggleAutoplayVideos(
-            State(true)
-        ),
-        ToggleAutoplayVideos(
-            State(false)
-        )
+        ToggleAutoplayVideos,
+        ToggleAutoplayVideos
     ), {
         assert(expectItem() == State(autoplayVideos = true))
         assert(expectItem() == State(autoplayVideos = false))

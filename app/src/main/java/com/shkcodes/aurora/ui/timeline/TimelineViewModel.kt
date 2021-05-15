@@ -38,7 +38,7 @@ class TimelineViewModel @Inject constructor(
             }
 
             is Retry -> {
-                emitState { Content(isLoading = true) }
+                currentState = Content(isLoading = true)
                 fetchTweets()
             }
 
@@ -46,14 +46,14 @@ class TimelineViewModel @Inject constructor(
                 with(intent.currentState) {
                     val afterId = items.last().tweetId
                     if (!isPaginatedLoading) {
-                        emitState { copy(isPaginatedLoading = true) }
+                        currentState = copy(isPaginatedLoading = true)
                         fetchTweets(items, afterId)
                     }
                 }
             }
 
             is Refresh -> {
-                emitState { intent.currentState.copy(isLoading = true) }
+                currentState = intent.currentState.copy(isLoading = true)
                 fetchTweets(forceRefresh = true)
             }
 
@@ -90,14 +90,14 @@ class TimelineViewModel @Inject constructor(
                         isPaginatedError = true
                     )
                 }
-                emitState { errorState }
+                currentState = errorState
             })
         }
     }
 
     private fun observeCachedTweets() {
         userService.getTimelineTweets().filter { it.isNotEmpty() }.onEach {
-            emitState { Content(false, it, false) }
+            currentState = Content(false, it, false)
         }.launchIn(viewModelScope)
     }
 }

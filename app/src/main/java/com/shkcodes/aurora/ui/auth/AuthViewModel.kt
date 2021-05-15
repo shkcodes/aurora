@@ -35,19 +35,19 @@ class AuthViewModel @Inject constructor(
             is RequestAccessToken -> {
                 val token = intent.tokenState.token
                 val verifier = intent.authorizationResponse.split("=").last()
-                emitState { Loading }
+                currentState = Loading
                 viewModelScope.launch {
                     authService.getAccessToken(verifier, token).evaluate({
                         authService.isLoggedIn = true
                         onSideEffect(SideEffect.DisplayScreen(Screen.HOME))
                     }, {
-                        emitState { Error(errorHandler.getErrorMessage(it)) }
+                        currentState = Error(errorHandler.getErrorMessage(it))
                     })
                 }
             }
 
             is Retry -> {
-                emitState { Loading }
+                currentState = Loading
                 fetchRequestToken()
             }
         }
@@ -56,9 +56,9 @@ class AuthViewModel @Inject constructor(
     private fun fetchRequestToken() {
         viewModelScope.launch {
             authService.getRequestToken().evaluate({
-                emitState { RequestToken(token = it) }
+                currentState = RequestToken(token = it)
             }, {
-                emitState { Error(errorHandler.getErrorMessage(it)) }
+                currentState = Error(errorHandler.getErrorMessage(it))
             })
         }
     }

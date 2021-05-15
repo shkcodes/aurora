@@ -4,7 +4,6 @@ import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.ui.settings.SettingsContract.Intent
 import com.shkcodes.aurora.ui.settings.SettingsContract.Intent.ToggleAutoplayVideos
-import com.shkcodes.aurora.ui.settings.SettingsContract.State
 import com.shkcodes.aurora.ui.settings.SettingsContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -16,16 +15,15 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     init {
-        emitState { State(preferencesService.autoplayVideos) }
+        currentState = currentState.copy(autoplayVideos = preferencesService.autoplayVideos)
     }
 
     override fun handleIntent(intent: Intent) {
         when (intent) {
             is ToggleAutoplayVideos -> {
-                preferencesService.autoplayVideos = !preferencesService.autoplayVideos
-                with(intent.currentState) {
-                    emitState { copy(autoplayVideos = !autoplayVideos) }
-                }
+                val currentValue = currentState.autoplayVideos
+                preferencesService.autoplayVideos = !currentValue
+                currentState = currentState.copy(autoplayVideos = !currentValue)
             }
         }
     }

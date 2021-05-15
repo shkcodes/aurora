@@ -22,7 +22,7 @@ class MediaViewerViewModel @Inject constructor(
             is Init -> {
                 viewModelScope.launch {
                     val media = userService.getMediaForTweet(intent.tweetId)
-                    emitState { Content(intent.index, media) }
+                    currentState = Content(intent.index, media)
                 }
             }
         }

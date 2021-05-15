@@ -16,9 +16,11 @@ abstract class BaseViewModel<S, I>(initialState: S) : ViewModel() {
 
     private val sideEffectsFlow = MutableSharedFlow<SideEffect>()
 
-    fun emitState(emitter: () -> S) {
-        viewModelScope.launch { viewStateFlow.emit(emitter.invoke()) }
-    }
+    var currentState = initialState
+        set(value) {
+            field = value
+            viewStateFlow.value = field
+        }
 
     fun getState(): StateFlow<S> = viewStateFlow
 

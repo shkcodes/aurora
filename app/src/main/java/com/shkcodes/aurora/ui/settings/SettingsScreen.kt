@@ -31,7 +31,7 @@ fun SettingsScreen() {
             Switch(
                 checked = state.autoplayVideos,
                 onCheckedChange = {
-                    viewModel.handleIntent(ToggleAutoplayVideos(state))
+                    viewModel.handleIntent(ToggleAutoplayVideos)
                 })
         }
     }

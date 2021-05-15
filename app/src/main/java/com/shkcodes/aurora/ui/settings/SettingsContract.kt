@@ -9,6 +9,6 @@ interface SettingsContract {
     data class State(val autoplayVideos: Boolean = false)
 
     sealed class Intent {
-        data class ToggleAutoplayVideos(val currentState: State) : Intent()
+        object ToggleAutoplayVideos : Intent()
     }
 }
