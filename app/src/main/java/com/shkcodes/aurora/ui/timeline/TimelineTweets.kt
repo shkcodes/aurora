@@ -124,7 +124,11 @@ private fun TweetsList(
         }
     }
 
-    val currentlyPlayingItem = getCurrentlyPlayingItem(listState, state.items)
+    val currentlyPlayingItem = if (state.autoplayVideos) {
+        getCurrentlyPlayingItem(listState, state.items)
+    } else {
+        null
+    }
 
     VideoPlayer(exoPlayer, currentlyPlayingItem)
 
@@ -140,13 +144,7 @@ private fun TweetsList(
         }) {
         LazyColumn(state = listState, modifier = Modifier.fillMaxWidth()) {
             items(state.items) {
-                TweetItem(
-                    it,
-                    urlsMetaData,
-                    viewModel,
-                    exoPlayer,
-                    currentlyPlayingItem == it && state.autoplayVideos
-                )
+                TweetItem(it, urlsMetaData, viewModel, exoPlayer, currentlyPlayingItem == it)
             }
             if (state.isPaginatedError) {
                 item {
@@ -317,14 +315,15 @@ private fun VideoPlayer(exoPlayer: SimpleExoPlayer, tweet: TimelineItem?) {
 
 private fun getCurrentlyPlayingItem(listState: LazyListState, items: TimelineItems): TimelineItem? {
     val layoutInfo = listState.layoutInfo
-    val visibleTweets = layoutInfo.visibleItemsInfo.map { items[it.index] }
-    return if (visibleTweets.filter { it.tweetMedia.any { it.isAnimatedMedia } }.size == 1) {
-        visibleTweets.first { it.tweetMedia.any { it.isAnimatedMedia } }
+    val animatedMediaTweets =
+        layoutInfo.visibleItemsInfo.map { items[it.index] }.filter { it.hasAnimatedMedia }
+    return if (animatedMediaTweets.size == 1) {
+        animatedMediaTweets.first()
     } else {
         val midPoint = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
-        val midItem =
-            layoutInfo.visibleItemsInfo.minByOrNull { abs((it.offset + it.size / 2) - midPoint) }
-        midItem?.let { items[it.index] }
+        val itemsFromCenter =
+            layoutInfo.visibleItemsInfo.sortedBy { abs((it.offset + it.size / 2) - midPoint) }
+        itemsFromCenter.map { items[it.index] }.firstOrNull { it.hasAnimatedMedia }
     }
 }
 

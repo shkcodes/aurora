@@ -62,6 +62,9 @@ data class TimelineItem(
     val tweetMedia = retweetDto?.media ?: primaryTweetMedia
 
     @Ignore
+    val hasAnimatedMedia = tweetMedia.any { it.isAnimatedMedia }
+
+    @Ignore
     val quoteTweetMedia =
         if (isRetweet) retweetQuoteDto?.media.orEmpty() else quoteTweetDto?.media.orEmpty()
 }
