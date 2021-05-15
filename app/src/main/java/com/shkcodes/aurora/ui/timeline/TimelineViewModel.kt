@@ -4,7 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.shkcodes.aurora.api.evaluate
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
+import com.shkcodes.aurora.base.Event
+import com.shkcodes.aurora.base.Event.AutoplayVideosToggled
+import com.shkcodes.aurora.base.EventBus
 import com.shkcodes.aurora.base.SideEffect
+import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Init
@@ -28,8 +32,14 @@ import javax.inject.Inject
 class TimelineViewModel @Inject constructor(
     override val dispatcherProvider: DispatcherProvider,
     private val userService: UserService,
-    private val errorHandler: ErrorHandler
+    private val errorHandler: ErrorHandler,
+    private val preferencesService: PreferencesService,
+    eventBus: EventBus,
 ) : ViewModel() {
+
+    init {
+        eventBus.getEvents().onEach(::handleEvent).launchIn(viewModelScope)
+    }
 
     override fun handleIntent(intent: Intent) {
         when (intent) {
@@ -97,7 +107,18 @@ class TimelineViewModel @Inject constructor(
 
     private fun observeCachedTweets() {
         userService.getTimelineTweets().filter { it.isNotEmpty() }.onEach {
-            currentState = Content(false, it, false)
+            currentState =
+                Content(false, it, false, autoplayVideos = preferencesService.autoplayVideos)
         }.launchIn(viewModelScope)
+    }
+
+    private fun handleEvent(event: Event) {
+        when (event) {
+            is AutoplayVideosToggled -> {
+                currentState = (currentState as Content).copy(
+                    autoplayVideos = preferencesService.autoplayVideos
+                )
+            }
+        }
     }
 }

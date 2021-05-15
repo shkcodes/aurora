@@ -4,8 +4,11 @@ import app.cash.turbine.test
 import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
+import com.shkcodes.aurora.base.Event
+import com.shkcodes.aurora.base.EventBus
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
+import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Init
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
@@ -21,6 +24,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
@@ -52,11 +56,25 @@ class TimelineViewModelTest : BaseTest() {
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
     }
+    private val events = MutableSharedFlow<Event>()
+    private val eventBus: EventBus = mockk {
+        every { getEvents() } returns events
+    }
+    private val preferencesService: PreferencesService = mockk {
+        every { autoplayVideos } returns false
+    }
 
     @Before
     override fun setUp() {
         super.setUp()
-        tweetsViewModel = TimelineViewModel(testDispatcherProvider, userService, errorHandler)
+        tweetsViewModel =
+            TimelineViewModel(
+                testDispatcherProvider,
+                userService,
+                errorHandler,
+                preferencesService,
+                eventBus
+            )
     }
 
     @Test

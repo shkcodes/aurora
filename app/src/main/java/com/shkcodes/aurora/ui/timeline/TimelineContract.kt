@@ -11,7 +11,8 @@ class TimelineContract {
             val isLoading: Boolean = false,
             val items: TimelineItems = emptyList(),
             val isPaginatedLoading: Boolean = false,
-            val isPaginatedError: Boolean = false
+            val isPaginatedError: Boolean = false,
+            val autoplayVideos: Boolean = false
         ) : State()
 
         data class Error(val message: String) : State()

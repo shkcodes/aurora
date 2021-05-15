@@ -140,7 +140,13 @@ private fun TweetsList(
         }) {
         LazyColumn(state = listState, modifier = Modifier.fillMaxWidth()) {
             items(state.items) {
-                TweetItem(it, urlsMetaData, viewModel, exoPlayer, currentlyPlayingItem == it)
+                TweetItem(
+                    it,
+                    urlsMetaData,
+                    viewModel,
+                    exoPlayer,
+                    currentlyPlayingItem == it && state.autoplayVideos
+                )
             }
             if (state.isPaginatedError) {
                 item {

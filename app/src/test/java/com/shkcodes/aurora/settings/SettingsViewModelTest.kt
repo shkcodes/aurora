@@ -1,6 +1,7 @@
 package com.shkcodes.aurora.settings
 
 import com.shkcodes.aurora.base.BaseTest
+import com.shkcodes.aurora.base.EventBus
 import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.ui.settings.SettingsContract.Intent.ToggleAutoplayVideos
 import com.shkcodes.aurora.ui.settings.SettingsContract.State
@@ -19,10 +20,12 @@ class SettingsViewModelTest : BaseTest() {
         every { autoplayVideos } returns true
     }
 
+    private val eventBus: EventBus = mockk()
+
     @Before
     override fun setUp() {
         super.setUp()
-        viewModel = SettingsViewModel(testDispatcherProvider, preferencesService)
+        viewModel = SettingsViewModel(testDispatcherProvider, preferencesService, eventBus)
     }
 
     @Test
@@ -31,7 +34,7 @@ class SettingsViewModelTest : BaseTest() {
     })
 
     @Test
-    fun `state updated correctly on toggle auto play`() = viewModel.test(listOf(
+    fun `state updates correctly on toggle auto play`() = viewModel.test(listOf(
         ToggleAutoplayVideos,
         ToggleAutoplayVideos
     ), {

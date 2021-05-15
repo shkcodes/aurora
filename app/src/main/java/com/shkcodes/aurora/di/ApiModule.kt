@@ -9,6 +9,8 @@ import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.adapters.LocalDateTimeAdapter
 import com.shkcodes.aurora.api.adapters.ZonedDateTimeAdapter
 import com.shkcodes.aurora.base.ErrorHandler
+import com.shkcodes.aurora.base.EventBus
+import com.shkcodes.aurora.base.EventBusImpl
 import com.shkcodes.aurora.base.StringProvider
 import com.shkcodes.aurora.service.DefaultTimeProvider
 import com.shkcodes.aurora.service.TimeProvider
@@ -29,6 +31,7 @@ import retrofit2.create
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+@Suppress("TooManyFunctions")
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
@@ -107,4 +110,8 @@ object ApiModule {
     @Provides
     @Singleton
     fun provideTimeProvider(timeProvider: DefaultTimeProvider): TimeProvider = timeProvider
+
+    @Provides
+    @Singleton
+    fun provideEventBus(eventBus: EventBusImpl): EventBus = eventBus
 }
