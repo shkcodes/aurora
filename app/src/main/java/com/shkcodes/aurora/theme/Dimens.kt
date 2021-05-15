@@ -7,7 +7,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object Dimens {
-    val zero_dp: Dp @Composable get() = 0.dp
     val two_dp: Dp @Composable get() = 2.dp
     val space_small: Dp @Composable get() = 4.dp
     val space: Dp @Composable get() = 8.dp
@@ -29,4 +28,5 @@ object Dimens {
     val gif_indicator_size: Dp @Composable get() = 28.dp
     val play_icon_size: Dp @Composable get() = 36.dp
     val video_player_max_height: Dp @Composable get() = 200.dp
+    val media_corner_radius: Dp @Composable get() = 2.dp
 }

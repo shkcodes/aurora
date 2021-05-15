@@ -47,7 +47,6 @@ import java.time.Duration
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-private const val MEDIA_CORNER_RADIUS = 8F
 private const val ANIMATED_MEDIA_INDICATOR_OPACITY = 0.6F
 
 @Composable
@@ -91,7 +90,7 @@ fun TweetMedia(
 fun TweetVideo(exoPlayer: SimpleExoPlayer, modifier: Modifier, media: MediaEntity) {
     val playbackTime = playbackTime(exoPlayer)
     Box(
-        modifier = modifier.clip(RoundedCornerShape(MEDIA_CORNER_RADIUS)),
+        modifier = modifier.clip(RoundedCornerShape(Dimens.media_corner_radius)),
         contentAlignment = Alignment.BottomEnd
     ) {
         AndroidView(
@@ -215,7 +214,7 @@ private fun TweetImage(media: MediaEntity, modifier: Modifier = Modifier) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(MEDIA_CORNER_RADIUS))
+                    .clip(RoundedCornerShape(Dimens.media_corner_radius))
             )
             if (media.mediaType == VIDEO) {
                 PlayButton()
