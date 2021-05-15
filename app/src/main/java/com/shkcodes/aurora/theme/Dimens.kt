@@ -28,5 +28,6 @@ object Dimens {
     val gif_indicator_size: Dp @Composable get() = 28.dp
     val play_icon_size: Dp @Composable get() = 36.dp
     val video_player_max_height: Dp @Composable get() = 200.dp
-    val media_corner_radius: Dp @Composable get() = 2.dp
+    val default_corner_radius: Dp @Composable get() = 2.dp
+    val bottom_nav_indicator_height: Dp @Composable get() = 0.2.dp
 }

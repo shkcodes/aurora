@@ -1,6 +1,10 @@
 package com.shkcodes.aurora.ui.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -20,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
+import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.BottomNavScreens
 import com.shkcodes.aurora.ui.BottomNavScreens.FAVORITES
 import com.shkcodes.aurora.ui.BottomNavScreens.MENTIONS
@@ -54,23 +59,31 @@ fun HomeScreen(primaryNavController: NavController) {
 
 @Composable
 fun BottomNavBar(navController: NavController) {
-    BottomNavigation {
-        val currentRoute = currentRoute(navController)
-        BottomNavScreens.values().forEach { screen ->
-            BottomNavigationItem(
-                icon = { Icon(imageVector = screen.icon, contentDescription = null) },
-                label = { Text(screen.name) },
-                selectedContentColor = colors.primary,
-                unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
-                alwaysShowLabel = false,
-                selected = currentRoute == screen.name,
-                onClick = {
-                    navController.navigate(screen.name) {
-                        popUpTo = navController.graph.startDestination
-                        launchSingleTop = true
+    Column {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimens.bottom_nav_indicator_height)
+                .background(colors.primary)
+        )
+        BottomNavigation(backgroundColor = colors.background) {
+            val currentRoute = currentRoute(navController)
+            BottomNavScreens.values().forEach { screen ->
+                BottomNavigationItem(
+                    icon = { Icon(imageVector = screen.icon, contentDescription = null) },
+                    label = { Text(screen.name) },
+                    selectedContentColor = colors.primary,
+                    unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
+                    alwaysShowLabel = false,
+                    selected = currentRoute == screen.name,
+                    onClick = {
+                        navController.navigate(screen.name) {
+                            popUpTo = navController.graph.startDestination
+                            launchSingleTop = true
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

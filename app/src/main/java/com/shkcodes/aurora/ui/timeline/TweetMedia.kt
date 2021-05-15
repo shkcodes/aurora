@@ -90,7 +90,7 @@ fun TweetMedia(
 fun TweetVideo(exoPlayer: SimpleExoPlayer, modifier: Modifier, media: MediaEntity) {
     val playbackTime = playbackTime(exoPlayer)
     Box(
-        modifier = modifier.clip(RoundedCornerShape(Dimens.media_corner_radius)),
+        modifier = modifier.clip(RoundedCornerShape(Dimens.default_corner_radius)),
         contentAlignment = Alignment.BottomEnd
     ) {
         AndroidView(
@@ -214,7 +214,7 @@ private fun TweetImage(media: MediaEntity, modifier: Modifier = Modifier) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(Dimens.media_corner_radius))
+                    .clip(RoundedCornerShape(Dimens.default_corner_radius))
             )
             if (media.mediaType == VIDEO) {
                 PlayButton()
