@@ -16,6 +16,7 @@
     <string name="two_users_replied_placeholder">\@%1$s &amp; \@%2$s</string>
     <string name="multiple_users_replied_placeholder">\@%1$s, \@%2$s &amp; %3$d more</string>
     <string name="users_replied_placeholder">replied to %1$s</string>
+    <string name="autoplay_videos">Autoplay Videos</string>
 
 
     <string name="accessibility_retweet_icon">Retweet Icon</string>

@@ -41,6 +41,12 @@ class PreferenceManager @Inject constructor(
             setData(PrefKey.HOME_TIMELINE_REFRESH_TIME, value)
         }
 
+    var autoplayVideos: Boolean = getData(PrefKey.AUTOPLAY_VIDEOS) ?: true
+        set(value) {
+            field = value
+            setData(PrefKey.AUTOPLAY_VIDEOS, value)
+        }
+
     private inline fun <reified T> getData(key: String): T? = sharedPreferences.getData(key, moshi)
 
     private inline fun <reified T> setData(key: String, data: T?, commit: Boolean = false) {
@@ -52,4 +58,5 @@ internal object PrefKey {
     const val SCHEMA_VERSION = "schema_version"
     const val IS_LOGGED_IN = "is_logged_in"
     const val HOME_TIMELINE_REFRESH_TIME = "home_timeline_refresh_time"
+    const val AUTOPLAY_VIDEOS = "autoplay_videos"
 }

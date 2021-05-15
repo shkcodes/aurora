@@ -28,7 +28,9 @@ import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.BottomNavScreens
 import com.shkcodes.aurora.ui.BottomNavScreens.FAVORITES
 import com.shkcodes.aurora.ui.BottomNavScreens.MENTIONS
+import com.shkcodes.aurora.ui.BottomNavScreens.SETTINGS
 import com.shkcodes.aurora.ui.BottomNavScreens.TWEETS
+import com.shkcodes.aurora.ui.settings.SettingsScreen
 import com.shkcodes.aurora.ui.timeline.TweetsTimeline
 import com.shkcodes.aurora.util.TempScreen
 
@@ -51,6 +53,9 @@ fun HomeScreen(primaryNavController: NavController) {
                 }
                 composable(FAVORITES.name) {
                     TempScreen(content = FAVORITES.name)
+                }
+                composable(SETTINGS.name) {
+                    SettingsScreen()
                 }
             }
         }
