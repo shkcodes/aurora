@@ -17,11 +17,8 @@ import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
-import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Content
-import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Error
 import com.shkcodes.aurora.ui.timeline.TimelineContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -41,6 +38,9 @@ class TimelineViewModel @Inject constructor(
         eventBus.getEvents().onEach(::handleEvent).launchIn(viewModelScope)
     }
 
+    private val autoplayVideos: Boolean
+        get() = preferencesService.autoplayVideos
+
     override fun handleIntent(intent: Intent) {
         when (intent) {
             is Init -> {
@@ -48,22 +48,22 @@ class TimelineViewModel @Inject constructor(
             }
 
             is Retry -> {
-                currentState = Content(isLoading = true)
+                currentState =
+                    currentState.copy(isLoading = true, isTerminalError = false, errorMessage = "")
                 fetchTweets()
             }
 
             is LoadNextPage -> {
-                with(intent.currentState) {
-                    val afterId = items.last().tweetId
-                    if (!isPaginatedLoading) {
-                        currentState = copy(isPaginatedLoading = true)
-                        fetchTweets(items, afterId)
-                    }
+                val afterId = currentState.items.last().tweetId
+                if (!currentState.isPaginatedLoading) {
+                    currentState =
+                        currentState.copy(isPaginatedLoading = true, isPaginatedError = false)
+                    fetchTweets(afterId)
                 }
             }
 
             is Refresh -> {
-                currentState = intent.currentState.copy(isLoading = true)
+                currentState = currentState.copy(isLoading = true)
                 fetchTweets(forceRefresh = true)
             }
 
@@ -81,43 +81,34 @@ class TimelineViewModel @Inject constructor(
     }
 
     private fun fetchTweets(
-        previousItems: TimelineItems = emptyList(),
         afterId: Long? = null,
         forceRefresh: Boolean = false
     ) {
         viewModelScope.launch {
             userService.fetchTimelineTweets(forceRefresh, afterId).evaluate({
-                if (afterId == null) observeCachedTweets()
+                currentState = currentState.copy(
+                    isLoading = false, isPaginatedLoading = false, autoplayVideos = autoplayVideos,
+                    items = it
+                )
             }, {
                 Timber.e(it)
-                val errorState = if (afterId == null) {
-                    Error(errorHandler.getErrorMessage(it))
-                } else {
-                    Content(
-                        false,
-                        previousItems,
-                        isPaginatedLoading = false,
-                        isPaginatedError = true
+                currentState = if (afterId == null) {
+                    currentState.copy(
+                        isLoading = false,
+                        isTerminalError = true,
+                        errorMessage = errorHandler.getErrorMessage(it)
                     )
+                } else {
+                    currentState.copy(isPaginatedError = true, isPaginatedLoading = false)
                 }
-                currentState = errorState
             })
         }
-    }
-
-    private fun observeCachedTweets() {
-        userService.getTimelineTweets().filter { it.isNotEmpty() }.onEach {
-            currentState =
-                Content(false, it, false, autoplayVideos = preferencesService.autoplayVideos)
-        }.launchIn(viewModelScope)
     }
 
     private fun handleEvent(event: Event) {
         when (event) {
             is AutoplayVideosToggled -> {
-                currentState = (currentState as Content).copy(
-                    autoplayVideos = preferencesService.autoplayVideos
-                )
+                currentState = currentState.copy(autoplayVideos = autoplayVideos)
             }
         }
     }

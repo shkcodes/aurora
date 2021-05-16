@@ -12,7 +12,6 @@ import com.shkcodes.aurora.ui.timeline.TimelineItem
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
@@ -34,6 +33,11 @@ class UserServiceTest : BaseTest() {
         every { id } returns 6031994
         every { content } returns "old tweet"
     }
+
+    private val cachedTweets = listOf(freshTweet).toCachedTweets(
+        true
+    ).map { TimelineItem(it) }
+
     private val fakeTime = LocalDateTime.of(2021, 4, 16, 23, 10)
 
     private val userApi = mockk<UserApi> {
@@ -60,11 +64,8 @@ class UserServiceTest : BaseTest() {
         testDispatcher.runBlockingTest {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
             val result = userService.fetchTimelineTweets(false, null)
-            assert(result == Result.Success(Unit))
-            assert(
-                tweetsDao.getCachedTimeline().toList().first() == listOf(freshTweet).toCachedTweets(
-                    true
-                ).map { TimelineItem(it) })
+            assert(result == Result.Success(cachedTweets))
+            assert(tweetsDao.getCachedTimeline() == cachedTweets)
         }
 
     @Test
@@ -72,11 +73,8 @@ class UserServiceTest : BaseTest() {
         testDispatcher.runBlockingTest {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
             val result = userService.fetchTimelineTweets(true, null)
-            assert(result == Result.Success(Unit))
-            assert(
-                tweetsDao.getCachedTimeline().toList().first() == listOf(freshTweet).toCachedTweets(
-                    true
-                ).map { TimelineItem(it) })
+            assert(result == Result.Success(cachedTweets))
+            assert(tweetsDao.getCachedTimeline() == cachedTweets)
         }
 
     @Test
@@ -85,10 +83,11 @@ class UserServiceTest : BaseTest() {
             tweetsDao.saveTweets(listOf(staleTweet))
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(7)
             val result = userService.fetchTimelineTweets(false, null)
-            assert(result == Result.Success(Unit))
+            assert(result == Result.Success(listOf(staleTweet).map {
+                TimelineItem(it)
+            }))
             assert(
-                tweetsDao.getCachedTimeline().toList()
-                    .first() == listOf(staleTweet).map {
+                tweetsDao.getCachedTimeline() == listOf(staleTweet).map {
                     TimelineItem(it)
                 })
         }

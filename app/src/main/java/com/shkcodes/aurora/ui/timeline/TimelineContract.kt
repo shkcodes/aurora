@@ -1,28 +1,25 @@
 package com.shkcodes.aurora.ui.timeline
 
 import com.shkcodes.aurora.base.BaseViewModel
-import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Content
 
 class TimelineContract {
-    abstract class ViewModel : BaseViewModel<State, Intent>(Content(true))
+    abstract class ViewModel : BaseViewModel<State, Intent>(State())
 
-    sealed class State {
-        data class Content(
-            val isLoading: Boolean = false,
-            val items: TimelineItems = emptyList(),
-            val isPaginatedLoading: Boolean = false,
-            val isPaginatedError: Boolean = false,
-            val autoplayVideos: Boolean = false
-        ) : State()
-
-        data class Error(val message: String) : State()
-    }
+    data class State(
+        val isLoading: Boolean = true,
+        val items: TimelineItems = emptyList(),
+        val isPaginatedLoading: Boolean = false,
+        val isPaginatedError: Boolean = false,
+        val autoplayVideos: Boolean = false,
+        val isTerminalError: Boolean = false,
+        val errorMessage: String = ""
+    )
 
     sealed class Intent {
         object Init : Intent()
         object Retry : Intent()
-        data class LoadNextPage(val currentState: Content) : Intent()
-        data class Refresh(val currentState: Content) : Intent()
+        object LoadNextPage : Intent()
+        object Refresh : Intent()
         data class MediaClick(val index: Int, val tweetId: Long) : Intent()
     }
 

@@ -6,6 +6,7 @@ import com.shkcodes.aurora.api.execute
 import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
 import com.shkcodes.aurora.cache.entities.MediaEntity
+import com.shkcodes.aurora.ui.timeline.TimelineItems
 import java.time.Duration
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -29,17 +30,16 @@ class UserService @Inject constructor(
             return difference.toMinutes() >= TIMELINE_REFRESH_THRESHOLD
         }
 
-    suspend fun fetchTimelineTweets(forceRefresh: Boolean, afterId: Long?): Result<Unit> {
+    suspend fun fetchTimelineTweets(forceRefresh: Boolean, afterId: Long?): Result<TimelineItems> {
         return execute {
             if (isTimelineStale || afterId != null || forceRefresh) {
                 val freshTweets = userApi.getTimelineTweets(afterId = afterId)
                 tweetsDao.cacheTimeline(freshTweets)
                 if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()
             }
+            tweetsDao.getCachedTimeline()
         }
     }
-
-    fun getTimelineTweets() = tweetsDao.getCachedTimeline()
 
     suspend fun flushTweetsCache() {
         tweetsDao.removeTweets(ZonedDateTime.now().minusDays(CACHE_FLUSH_THRESHOLD))

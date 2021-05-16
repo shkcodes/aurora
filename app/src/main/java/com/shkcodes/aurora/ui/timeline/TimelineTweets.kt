@@ -63,8 +63,7 @@ import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
-import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Content
-import com.shkcodes.aurora.ui.timeline.TimelineContract.State.Error
+import com.shkcodes.aurora.ui.timeline.TimelineContract.State
 import com.shkcodes.aurora.util.toPrettyTime
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -82,27 +81,25 @@ fun TweetsTimeline(navController: NavController) {
     }
 
     Scaffold {
-        when (val state = viewModel.getState().collectAsState().value) {
-            is Content -> {
-                val listState = rememberLazyListState()
-                val shouldLoadMore =
-                    listState.isAtTheBottom && !state.isPaginatedError && state.items.isNotEmpty()
-
-                if (shouldLoadMore) {
-                    viewModel.handleIntent(LoadNextPage(state))
-                }
-
-                val urlsMetaData = remember { mutableMapOf<String, MetaData>() }
-                Box(contentAlignment = Alignment.BottomCenter) {
-                    TweetsList(state, urlsMetaData, listState, viewModel)
-                    if (state.isPaginatedLoading) {
-                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                    }
-                }
+        val state = viewModel.getState().collectAsState().value
+        if (state.isTerminalError) {
+            TerminalError(message = state.errorMessage) {
+                viewModel.handleIntent(Retry)
             }
-            is Error -> {
-                TerminalError(message = state.message) {
-                    viewModel.handleIntent(Retry)
+        } else {
+            val listState = rememberLazyListState()
+            val shouldLoadMore =
+                listState.isAtTheBottom && !state.isPaginatedError && state.items.isNotEmpty()
+
+            if (shouldLoadMore) {
+                viewModel.handleIntent(LoadNextPage)
+            }
+
+            val urlsMetaData = remember { mutableMapOf<String, MetaData>() }
+            Box(contentAlignment = Alignment.BottomCenter) {
+                TweetsList(state, urlsMetaData, listState, viewModel)
+                if (state.isPaginatedLoading) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
             }
         }
@@ -111,7 +108,7 @@ fun TweetsTimeline(navController: NavController) {
 
 @Composable
 private fun TweetsList(
-    state: Content,
+    state: State,
     urlsMetaData: MutableMap<String, MetaData>,
     listState: LazyListState,
     viewModel: TimelineViewModel
@@ -134,7 +131,7 @@ private fun TweetsList(
 
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = state.isLoading),
-        onRefresh = { viewModel.handleIntent(Refresh(state)) },
+        onRefresh = { viewModel.handleIntent(Refresh) },
         indicator = { swipeRefreshState, trigger ->
             SwipeRefreshIndicator(
                 state = swipeRefreshState,
@@ -148,9 +145,7 @@ private fun TweetsList(
             }
             if (state.isPaginatedError) {
                 item {
-                    PaginatedError {
-                        viewModel.handleIntent(LoadNextPage(state))
-                    }
+                    PaginatedError { viewModel.handleIntent(LoadNextPage) }
                 }
             }
         }

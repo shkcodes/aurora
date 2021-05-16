@@ -18,15 +18,11 @@ import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.timeline.TimelineContract.State
 import com.shkcodes.aurora.ui.timeline.TimelineItem
-import com.shkcodes.aurora.ui.timeline.TimelineItems
 import com.shkcodes.aurora.ui.timeline.TimelineViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
@@ -45,8 +41,12 @@ class TimelineViewModelTest : BaseTest() {
     private val timelineItem = TimelineItem(tweetEntity, emptyList())
 
     private val userService: UserService = mockk(relaxUnitFun = true) {
-        coEvery { fetchTimelineTweets(any(), any()) } returns Result.Success(Unit)
-        coEvery { getTimelineTweets() } returns flowOf(listOf(timelineItem)) andThen flowOf(
+        coEvery {
+            fetchTimelineTweets(
+                any(),
+                any()
+            )
+        } returns Result.Success(listOf(timelineItem)) andThen Result.Success(
             listOf(
                 timelineItem,
                 timelineItem
@@ -80,8 +80,8 @@ class TimelineViewModelTest : BaseTest() {
     @Test
     fun `state updates correctly on init in case of success`() =
         tweetsViewModel.test(intents = listOf(Init), states = {
-            assert(expectItem() == State.Content(true))
-            assert(expectItem() == State.Content(false, listOf(timelineItem), false))
+            assert(expectItem() == State(true))
+            assert(expectItem() == State(false, listOf(timelineItem)))
         })
 
     @Test
@@ -92,10 +92,15 @@ class TimelineViewModelTest : BaseTest() {
                 any()
             )
         } returns Result.Failure(Exception())
-        coEvery { userService.getTimelineTweets() } returns flowOf(emptyList())
         tweetsViewModel.test(intents = listOf(Init), states = {
-            assert(expectItem() == State.Content(true))
-            assert(expectItem() == State.Error("error"))
+            assert(expectItem() == State(true))
+            assert(
+                expectItem() == State(
+                    isLoading = false,
+                    errorMessage = "error",
+                    isTerminalError = true
+                )
+            )
         })
     }
 
@@ -103,26 +108,24 @@ class TimelineViewModelTest : BaseTest() {
     fun `state updates correctly on retry`() {
         coEvery {
             userService.fetchTimelineTweets(any(), any())
-        } returns Result.Failure(Exception())
-        val cache = BroadcastChannel<TimelineItems>(2)
-        coEvery { userService.getTimelineTweets() } returns cache.asFlow()
+        } returns Result.Failure(Exception()) andThen Result.Success(listOf(timelineItem))
         val states = tweetsViewModel.getState()
         testDispatcher.runBlockingTest {
             states.test {
                 tweetsViewModel.handleIntent(Init)
-
-                assert(expectItem() == State.Content(true))
-                assert(expectItem() == State.Error("error"))
-
-                coEvery { userService.fetchTimelineTweets(any(), any()) } returns Result.Success(
-                    Unit
+                assert(expectItem() == State(true))
+                assert(
+                    expectItem() == State(
+                        isLoading = false,
+                        isTerminalError = true,
+                        errorMessage = "error"
+                    )
                 )
 
                 tweetsViewModel.handleIntent(Retry)
-                cache.send(listOf(timelineItem))
 
-                assert(expectItem() == State.Content(true))
-                assert(expectItem() == State.Content(false, listOf(timelineItem), false))
+                assert(expectItem() == State(true))
+                assert(expectItem() == State(false, listOf(timelineItem)))
 
             }
         }
@@ -134,19 +137,19 @@ class TimelineViewModelTest : BaseTest() {
             Exception()
         )
         tweetsViewModel.test(
-            intents = listOf(Init, LoadNextPage(State.Content(false, listOf(timelineItem), false))),
+            intents = listOf(Init, LoadNextPage),
             states = {
-                assert(expectItem() == State.Content(true))
-                assert(expectItem() == State.Content(false, listOf(timelineItem), false))
+                assert(expectItem() == State(true))
+                assert(expectItem() == State(false, listOf(timelineItem)))
                 assert(
-                    expectItem() == State.Content(
+                    expectItem() == State(
                         false,
                         listOf(timelineItem),
                         isPaginatedLoading = true
                     )
                 )
                 assert(
-                    expectItem() == State.Content(
+                    expectItem() == State(
                         false,
                         listOf(timelineItem),
                         isPaginatedLoading = false,
@@ -159,44 +162,19 @@ class TimelineViewModelTest : BaseTest() {
     @Test
     fun `state updates correctly on refresh`() {
         tweetsViewModel.test(
-            intents = listOf(
-                Init,
-                Refresh(State.Content(items = listOf(timelineItem)))
-            ), states = {
-                assert(expectItem() == State.Content(true))
-                assert(expectItem() == State.Content(false, listOf(timelineItem), false))
-                assert(
-                    expectItem() == State.Content(
-                        true,
-                        listOf(timelineItem),
-                        false
-                    )
-                )
-                assert(
-                    expectItem() == State.Content(
-                        false,
-                        listOf(timelineItem, timelineItem),
-                        false
-                    )
-                )
+            intents = listOf(Init, Refresh), states = {
+                assert(expectItem() == State(true))
+                assert(expectItem() == State(false, listOf(timelineItem)))
+                assert(expectItem() == State(true, listOf(timelineItem)))
+                assert(expectItem() == State(false, listOf(timelineItem, timelineItem)))
             })
     }
 
     @Test
     fun `navigates to media viewer on media click`() {
-        tweetsViewModel.test(
-            intents = listOf(
-                MediaClick(3, 3333),
-            ),
+        tweetsViewModel.test(intents = listOf(MediaClick(3, 3333)),
             sideEffects = {
-                assert(
-                    SideEffect.DisplayScreen(
-                        MediaViewer(
-                            3,
-                            3333
-                        )
-                    ) == expectItem()
-                )
+                assert(expectItem() == SideEffect.DisplayScreen(MediaViewer(3, 3333)))
             })
     }
 
