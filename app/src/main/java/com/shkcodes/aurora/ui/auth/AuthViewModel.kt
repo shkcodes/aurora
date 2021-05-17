@@ -8,7 +8,6 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.AuthService
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent
-import com.shkcodes.aurora.ui.auth.AuthContract.Intent.Init
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.RequestAccessToken
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.Retry
 import com.shkcodes.aurora.ui.auth.AuthContract.State.Error
@@ -26,12 +25,12 @@ class AuthViewModel @Inject constructor(
     private val errorHandler: ErrorHandler
 ) : ViewModel() {
 
+    init {
+        fetchRequestToken()
+    }
+
     override fun handleIntent(intent: Intent) {
         when (intent) {
-            is Init -> {
-                fetchRequestToken()
-            }
-
             is RequestAccessToken -> {
                 val token = intent.tokenState.token
                 val verifier = intent.authorizationResponse.split("=").last()

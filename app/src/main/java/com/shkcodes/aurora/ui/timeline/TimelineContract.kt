@@ -16,7 +16,6 @@ class TimelineContract {
     )
 
     sealed class Intent {
-        object Init : Intent()
         object Retry : Intent()
         object LoadNextPage : Intent()
         object Refresh : Intent()

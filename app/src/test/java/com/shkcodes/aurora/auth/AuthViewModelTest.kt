@@ -6,7 +6,6 @@ import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.AuthService
 import com.shkcodes.aurora.ui.Screen
-import com.shkcodes.aurora.ui.auth.AuthContract.Intent.Init
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.RequestAccessToken
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.Retry
 import com.shkcodes.aurora.ui.auth.AuthContract.State
@@ -14,14 +13,12 @@ import com.shkcodes.aurora.ui.auth.AuthViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Before
 import org.junit.Test
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 class AuthViewModelTest : BaseTest() {
 
-    private lateinit var viewModel: AuthViewModel
     private val authService: AuthService = mockk(relaxUnitFun = true) {
         coEvery { getRequestToken() } returns Result.Success("token")
         coEvery { getAccessToken(any(), any()) } returns Result.Success(Unit)
@@ -30,72 +27,93 @@ class AuthViewModelTest : BaseTest() {
         every { getErrorMessage(any()) } returns "error"
     }
 
-
-    @Before
-    override fun setUp() {
-        super.setUp()
-        viewModel = AuthViewModel(testDispatcherProvider, authService, errorHandler)
+    private fun viewModel(): AuthViewModel {
+        return AuthViewModel(testDispatcherProvider, authService, errorHandler)
     }
 
     @Test
-    fun `state updates correctly on init in case of success`() =
-        viewModel.test(intents = listOf(Init), states = {
+    fun `state updates correctly on init in case of success`() = test {
+        val sut = viewModel()
+
+        sut.testStates {
             assert(expectItem() == State.Loading)
             assert(expectItem() == State.RequestToken("token"))
-        })
+        }
+    }
 
     @Test
-    fun `state updates correctly on init in case of error`() {
+    fun `state updates correctly on init in case of error`() = test {
         coEvery { authService.getRequestToken() } returns Result.Failure(Exception())
-        viewModel.test(intents = listOf(Init), states = {
+        val sut = viewModel()
+
+        sut.testStates {
             assert(expectItem() == State.Loading)
             assert(expectItem() == State.Error("error"))
-        })
+        }
     }
 
 
     @Test
-    fun `state updates correctly on request access token in case of success`() =
-        viewModel.test(intents = listOf(
-            Init,
-            RequestAccessToken(
-                State.RequestToken("token"),
-                "verifier=verifierer"
-            )
-        ), states = {
+    fun `state updates correctly on request access token in case of success`() = test {
+        val sut = viewModel()
+
+        sut.testStates {
             assert(expectItem() == State.Loading)
             assert(expectItem() == State.RequestToken("token"))
+
+            sut.handleIntent(
+                RequestAccessToken(
+                    State.RequestToken("token"),
+                    "verifier=verifierer"
+                )
+            )
+
             assert(expectItem() == State.Loading)
-        }, sideEffects = {
+        }
+
+        sut.testSideEffects {
             assert(SideEffect.DisplayScreen(Screen.HOME) == expectItem())
-        })
-
-    @Test
-    fun `state updates correctly on request access token in case of failure`() {
-        coEvery { authService.getAccessToken(any(), any()) } returns Result.Failure(Exception())
-        viewModel.test(intents = listOf(
-            Init,
-            RequestAccessToken(
-                State.RequestToken("token"),
-                "verifier=verifierer"
-            )
-        ), states = {
-            assert(expectItem() == State.Loading)
-            assert(expectItem() == State.RequestToken("token"))
-            assert(expectItem() == State.Loading)
-            assert(expectItem() == State.Error("error"))
-        })
+        }
     }
 
     @Test
-    fun `state updates correctly on retry event`() {
+    fun `state updates correctly on request access token in case of failure`() = test {
+        coEvery { authService.getAccessToken(any(), any()) } returns Result.Failure(Exception())
+
+        val sut = viewModel()
+
+
+        sut.testStates {
+            assert(expectItem() == State.Loading)
+            assert(expectItem() == State.RequestToken("token"))
+
+            sut.handleIntent(
+                RequestAccessToken(
+                    State.RequestToken("token"),
+                    "verifier=verifierer"
+                )
+            )
+
+            assert(expectItem() == State.Loading)
+            assert(expectItem() == State.Error("error"))
+        }
+    }
+
+    @Test
+    fun `state updates correctly on retry event`() = test {
         coEvery { authService.getRequestToken() } returns Result.Failure(Exception())
-        viewModel.test(intents = listOf(Init, Retry), states = {
+
+        val sut = viewModel()
+
+        sut.testStates {
             assert(expectItem() == State.Loading)
             assert(expectItem() == State.Error("error"))
+
+            sut.handleIntent(Retry)
+
             assert(expectItem() == State.Loading)
             assert(expectItem() == State.Error("error"))
-        })
+        }
     }
 
 

@@ -18,7 +18,6 @@ interface AuthContract {
     }
 
     sealed class Intent {
-        object Init : Intent()
         object Retry : Intent()
         data class RequestAccessToken(
             val tokenState: RequestToken,

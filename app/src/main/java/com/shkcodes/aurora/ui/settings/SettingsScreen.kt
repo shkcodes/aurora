@@ -8,7 +8,6 @@ import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,7 +20,7 @@ import com.shkcodes.aurora.ui.settings.SettingsContract.Intent.ToggleAutoplayVid
 fun SettingsScreen() {
     val viewModel = hiltNavGraphViewModel<SettingsViewModel>()
 
-    val state = viewModel.getState().collectAsState().value
+    val state = viewModel.composableState()
 
     Column {
         Row(modifier = Modifier

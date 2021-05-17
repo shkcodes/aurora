@@ -13,7 +13,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -59,7 +58,7 @@ fun MediaViewer(index: Int, tweetId: Long) {
         }
     }
     Scaffold {
-        when (val state = viewModel.getState().collectAsState().value) {
+        when (val state = viewModel.composableState()) {
             is Content -> {
                 with(state) {
                     if (media.first().isAnimatedMedia) {

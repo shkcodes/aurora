@@ -23,7 +23,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -57,7 +56,6 @@ import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.common.TerminalError
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Init
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
@@ -74,14 +72,13 @@ fun TweetsTimeline(navController: NavController) {
     val viewModel = hiltNavGraphViewModel<TimelineViewModel>()
 
     LaunchedEffect(Unit) {
-        viewModel.handleIntent(Init)
         launch {
             viewModel.getSideEffects().collect { handleActions(it, navController) }
         }
     }
+    val state = viewModel.composableState()
 
     Scaffold {
-        val state = viewModel.getState().collectAsState().value
         if (state.isTerminalError) {
             TerminalError(message = state.errorMessage) {
                 viewModel.handleIntent(Retry)

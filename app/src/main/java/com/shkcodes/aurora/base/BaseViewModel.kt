@@ -1,28 +1,33 @@
 package com.shkcodes.aurora.base
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<S, I>(initialState: S) : ViewModel() {
+abstract class BaseViewModel<S, I>(private val initialState: S) : ViewModel() {
 
     protected abstract val dispatcherProvider: DispatcherProvider
 
-    private val viewStateFlow = MutableStateFlow(initialState)
+    private val viewStateFlow = MutableSharedFlow<S>(1).apply {
+        tryEmit(initialState)
+    }
 
     private val sideEffectsFlow = MutableSharedFlow<SideEffect>()
 
     var currentState = initialState
         set(value) {
             field = value
-            viewStateFlow.value = field
+            viewStateFlow.tryEmit(field)
         }
 
-    fun getState(): StateFlow<S> = viewStateFlow
+    @Composable
+    fun composableState() = getState().collectAsState(initial = currentState).value
+
+    fun getState(): SharedFlow<S> = viewStateFlow
 
     fun getSideEffects(): SharedFlow<SideEffect> = sideEffectsFlow
 

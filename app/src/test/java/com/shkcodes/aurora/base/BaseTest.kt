@@ -26,8 +26,9 @@ open class BaseTest {
     }
 
     @Before
-    open fun setUp() {
+    fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        testDispatcher.pauseDispatcher()
     }
 
     @After
@@ -37,23 +38,25 @@ open class BaseTest {
         testScope.cleanupTestCoroutines()
     }
 
+    fun test(block: suspend () -> Unit) = testDispatcher.runBlockingTest {
+        block()
+    }
+
     @ExperimentalTime
-    fun <S, I> BaseViewModel<S, I>.test(
-        intents: List<I> = emptyList(),
-        states: suspend FlowTurbine<S>.() -> Unit = { cancelAndIgnoreRemainingEvents() },
-        sideEffects: suspend FlowTurbine<SideEffect>.() -> Unit = { cancelAndIgnoreRemainingEvents() }
+    suspend fun <S, I> BaseViewModel<S, I>.testStates(
+        states: suspend FlowTurbine<S>.() -> Unit
     ) {
-        testDispatcher.runBlockingTest {
-            getState().test {
-                intents.forEach(::handleIntent)
-                states(this)
-            }
+        getState().test {
+            states()
         }
-        testDispatcher.runBlockingTest {
-            getSideEffects().test {
-                intents.forEach(::handleIntent)
-                sideEffects(this)
-            }
+    }
+
+    @ExperimentalTime
+    suspend fun <S, I> BaseViewModel<S, I>.testSideEffects(
+        sideEffects: suspend FlowTurbine<SideEffect>.() -> Unit
+    ) {
+        getSideEffects().test {
+            sideEffects()
         }
     }
 

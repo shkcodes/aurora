@@ -13,15 +13,12 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Before
 import org.junit.Test
 import java.time.LocalDateTime
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 class UserServiceTest : BaseTest() {
-
-    lateinit var userService: UserService
 
     private val freshTweet = mockk<Tweet>(relaxed = true) {
         every { id } returns 23121993
@@ -44,7 +41,7 @@ class UserServiceTest : BaseTest() {
         coEvery { getTimelineTweets() } returns listOf(freshTweet)
     }
 
-    lateinit var tweetsDao: FakeTweetsDao
+    private val tweetsDao = FakeTweetsDao()
 
     private val fakeTimeProvider = mockk<TimeProvider> {
         every { now() } returns fakeTime
@@ -52,18 +49,13 @@ class UserServiceTest : BaseTest() {
 
     private val preferenceManager = mockk<PreferenceManager>()
 
-    @Before
-    override fun setUp() {
-        super.setUp()
-        tweetsDao = FakeTweetsDao()
-        userService = UserService(userApi, tweetsDao, preferenceManager, fakeTimeProvider)
-    }
+    private fun sut() = UserService(userApi, tweetsDao, preferenceManager, fakeTimeProvider)
 
     @Test
     fun `get timeline tweets returns fresh tweets if cached data is stale`() =
         testDispatcher.runBlockingTest {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
-            val result = userService.fetchTimelineTweets(false, null)
+            val result = sut().fetchTimelineTweets(false, null)
             assert(result == Result.Success(cachedTweets))
             assert(tweetsDao.getCachedTimeline() == cachedTweets)
         }
@@ -72,7 +64,7 @@ class UserServiceTest : BaseTest() {
     fun `get timeline tweets returns fresh tweets if forced to refresh`() =
         testDispatcher.runBlockingTest {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
-            val result = userService.fetchTimelineTweets(true, null)
+            val result = sut().fetchTimelineTweets(true, null)
             assert(result == Result.Success(cachedTweets))
             assert(tweetsDao.getCachedTimeline() == cachedTweets)
         }
@@ -82,7 +74,7 @@ class UserServiceTest : BaseTest() {
         testDispatcher.runBlockingTest {
             tweetsDao.saveTweets(listOf(staleTweet))
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(7)
-            val result = userService.fetchTimelineTweets(false, null)
+            val result = sut().fetchTimelineTweets(false, null)
             assert(result == Result.Success(listOf(staleTweet).map {
                 TimelineItem(it)
             }))

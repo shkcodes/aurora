@@ -11,7 +11,6 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Init
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
@@ -35,6 +34,7 @@ class TimelineViewModel @Inject constructor(
 ) : ViewModel() {
 
     init {
+        fetchTweets()
         eventBus.getEvents().onEach(::handleEvent).launchIn(viewModelScope)
     }
 
@@ -43,10 +43,6 @@ class TimelineViewModel @Inject constructor(
 
     override fun handleIntent(intent: Intent) {
         when (intent) {
-            is Init -> {
-                fetchTweets()
-            }
-
             is Retry -> {
                 currentState =
                     currentState.copy(isLoading = true, isTerminalError = false, errorMessage = "")
