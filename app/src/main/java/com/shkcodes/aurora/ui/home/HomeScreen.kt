@@ -13,7 +13,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -76,10 +75,8 @@ fun BottomNavBar(navController: NavController) {
             BottomNavScreens.values().forEach { screen ->
                 BottomNavigationItem(
                     icon = { Icon(imageVector = screen.icon, contentDescription = null) },
-                    label = { Text(screen.name) },
                     selectedContentColor = colors.primary,
                     unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
-                    alwaysShowLabel = false,
                     selected = currentRoute == screen.name,
                     onClick = {
                         navController.navigate(screen.name) {
