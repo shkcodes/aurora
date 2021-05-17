@@ -62,6 +62,7 @@ import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.timeline.TimelineContract.State
+import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.RetainScrollState
 import com.shkcodes.aurora.util.toPrettyTime
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -70,13 +71,23 @@ import kotlin.math.abs
 @Composable
 fun TweetsTimeline(navController: NavController) {
     val viewModel = hiltNavGraphViewModel<TimelineViewModel>()
+    val state = viewModel.composableState()
+    val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
         launch {
-            viewModel.getSideEffects().collect { handleActions(it, navController) }
+            viewModel.getSideEffects().collect {
+                when (it) {
+                    is SideEffect.Action<*> -> {
+                        when (val action = it.action) {
+                            is RetainScrollState -> listState.scrollToItem(action.newItemsCount)
+                        }
+                    }
+                    is SideEffect.DisplayScreen<*> -> handleNavigation(it, navController)
+                }
+            }
         }
     }
-    val state = viewModel.composableState()
 
     Scaffold {
         if (state.isTerminalError) {
@@ -84,7 +95,6 @@ fun TweetsTimeline(navController: NavController) {
                 viewModel.handleIntent(Retry)
             }
         } else {
-            val listState = rememberLazyListState()
             val shouldLoadMore =
                 listState.isAtTheBottom && !state.isPaginatedError && state.items.isNotEmpty()
 
@@ -319,15 +329,14 @@ private fun getCurrentlyPlayingItem(listState: LazyListState, items: TimelineIte
     }
 }
 
-private fun handleActions(sideEffect: SideEffect, navController: NavController) {
-    when (sideEffect) {
-        is SideEffect.DisplayScreen<*> -> {
-            when (val screen = sideEffect.screen) {
-                is MediaViewer -> {
-                    val route = Screen.MEDIA_VIEWER.createRoute(screen.tweetId, screen.index)
-                    navController.navigate(route)
-                }
-            }
+private fun handleNavigation(
+    sideEffect: SideEffect.DisplayScreen<*>,
+    navController: NavController
+) {
+    when (val screen = sideEffect.screen) {
+        is MediaViewer -> {
+            val route = Screen.MEDIA_VIEWER.createRoute(screen.tweetId, screen.index)
+            navController.navigate(route)
         }
     }
 }

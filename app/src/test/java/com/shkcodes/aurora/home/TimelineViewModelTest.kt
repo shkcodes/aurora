@@ -22,30 +22,34 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.Test
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 class TimelineViewModelTest : BaseTest() {
 
+    private val time = LocalDateTime.of(1993, 12, 23, 1, 0, 0)
+    private val tweetTime = ZonedDateTime.of(time, ZoneId.systemDefault())
+
     private val tweetEntity = mockk<TweetEntity>(relaxed = true) {
         every { id } returns 23121993
         every { content } returns "Shouldn't have tweeted this"
+        every { createdAt } returns tweetTime
     }
 
     private val timelineItem = TimelineItem(tweetEntity, emptyList())
 
+    private val freshTweet =
+        tweetEntity.copy(createdAt = tweetTime.withHour(2))
+    private val freshTimelineItem = TimelineItem(freshTweet, emptyList())
+
     private val userService: UserService = mockk(relaxUnitFun = true) {
+        coEvery { fetchTimelineTweets(null, null) } returns Result.Success(listOf(timelineItem))
         coEvery {
-            fetchTimelineTweets(
-                any(),
-                any()
-            )
-        } returns Result.Success(listOf(timelineItem)) andThen Result.Success(
-            listOf(
-                timelineItem,
-                timelineItem
-            )
-        )
+            fetchTimelineTweets(tweetEntity, null)
+        } returns Result.Success(listOf(freshTimelineItem))
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -124,7 +128,7 @@ class TimelineViewModelTest : BaseTest() {
 
     @Test
     fun `state updates correctly on init in case of paginated failure`() = test {
-        coEvery { userService.fetchTimelineTweets(false, 23121993) } returns Result.Failure(
+        coEvery { userService.fetchTimelineTweets(null, 23121993) } returns Result.Failure(
             Exception()
         )
         val sut = viewModel()
@@ -165,7 +169,13 @@ class TimelineViewModelTest : BaseTest() {
             sut.handleIntent(Refresh)
 
             assert(expectItem() == State(true, listOf(timelineItem)))
-            assert(expectItem() == State(false, listOf(timelineItem, timelineItem)))
+            assert(
+                expectItem() == State(
+                    false,
+                    listOf(freshTimelineItem, timelineItem),
+                    newItems = listOf(freshTimelineItem)
+                )
+            )
         }
     }
 

@@ -18,8 +18,12 @@ import java.time.ZonedDateTime
 abstract class TweetsDao {
 
     @Transaction
-    @Query("SELECT * FROM tweets where isTimelineTweet = :isTimelineTweet ORDER BY createdAt DESC")
-    abstract suspend fun getCachedTimeline(isTimelineTweet: Boolean = true): TimelineItems
+    @Query("SELECT * FROM tweets" +
+            " where (isTimelineTweet = :isTimelineTweet) AND (createdAt > :createdAt) ORDER BY createdAt DESC")
+    abstract suspend fun getCachedTimeline(
+        createdAt: ZonedDateTime,
+        isTimelineTweet: Boolean = true
+    ): TimelineItems
 
     @Query("SELECT * FROM tweets where id = :tweetId")
     abstract suspend fun getTweet(tweetId: Long): TweetEntity

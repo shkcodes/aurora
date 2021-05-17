@@ -12,7 +12,8 @@ class TimelineContract {
         val isPaginatedError: Boolean = false,
         val autoplayVideos: Boolean = false,
         val isTerminalError: Boolean = false,
-        val errorMessage: String = ""
+        val errorMessage: String = "",
+        val newItems: TimelineItems = emptyList()
     )
 
     sealed class Intent {
@@ -20,6 +21,10 @@ class TimelineContract {
         object LoadNextPage : Intent()
         object Refresh : Intent()
         data class MediaClick(val index: Int, val tweetId: Long) : Intent()
+    }
+
+    sealed class TimelineSideEffect {
+        data class RetainScrollState(val newItemsCount: Int) : TimelineSideEffect()
     }
 
     sealed class Screen {

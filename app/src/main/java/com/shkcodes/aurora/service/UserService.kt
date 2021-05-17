@@ -6,8 +6,11 @@ import com.shkcodes.aurora.api.execute
 import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
 import com.shkcodes.aurora.cache.entities.MediaEntity
+import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.ui.timeline.TimelineItems
 import java.time.Duration
+import java.time.Instant
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,6 +25,7 @@ class UserService @Inject constructor(
     private val preferenceManager: PreferenceManager,
     private val timeProvider: TimeProvider
 ) {
+    private val minTime = Instant.EPOCH.atZone(ZoneOffset.UTC)
 
     private val isTimelineStale: Boolean
         get() {
@@ -30,14 +34,17 @@ class UserService @Inject constructor(
             return difference.toMinutes() >= TIMELINE_REFRESH_THRESHOLD
         }
 
-    suspend fun fetchTimelineTweets(forceRefresh: Boolean, afterId: Long?): Result<TimelineItems> {
+    suspend fun fetchTimelineTweets(
+        newerThan: TweetEntity?,
+        afterId: Long?
+    ): Result<TimelineItems> {
         return execute {
-            if (isTimelineStale || afterId != null || forceRefresh) {
+            if (isTimelineStale || afterId != null || newerThan != null) {
                 val freshTweets = userApi.getTimelineTweets(afterId = afterId)
                 tweetsDao.cacheTimeline(freshTweets)
                 if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()
             }
-            tweetsDao.getCachedTimeline()
+            tweetsDao.getCachedTimeline(newerThan?.createdAt ?: minTime)
         }
     }
 

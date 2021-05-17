@@ -20,8 +20,8 @@ class FakeTweetsDao : TweetsDao() {
         savedTweets.addAll(tweets)
     }
 
-    override suspend fun getCachedTimeline(isTimelineTweet: Boolean) =
-        savedTweets.map { TimelineItem(it) }
+    override suspend fun getCachedTimeline(createdAt: ZonedDateTime, isTimelineTweet: Boolean) =
+        savedTweets.map { TimelineItem(it) }.filter { it.primaryTweet.createdAt > createdAt }
 
     override suspend fun removeTweets(date: ZonedDateTime) {}
 

@@ -7,7 +7,7 @@ import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
 
 data class TimelineItem(
-    @Embedded private val primaryTweet: TweetEntity,
+    @Embedded val primaryTweet: TweetEntity,
     @Relation(
         parentColumn = "id",
         entityColumn = "tweetId"

@@ -8,6 +8,7 @@ import com.shkcodes.aurora.base.Event
 import com.shkcodes.aurora.base.Event.AutoplayVideosToggled
 import com.shkcodes.aurora.base.EventBus
 import com.shkcodes.aurora.base.SideEffect
+import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent
@@ -16,6 +17,7 @@ import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
+import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.RetainScrollState
 import com.shkcodes.aurora.ui.timeline.TimelineContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -60,7 +62,8 @@ class TimelineViewModel @Inject constructor(
 
             is Refresh -> {
                 currentState = currentState.copy(isLoading = true)
-                fetchTweets(forceRefresh = true)
+                val latestTweet = currentState.items.first().primaryTweet
+                fetchTweets(newerThan = latestTweet)
             }
 
             is MediaClick -> {
@@ -78,13 +81,18 @@ class TimelineViewModel @Inject constructor(
 
     private fun fetchTweets(
         afterId: Long? = null,
-        forceRefresh: Boolean = false
+        newerThan: TweetEntity? = null
     ) {
         viewModelScope.launch {
-            userService.fetchTimelineTweets(forceRefresh, afterId).evaluate({
+            userService.fetchTimelineTweets(newerThan, afterId).evaluate({
+                val newItems = if (newerThan != null) it else emptyList()
+                if (newItems.isNotEmpty()) {
+                    onSideEffect(SideEffect.Action(RetainScrollState(newItems.size)))
+                }
                 currentState = currentState.copy(
                     isLoading = false, isPaginatedLoading = false, autoplayVideos = autoplayVideos,
-                    items = it
+                    items = it + currentState.items,
+                    newItems = newItems
                 )
             }, {
                 Timber.e(it)
