@@ -74,7 +74,7 @@ fun BottomNavBar(navController: NavController) {
             val currentRoute = currentRoute(navController)
             BottomNavScreens.values().forEach { screen ->
                 BottomNavigationItem(
-                    icon = { Icon(imageVector = screen.icon, contentDescription = null) },
+                    icon = { Icon(imageVector = screen.icon, contentDescription = screen.name) },
                     selectedContentColor = colors.primary,
                     unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
                     selected = currentRoute == screen.name,
