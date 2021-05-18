@@ -4,6 +4,9 @@
     <string name="proceed">PROCEED</string>
     <string name="retry">RETRY</string>
 
+    <string name="accessibility_retweet_icon">Retweet Icon</string>
+    <string name="accessibility_user_profile_image">User Profile Image</string>
+
     <!--errors-->
     <string name="error_no_internet">No internet connection</string>
     <string name="error_unknown">An unknown error has occurred</string>
@@ -17,8 +20,8 @@
     <string name="multiple_users_replied_placeholder">\@%1$s, \@%2$s &amp; %3$d more</string>
     <string name="users_replied_placeholder">replied to %1$s</string>
     <string name="autoplay_videos">Autoplay Videos</string>
-
-
-    <string name="accessibility_retweet_icon">Retweet Icon</string>
-    <string name="accessibility_user_profile_image">User Profile Image</string>
+    <plurals name="new_tweets_placeholder">
+        <item quantity="one">%1$d new tweet</item>
+        <item quantity="other">%1$d new tweets</item>
+    </plurals>
 </resources>

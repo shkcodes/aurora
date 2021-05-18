@@ -2,6 +2,8 @@ package com.shkcodes.aurora.ui.timeline
 
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
@@ -26,8 +29,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalUriHandler
@@ -57,14 +62,19 @@ import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.common.TerminalError
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.ScrollIndexChange
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.timeline.TimelineContract.State
 import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.RetainScrollState
+import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.ScrollToTop
+import com.shkcodes.aurora.util.pluralResource
 import com.shkcodes.aurora.util.toPrettyTime
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -74,19 +84,32 @@ fun TweetsTimeline(navController: NavController) {
     val state = viewModel.composableState()
     val listState = rememberLazyListState()
 
+    val newItemsCount = state.newItems.size
+
     LaunchedEffect(Unit) {
         launch {
             viewModel.getSideEffects().collect {
                 when (it) {
                     is SideEffect.Action<*> -> {
                         when (val action = it.action) {
-                            is RetainScrollState -> listState.scrollToItem(action.newItemsCount)
+                            is RetainScrollState -> {
+                                listState.scrollToItem(action.newItemsCount)
+                            }
+                            is ScrollToTop -> {
+                                listState.animateScrollToItem(0)
+                            }
                         }
                     }
                     is SideEffect.DisplayScreen<*> -> handleNavigation(it, navController)
                 }
             }
         }
+    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .distinctUntilChanged()
+            .collect { viewModel.handleIntent(ScrollIndexChange(it)) }
     }
 
     Scaffold {
@@ -107,6 +130,9 @@ fun TweetsTimeline(navController: NavController) {
                 TweetsList(state, urlsMetaData, listState, viewModel)
                 if (state.isPaginatedLoading) {
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
+                if (newItemsCount != 0) {
+                    NewTweetsIndicator(newItemsCount, viewModel)
                 }
             }
         }
@@ -326,6 +352,29 @@ private fun getCurrentlyPlayingItem(listState: LazyListState, items: TimelineIte
         val itemsFromCenter =
             layoutInfo.visibleItemsInfo.sortedBy { abs((it.offset + it.size / 2) - midPoint) }
         itemsFromCenter.map { items[it.index] }.firstOrNull { it.hasAnimatedMedia }
+    }
+}
+
+@Composable
+private fun NewTweetsIndicator(newItemsCount: Int, viewModel: TimelineViewModel) {
+    Box(
+        modifier = Modifier
+            .padding(Dimens.space)
+            .clip(RoundedCornerShape(Dimens.space))
+            .background(colors.secondary)
+            .clickable { viewModel.handleIntent(MarkItemsAsSeen) }
+    ) {
+        Text(
+            text = pluralResource(
+                id = R.plurals.new_tweets_placeholder,
+                newItemsCount, newItemsCount
+            ),
+            color = colors.surface,
+            textAlign = TextAlign.Center,
+            style = typography.caption,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(Dimens.space)
+        )
     }
 }
 

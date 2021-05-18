@@ -10,9 +10,11 @@ import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.ScrollIndexChange
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.timeline.TimelineContract.State
 import com.shkcodes.aurora.ui.timeline.TimelineItem
@@ -186,6 +188,36 @@ class TimelineViewModelTest : BaseTest() {
 
         sut.testSideEffects {
             assert(expectItem() == SideEffect.DisplayScreen(MediaViewer(3, 3333)))
+        }
+    }
+
+    @Test
+    fun `state updates correctly on mark items as seen`() = test {
+        val sut = viewModel()
+        sut.testStates {
+            expectItem()
+            expectItem()
+            sut.handleIntent(Refresh)
+            expectItem()
+            assert(expectItem().newItems.size == 1)
+
+            sut.handleIntent(MarkItemsAsSeen)
+            assert(expectItem().newItems.isEmpty())
+        }
+    }
+
+    @Test
+    fun `state updates correctly on scroll index change`() = test {
+        val sut = viewModel()
+        sut.testStates {
+            expectItem()
+            expectItem()
+            sut.handleIntent(Refresh)
+            expectItem()
+            assert(expectItem().newItems.size == 1)
+
+            sut.handleIntent(ScrollIndexChange(0))
+            assert(expectItem().newItems.isEmpty())
         }
     }
 }

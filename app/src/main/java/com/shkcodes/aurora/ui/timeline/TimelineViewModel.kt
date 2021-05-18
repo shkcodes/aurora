@@ -13,11 +13,14 @@ import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.ScrollIndexChange
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.RetainScrollState
+import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.ScrollToTop
 import com.shkcodes.aurora.ui.timeline.TimelineContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -75,6 +78,17 @@ class TimelineViewModel @Inject constructor(
                         )
                     )
                 )
+            }
+
+            is MarkItemsAsSeen -> {
+                currentState = currentState.copy(newItems = emptyList())
+                onSideEffect(SideEffect.Action(ScrollToTop))
+            }
+
+            is ScrollIndexChange -> {
+                if (currentState.newItems.isNotEmpty() && intent.index < currentState.newItems.size) {
+                    currentState = currentState.copy(newItems = currentState.newItems.dropLast(1))
+                }
             }
         }
     }

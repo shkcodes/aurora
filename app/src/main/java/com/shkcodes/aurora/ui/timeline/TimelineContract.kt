@@ -20,10 +20,13 @@ class TimelineContract {
         object Retry : Intent()
         object LoadNextPage : Intent()
         object Refresh : Intent()
+        object MarkItemsAsSeen : Intent()
         data class MediaClick(val index: Int, val tweetId: Long) : Intent()
+        data class ScrollIndexChange(val index: Int) : Intent()
     }
 
     sealed class TimelineSideEffect {
+        object ScrollToTop : TimelineSideEffect()
         data class RetainScrollState(val newItemsCount: Int) : TimelineSideEffect()
     }
 
