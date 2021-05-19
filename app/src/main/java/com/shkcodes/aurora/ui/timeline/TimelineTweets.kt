@@ -1,6 +1,11 @@
 package com.shkcodes.aurora.ui.timeline
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -77,6 +82,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TweetsTimeline(navController: NavController) {
     val viewModel = hiltNavGraphViewModel<TimelineViewModel>()
@@ -127,7 +133,11 @@ fun TweetsTimeline(navController: NavController) {
             val urlsMetaData = remember { mutableMapOf<String, MetaData>() }
             Box(contentAlignment = Alignment.TopCenter) {
                 TweetsList(state, urlsMetaData, listState, viewModel)
-                if (newItemsCount != 0) {
+                AnimatedVisibility(
+                    visible = newItemsCount != 0,
+                    enter = slideInVertically(animationSpec = tween()),
+                    exit = slideOutVertically(animationSpec = tween())
+                ) {
                     NewTweetsIndicator(newItemsCount, viewModel)
                 }
             }
@@ -361,10 +371,14 @@ private fun NewTweetsIndicator(newItemsCount: Int, viewModel: TimelineViewModel)
             .clickable { viewModel.handleIntent(MarkItemsAsSeen) }
     ) {
         Text(
-            text = pluralResource(
-                id = R.plurals.new_tweets_placeholder,
-                newItemsCount, newItemsCount
-            ),
+            text = if (newItemsCount == 0) {
+                stringResource(R.string.new_tweets_caught_up)
+            } else {
+                pluralResource(
+                    id = R.plurals.new_tweets_placeholder,
+                    newItemsCount, newItemsCount
+                )
+            },
             color = colors.surface,
             textAlign = TextAlign.Center,
             style = typography.caption,
