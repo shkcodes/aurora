@@ -134,7 +134,7 @@ fun TweetsTimeline(navController: NavController) {
             Box(contentAlignment = Alignment.TopCenter) {
                 TweetsList(state, urlsMetaData, listState, viewModel)
                 AnimatedVisibility(
-                    visible = newItemsCount != 0,
+                    visible = newItemsCount != 0 && !listState.isScrollInProgress,
                     enter = slideInVertically(animationSpec = tween()),
                     exit = slideOutVertically(animationSpec = tween())
                 ) {
