@@ -4,6 +4,7 @@ import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.Event
+import com.shkcodes.aurora.base.Event.AutoplayVideosToggled
 import com.shkcodes.aurora.base.EventBus
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
@@ -52,6 +53,9 @@ class TimelineViewModelTest : BaseTest() {
         coEvery {
             fetchTimelineTweets(tweetEntity, null)
         } returns Result.Success(listOf(freshTimelineItem))
+        coEvery {
+            fetchTimelineTweets(null, 23121993)
+        } returns Result.Success(listOf(timelineItem, freshTimelineItem))
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -129,7 +133,7 @@ class TimelineViewModelTest : BaseTest() {
     }
 
     @Test
-    fun `state updates correctly on init in case of paginated failure`() = test {
+    fun `state updates correctly in case of paginated failure`() = test {
         coEvery { userService.fetchTimelineTweets(null, 23121993) } returns Result.Failure(
             Exception()
         )
@@ -155,6 +159,34 @@ class TimelineViewModelTest : BaseTest() {
                     listOf(timelineItem),
                     isPaginatedLoading = false,
                     isPaginatedError = true
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `state updates correctly in case of paginated success`() = test {
+        val sut = viewModel()
+
+        sut.testStates {
+
+            assert(expectItem() == State(true))
+            assert(expectItem() == State(false, listOf(timelineItem)))
+
+            sut.handleIntent(LoadNextPage)
+
+            assert(
+                expectItem() == State(
+                    false,
+                    listOf(timelineItem),
+                    isPaginatedLoading = true
+                )
+            )
+            assert(
+                expectItem() == State(
+                    false,
+                    listOf(timelineItem, freshTimelineItem),
+                    isPaginatedLoading = false,
                 )
             )
         }
@@ -218,6 +250,20 @@ class TimelineViewModelTest : BaseTest() {
 
             sut.handleIntent(ScrollIndexChange(0))
             assert(expectItem().newItems.isEmpty())
+        }
+    }
+
+    @Test
+    fun `state updates correctly on autoplay video toggle`() = test {
+        every { preferencesService.autoplayVideos } returns false andThen true andThen false
+        val sut = viewModel()
+        sut.testStates {
+            expectItem()
+            expectItem()
+            events.emit(AutoplayVideosToggled)
+            assert(expectItem().autoplayVideos)
+            events.emit(AutoplayVideosToggled)
+            assert(!expectItem().autoplayVideos)
         }
     }
 }

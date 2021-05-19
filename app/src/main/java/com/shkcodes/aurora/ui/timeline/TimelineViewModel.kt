@@ -108,7 +108,7 @@ class TimelineViewModel @Inject constructor(
                 eventBus.sendEvent(TogglePaginatedLoading(false))
                 currentState = currentState.copy(
                     isLoading = false, isPaginatedLoading = false, autoplayVideos = autoplayVideos,
-                    items = it + currentState.items,
+                    items = if (newerThan != null) it + currentState.items else it,
                     newItems = newItems
                 )
             }, {
