@@ -38,4 +38,8 @@ abstract class BaseViewModel<S, I>(private val initialState: S) : ViewModel() {
             sideEffectsFlow.emit(sideEffect)
         }
     }
+
+    fun EventBus.emitEvent(event: Event) {
+        viewModelScope.launch { sendEvent(event) }
+    }
 }

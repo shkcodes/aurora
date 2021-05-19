@@ -1,5 +1,10 @@
 package com.shkcodes.aurora.ui.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,12 +15,15 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
@@ -29,6 +37,7 @@ import com.shkcodes.aurora.ui.BottomNavScreens.FAVORITES
 import com.shkcodes.aurora.ui.BottomNavScreens.MENTIONS
 import com.shkcodes.aurora.ui.BottomNavScreens.SETTINGS
 import com.shkcodes.aurora.ui.BottomNavScreens.TWEETS
+import com.shkcodes.aurora.ui.home.HomeContract.State
 import com.shkcodes.aurora.ui.settings.SettingsScreen
 import com.shkcodes.aurora.ui.timeline.TweetsTimeline
 import com.shkcodes.aurora.util.TempScreen
@@ -36,8 +45,11 @@ import com.shkcodes.aurora.util.TempScreen
 @Composable
 fun HomeScreen(primaryNavController: NavController) {
     val navController = rememberNavController()
+    val viewModel = hiltNavGraphViewModel<HomeViewModel>()
+    val state = viewModel.composableState()
+
     Scaffold(bottomBar = {
-        BottomNavBar(navController = navController)
+        BottomNavBar(navController = navController, state = state)
     }) {
         Box(modifier = Modifier.padding(bottom = it.calculateBottomPadding())) {
             NavHost(
@@ -61,15 +73,42 @@ fun HomeScreen(primaryNavController: NavController) {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(navController: NavController, state: State) {
+    val enterAnimation = expandVertically(
+        animationSpec = tween(),
+        expandFrom = Alignment.Bottom
+    )
+    val exitAnimation = shrinkVertically(
+        animationSpec = tween(),
+        shrinkTowards = Alignment.Bottom,
+    )
     Column {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(Dimens.bottom_nav_indicator_height)
-                .background(colors.primary)
-        )
+        Box {
+            this@Column.AnimatedVisibility(
+                state.isLoading,
+                enter = enterAnimation,
+                exit = exitAnimation
+            ) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+            this@Column.AnimatedVisibility(
+                visible = !state.isLoading,
+                enter = enterAnimation,
+                exit = exitAnimation
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(Dimens.bottom_nav_indicator_height)
+                        .background(colors.primary)
+                )
+            }
+        }
         BottomNavigation(backgroundColor = colors.background) {
             val currentRoute = currentRoute(navController)
             BottomNavScreens.values().forEach { screen ->

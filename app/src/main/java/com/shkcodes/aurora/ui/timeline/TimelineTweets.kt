@@ -14,11 +14,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Scaffold
@@ -126,11 +125,8 @@ fun TweetsTimeline(navController: NavController) {
             }
 
             val urlsMetaData = remember { mutableMapOf<String, MetaData>() }
-            Box(contentAlignment = Alignment.BottomCenter) {
+            Box(contentAlignment = Alignment.TopCenter) {
                 TweetsList(state, urlsMetaData, listState, viewModel)
-                if (state.isPaginatedLoading) {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                }
                 if (newItemsCount != 0) {
                     NewTweetsIndicator(newItemsCount, viewModel)
                 }
@@ -359,8 +355,8 @@ private fun getCurrentlyPlayingItem(listState: LazyListState, items: TimelineIte
 private fun NewTweetsIndicator(newItemsCount: Int, viewModel: TimelineViewModel) {
     Box(
         modifier = Modifier
-            .padding(Dimens.space)
-            .clip(RoundedCornerShape(Dimens.space))
+            .padding(Dimens.keyline_1)
+            .clip(CircleShape)
             .background(colors.secondary)
             .clickable { viewModel.handleIntent(MarkItemsAsSeen) }
     ) {

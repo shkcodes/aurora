@@ -6,6 +6,7 @@ import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.Event
 import com.shkcodes.aurora.base.Event.AutoplayVideosToggled
+import com.shkcodes.aurora.base.Event.TogglePaginatedLoading
 import com.shkcodes.aurora.base.EventBus
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
@@ -35,7 +36,7 @@ class TimelineViewModel @Inject constructor(
     private val userService: UserService,
     private val errorHandler: ErrorHandler,
     private val preferencesService: PreferencesService,
-    eventBus: EventBus,
+    private val eventBus: EventBus
 ) : ViewModel() {
 
     init {
@@ -57,6 +58,7 @@ class TimelineViewModel @Inject constructor(
             is LoadNextPage -> {
                 val afterId = currentState.items.last().tweetId
                 if (!currentState.isPaginatedLoading) {
+                    eventBus.emitEvent(TogglePaginatedLoading(true))
                     currentState =
                         currentState.copy(isPaginatedLoading = true, isPaginatedError = false)
                     fetchTweets(afterId)
@@ -103,6 +105,7 @@ class TimelineViewModel @Inject constructor(
                 if (newItems.isNotEmpty()) {
                     onSideEffect(SideEffect.Action(RetainScrollState(newItems.size)))
                 }
+                eventBus.sendEvent(TogglePaginatedLoading(false))
                 currentState = currentState.copy(
                     isLoading = false, isPaginatedLoading = false, autoplayVideos = autoplayVideos,
                     items = it + currentState.items,
@@ -124,10 +127,8 @@ class TimelineViewModel @Inject constructor(
     }
 
     private fun handleEvent(event: Event) {
-        when (event) {
-            is AutoplayVideosToggled -> {
-                currentState = currentState.copy(autoplayVideos = autoplayVideos)
-            }
+        if (event is AutoplayVideosToggled) {
+            currentState = currentState.copy(autoplayVideos = autoplayVideos)
         }
     }
 }

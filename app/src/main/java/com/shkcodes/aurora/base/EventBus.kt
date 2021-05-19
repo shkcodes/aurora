@@ -7,6 +7,7 @@ import javax.inject.Singleton
 
 sealed class Event {
     object AutoplayVideosToggled : Event()
+    data class TogglePaginatedLoading(val isLoading: Boolean) : Event()
 }
 
 interface EventBus {
