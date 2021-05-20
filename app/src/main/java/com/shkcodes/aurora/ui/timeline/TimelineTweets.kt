@@ -65,6 +65,7 @@ import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.common.TerminalError
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.HandleAnnotationClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
@@ -72,7 +73,9 @@ import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.ScrollIndexChange
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.timeline.TimelineContract.State
+import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.RetainScrollState
 import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.ScrollToTop
 import com.shkcodes.aurora.util.pluralResource
@@ -90,6 +93,7 @@ fun TweetsTimeline(navController: NavController) {
     val listState = rememberLazyListState()
 
     val newItemsCount = state.newItems.size
+    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(Unit) {
         launch {
@@ -102,6 +106,9 @@ fun TweetsTimeline(navController: NavController) {
                             }
                             is ScrollToTop -> {
                                 listState.animateScrollToItem(0)
+                            }
+                            is OpenUrl -> {
+                                uriHandler.openUri(action.url)
                             }
                         }
                     }
@@ -207,8 +214,6 @@ private fun TweetItem(
     val media = timelineItem.tweetMedia
     val quoteTweetMedia = timelineItem.quoteTweetMedia
 
-    val uriHandler = LocalUriHandler.current
-
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         Image(
             painter = rememberCoilPainter(
@@ -226,13 +231,16 @@ private fun TweetItem(
         ) {
             TweetItemHeader(tweet)
             if (tweet.repliedToUsers.isNotEmpty()) {
-                RepliedToUsers(tweet.repliedToUsers)
+                RepliedToUsers(tweet.repliedToUsers) {
+                    viewModel.handleIntent(HandleAnnotationClick(it))
+                }
             }
-            if (tweet.content.isNotEmpty()) RichContent(tweet, uriHandler)
+            if (tweet.content.isNotEmpty()) RichContent(tweet) {
+                viewModel.handleIntent(HandleAnnotationClick(it))
+            }
             QuoteTweet(
                 quoteTweet,
                 quoteTweetMedia,
-                uriHandler,
                 viewModel,
                 exoPlayer
             )
@@ -241,7 +249,8 @@ private fun TweetItem(
                 LinkPreview(
                     url,
                     urlsMetaData[url],
-                    { urlsMetaData[url] = it }, { uriHandler.openUri(it) })
+                    { urlsMetaData[url] = it },
+                    { viewModel.handleIntent(HandleAnnotationClick(it)) })
             }
 
             TweetMedia(media, exoPlayer, isVideoPlaying) { index ->
@@ -395,6 +404,10 @@ private fun handleNavigation(
     when (val screen = sideEffect.screen) {
         is MediaViewer -> {
             val route = Screen.MEDIA_VIEWER.createRoute(screen.tweetId, screen.index)
+            navController.navigate(route)
+        }
+        is UserProfile -> {
+            val route = Screen.PROFILE.createRoute(screen.userHandle)
             navController.navigate(route)
         }
     }

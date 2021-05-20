@@ -13,6 +13,7 @@ import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.HandleAnnotationClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
@@ -20,6 +21,8 @@ import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.ScrollIndexChange
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.UserProfile
+import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.RetainScrollState
 import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.ScrollToTop
 import com.shkcodes.aurora.ui.timeline.TimelineContract.ViewModel
@@ -90,6 +93,13 @@ class TimelineViewModel @Inject constructor(
             is ScrollIndexChange -> {
                 if (currentState.newItems.isNotEmpty() && intent.index < currentState.newItems.size) {
                     currentState = currentState.copy(newItems = currentState.newItems.dropLast(1))
+                }
+            }
+
+            is HandleAnnotationClick -> {
+                when (intent.data.first()) {
+                    'h' -> onSideEffect(SideEffect.Action(OpenUrl(intent.data)))
+                    '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.data)))
                 }
             }
         }

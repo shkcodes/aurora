@@ -10,6 +10,7 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.service.UserService
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.HandleAnnotationClick
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
@@ -17,7 +18,9 @@ import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.ScrollIndexChange
 import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
+import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.timeline.TimelineContract.State
+import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.TimelineItem
 import com.shkcodes.aurora.ui.timeline.TimelineViewModel
 import io.mockk.coEvery
@@ -264,6 +267,28 @@ class TimelineViewModelTest : BaseTest() {
             assert(expectItem().autoplayVideos)
             events.emit(AutoplayVideosToggled)
             assert(!expectItem().autoplayVideos)
+        }
+    }
+
+    @Test
+    fun `opens url on url click`() = test {
+        val sut = viewModel()
+        sut.testSideEffects {
+            val url = "https://www.www.com"
+            sut.handleIntent(HandleAnnotationClick(url))
+            events.emit(AutoplayVideosToggled)
+            assert(expectItem() == SideEffect.Action(OpenUrl(url)))
+        }
+    }
+
+    @Test
+    fun `opens profile screen on profile click`() = test {
+        val sut = viewModel()
+        sut.testSideEffects {
+            val userHandle = "@don't_@_me"
+            sut.handleIntent(HandleAnnotationClick(userHandle))
+            events.emit(AutoplayVideosToggled)
+            assert(expectItem() == SideEffect.DisplayScreen(UserProfile(userHandle)))
         }
     }
 }

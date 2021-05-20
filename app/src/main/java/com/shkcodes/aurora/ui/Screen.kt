@@ -15,7 +15,8 @@ enum class Screen(private val args: Map<String, NavType<*>> = emptyMap()) {
     LOGIN,
     AUTH,
     HOME,
-    MEDIA_VIEWER(mapOf("tweetId" to NavType.LongType, "index" to NavType.IntType));
+    MEDIA_VIEWER(mapOf("tweetId" to NavType.LongType, "index" to NavType.IntType)),
+    PROFILE(mapOf("userHandle" to NavType.StringType));
 
     val route: String = if (args.isNotEmpty()) {
         "$name/${args.keys.joinToString("/") { "{$it}" }}"

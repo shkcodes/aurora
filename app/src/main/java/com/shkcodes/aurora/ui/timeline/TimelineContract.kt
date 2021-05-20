@@ -23,14 +23,17 @@ class TimelineContract {
         object MarkItemsAsSeen : Intent()
         data class MediaClick(val index: Int, val tweetId: Long) : Intent()
         data class ScrollIndexChange(val index: Int) : Intent()
+        data class HandleAnnotationClick(val data: String) : Intent()
     }
 
     sealed class TimelineSideEffect {
         object ScrollToTop : TimelineSideEffect()
         data class RetainScrollState(val newItemsCount: Int) : TimelineSideEffect()
+        data class OpenUrl(val url: String) : TimelineSideEffect()
     }
 
     sealed class Screen {
         data class MediaViewer(val index: Int, val tweetId: Long) : Screen()
+        data class UserProfile(val userHandle: String) : Screen()
     }
 }
