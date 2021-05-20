@@ -3,6 +3,7 @@ package com.shkcodes.aurora.ui.main
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.Scaffold
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -22,38 +23,40 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AuroraTheme {
-                val navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = Screen.SPLASH.route
-                ) {
-                    composable(Screen.SPLASH.route) {
-                        HomeScreen(navController)
-                    }
-                    composable(Screen.LOGIN.route) {
-                        LoginScreen(navController)
-                    }
-                    composable(Screen.AUTH.route) {
-                        AuthScreen(navController)
-                    }
-                    composable(Screen.HOME.route) {
-                        HomeScreen(navController)
-                    }
-                    composable(
-                        Screen.MEDIA_VIEWER.route,
-                        Screen.MEDIA_VIEWER.arguments
+                Scaffold {
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.SPLASH.route
                     ) {
-                        val index = it.arguments?.getString("index")!!.toInt()
-                        val tweetId = it.arguments?.getString("tweetId")!!
-                            .toLong() // TODO: investigate why we can't directly call getLong
-                        MediaViewer(index, tweetId)
-                    }
-                    composable(
-                        Screen.PROFILE.route,
-                        Screen.PROFILE.arguments
-                    ) {
-                        val userHandle = it.arguments?.getString("userHandle")!!
-                        ProfileScreen(userHandle)
+                        composable(Screen.SPLASH.route) {
+                            HomeScreen(navController)
+                        }
+                        composable(Screen.LOGIN.route) {
+                            LoginScreen(navController)
+                        }
+                        composable(Screen.AUTH.route) {
+                            AuthScreen(navController)
+                        }
+                        composable(Screen.HOME.route) {
+                            HomeScreen(navController)
+                        }
+                        composable(
+                            Screen.MEDIA_VIEWER.route,
+                            Screen.MEDIA_VIEWER.arguments
+                        ) {
+                            val index = it.arguments?.getString("index")!!.toInt()
+                            val tweetId = it.arguments?.getString("tweetId")!!
+                                .toLong() // TODO: investigate why we can't directly call getLong
+                            MediaViewer(index, tweetId)
+                        }
+                        composable(
+                            Screen.PROFILE.route,
+                            Screen.PROFILE.arguments
+                        ) {
+                            val userHandle = it.arguments?.getString("userHandle")!!
+                            ProfileScreen(userHandle)
+                        }
                     }
                 }
             }

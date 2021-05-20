@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -57,15 +56,13 @@ fun MediaViewer(index: Int, tweetId: Long) {
             viewModel.getSideEffects().collect { }
         }
     }
-    Scaffold {
-        when (val state = viewModel.composableState()) {
-            is Content -> {
-                with(state) {
-                    if (media.first().isAnimatedMedia) {
-                        VideoPlayer(media.first())
-                    } else {
-                        ImagesPager(initialIndex = initialIndex, media = media)
-                    }
+    when (val state = viewModel.composableState()) {
+        is Content -> {
+            with(state) {
+                if (media.first().isAnimatedMedia) {
+                    VideoPlayer(media.first())
+                } else {
+                    ImagesPager(initialIndex = initialIndex, media = media)
                 }
             }
         }

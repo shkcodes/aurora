@@ -6,7 +6,6 @@ import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -36,35 +35,33 @@ fun AuthScreen(navController: NavController) {
         }
     }
 
-    Scaffold {
-        when (val state = viewModel.composableState()) {
-            is State.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
+    when (val state = viewModel.composableState()) {
+        is State.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
-            is State.RequestToken -> {
-                AndroidView(factory = {
-                    WebView(it).apply {
-                        webViewClient = object : WebViewClient() {
-                            override fun onPageStarted(
-                                view: WebView,
-                                url: String,
-                                favicon: Bitmap?
-                            ) {
-                                if (url.startsWith(BuildConfig.CALLBACK_URL)) {
-                                    viewModel.handleIntent(RequestAccessToken(state, url))
-                                }
+        }
+        is State.RequestToken -> {
+            AndroidView(factory = {
+                WebView(it).apply {
+                    webViewClient = object : WebViewClient() {
+                        override fun onPageStarted(
+                            view: WebView,
+                            url: String,
+                            favicon: Bitmap?
+                        ) {
+                            if (url.startsWith(BuildConfig.CALLBACK_URL)) {
+                                viewModel.handleIntent(RequestAccessToken(state, url))
                             }
                         }
-                        loadUrl(state.authorizationUrl)
                     }
-                })
-            }
-            is State.Error -> {
-                TerminalError(message = state.message) {
-                    viewModel.handleIntent(Retry)
+                    loadUrl(state.authorizationUrl)
                 }
+            })
+        }
+        is State.Error -> {
+            TerminalError(message = state.message) {
+                viewModel.handleIntent(Retry)
             }
         }
     }

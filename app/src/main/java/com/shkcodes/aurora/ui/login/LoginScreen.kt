@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme.typography
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,28 +38,26 @@ fun LoginScreen(navController: NavController) {
 
 @Composable
 private fun Content(login: () -> Unit) {
-    Scaffold {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Text(
-                text = stringResource(R.string.login_prompt),
-                style = typography.h5,
-                modifier = Modifier.padding(
-                    vertical = Dimens.space_xxxlarge,
-                    horizontal = Dimens.keyline_1
-                )
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = stringResource(R.string.login_prompt),
+            style = typography.h5,
+            modifier = Modifier.padding(
+                vertical = Dimens.space_xxxlarge,
+                horizontal = Dimens.keyline_1
             )
-            Spacer(modifier = Modifier.weight(1F))
-            Button(
-                onClick = login,
-                modifier = Modifier
-                    .padding(Dimens.keyline_1)
-                    .align(Alignment.End),
-            ) {
-                Text(
-                    text = stringResource(id = R.string.proceed),
-                    style = typography.button
-                )
-            }
+        )
+        Spacer(modifier = Modifier.weight(1F))
+        Button(
+            onClick = login,
+            modifier = Modifier
+                .padding(Dimens.keyline_1)
+                .align(Alignment.End),
+        ) {
+            Text(
+                text = stringResource(id = R.string.proceed),
+                style = typography.button
+            )
         }
     }
 }
