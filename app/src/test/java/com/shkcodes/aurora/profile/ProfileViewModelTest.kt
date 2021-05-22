@@ -10,7 +10,7 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Retry
 import com.shkcodes.aurora.ui.profile.ProfileContract.State
 import com.shkcodes.aurora.ui.profile.ProfileViewModel
-import com.shkcodes.aurora.ui.timeline.TimelineItem
+import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -25,7 +25,7 @@ class ProfileViewModelTest : BaseTest() {
         every { content } returns "Shouldn't have tweeted this"
     }
 
-    private val timelineItem = TimelineItem(tweetEntity, emptyList())
+    private val tweetItem = TweetItem(tweetEntity, emptyList())
 
     private val user = mockk<User>() {
         every { id } returns 23121993
@@ -34,7 +34,7 @@ class ProfileViewModelTest : BaseTest() {
 
     private val userService: UserService = mockk(relaxUnitFun = true) {
         coEvery { fetchUserProfile(any()) } returns Result.Success(user)
-        coEvery { fetchUserTweets() } returns Result.Success(listOf(timelineItem))
+        coEvery { fetchUserTweets() } returns Result.Success(listOf(tweetItem))
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -53,7 +53,7 @@ class ProfileViewModelTest : BaseTest() {
                     expectItem() == State(
                         isLoading = false,
                         user = user,
-                        items = listOf(timelineItem)
+                        items = listOf(tweetItem)
                     )
                 )
             }
@@ -105,7 +105,7 @@ class ProfileViewModelTest : BaseTest() {
                     expectItem() == State(
                         isLoading = false,
                         user = user,
-                        items = listOf(timelineItem)
+                        items = listOf(tweetItem)
                     )
                 )
         }

@@ -1,4 +1,4 @@
-package com.shkcodes.aurora.ui.timeline
+package com.shkcodes.aurora.ui.tweetlist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

@@ -2,7 +2,7 @@ package com.shkcodes.aurora.ui.profile
 
 import com.shkcodes.aurora.api.response.User
 import com.shkcodes.aurora.base.BaseViewModel
-import com.shkcodes.aurora.ui.timeline.TimelineItems
+import com.shkcodes.aurora.ui.tweetlist.TweetItems
 
 interface ProfileContract {
 
@@ -11,7 +11,7 @@ interface ProfileContract {
     data class State(
         val isLoading: Boolean = true,
         val user: User? = null,
-        val items: TimelineItems = emptyList(),
+        val items: TweetItems = emptyList(),
         val isPaginatedError: Boolean = false,
         val isTerminalError: Boolean = false,
         val errorMessage: String = ""

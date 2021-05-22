@@ -45,21 +45,11 @@ import com.google.android.exoplayer2.util.Util
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
-import com.shkcodes.aurora.ui.timeline.LinkPreview
-import com.shkcodes.aurora.ui.timeline.MetaData
-import com.shkcodes.aurora.ui.timeline.QuoteTweet
-import com.shkcodes.aurora.ui.timeline.RepliedToUsers
-import com.shkcodes.aurora.ui.timeline.RetweetIndicator
-import com.shkcodes.aurora.ui.timeline.RichContent
-import com.shkcodes.aurora.ui.timeline.TimelineItem
-import com.shkcodes.aurora.ui.timeline.TimelineItems
-import com.shkcodes.aurora.ui.timeline.TweetMedia
-import com.shkcodes.aurora.ui.timeline.UserInfo
 import com.shkcodes.aurora.util.toPrettyTime
 import kotlin.math.abs
 
 data class TweetListState(
-    val items: TimelineItems = emptyList(),
+    val items: TweetItems = emptyList(),
     val autoplayVideos: Boolean = false,
     val isLoading: Boolean = false,
     val isPaginatedError: Boolean = false
@@ -119,16 +109,16 @@ fun TweetList(state: TweetListState, listState: LazyListState, handler: TweetLis
 
 @Composable
 private fun TweetItem(
-    timelineItem: TimelineItem,
+    tweetItem: TweetItem,
     urlsMetaData: MutableMap<String, MetaData>,
     exoPlayer: SimpleExoPlayer,
     isVideoPlaying: Boolean,
     handler: TweetListHandler
 ) {
-    val tweet = timelineItem.tweet
-    val quoteTweet = timelineItem.quoteTweet
-    val media = timelineItem.tweetMedia
-    val quoteTweetMedia = timelineItem.quoteTweetMedia
+    val tweet = tweetItem.tweet
+    val quoteTweet = tweetItem.quoteTweet
+    val media = tweetItem.tweetMedia
+    val quoteTweetMedia = tweetItem.quoteTweetMedia
 
     Row(modifier = Modifier.padding(Dimens.keyline_1)) {
         Image(
@@ -172,8 +162,8 @@ private fun TweetItem(
             TweetMedia(media, exoPlayer, isVideoPlaying) { index ->
                 handler.mediaClick(index, tweet.id)
             }
-            if (timelineItem.isRetweet) {
-                RetweetIndicator(timelineItem.retweeter)
+            if (tweetItem.isRetweet) {
+                RetweetIndicator(tweetItem.retweeter)
             }
         }
     }
@@ -222,7 +212,7 @@ private fun PaginatedError(action: () -> Unit) {
 }
 
 @Composable
-private fun VideoPlayer(exoPlayer: SimpleExoPlayer, tweet: TimelineItem?) {
+private fun VideoPlayer(exoPlayer: SimpleExoPlayer, tweet: TweetItem?) {
     val context = LocalContext.current
     val dataSourceFactory = remember {
         DefaultDataSourceFactory(
@@ -272,7 +262,7 @@ private fun VideoPlayer(exoPlayer: SimpleExoPlayer, tweet: TimelineItem?) {
     }
 }
 
-private fun getCurrentlyPlayingItem(listState: LazyListState, items: TimelineItems): TimelineItem? {
+private fun getCurrentlyPlayingItem(listState: LazyListState, items: TweetItems): TweetItem? {
     val layoutInfo = listState.layoutInfo
     val animatedMediaTweets =
         layoutInfo.visibleItemsInfo.map { items[it.index] }.filter { it.hasAnimatedMedia }

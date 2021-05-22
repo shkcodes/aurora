@@ -8,7 +8,7 @@ import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.cache.entities.toCachedTweets
 import com.shkcodes.aurora.fakes.FakeTweetsDao
-import com.shkcodes.aurora.ui.timeline.TimelineItem
+import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -47,12 +47,12 @@ class UserServiceTest : BaseTest() {
         every { createdAt } returns localTweetTime
     }
 
-    private fun Tweet.toTimelineItems() = listOf(this).toCachedTweets(
+    private fun Tweet.toTweetItems() = listOf(this).toCachedTweets(
         true
-    ).map { TimelineItem(it) }
+    ).map { TweetItem(it) }
 
 
-    private fun TweetEntity.toTimelineItems() = listOf(this).map { TimelineItem(it) }
+    private fun TweetEntity.toTweetItems() = listOf(this).map { TweetItem(it) }
 
 
     private val fakeTime = LocalDateTime.of(2021, 4, 16, 23, 10)
@@ -76,8 +76,8 @@ class UserServiceTest : BaseTest() {
         testDispatcher.runBlockingTest {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
             val result = sut().fetchTimelineTweets(null, null)
-            assert(result == Result.Success(apiTweet.toTimelineItems()))
-            assert(tweetsDao.getCachedTimeline(Instant.EPOCH.atZone(ZoneOffset.UTC)) == apiTweet.toTimelineItems())
+            assert(result == Result.Success(apiTweet.toTweetItems()))
+            assert(tweetsDao.getCachedTimeline(Instant.EPOCH.atZone(ZoneOffset.UTC)) == apiTweet.toTweetItems())
         }
 
     @Test
@@ -87,8 +87,8 @@ class UserServiceTest : BaseTest() {
             sut().fetchTimelineTweets(null, null)
             val result =
                 sut().fetchTimelineTweets(listOf(apiTweet).toCachedTweets(true).first(), null)
-            assert(result == Result.Success(freshApiTweet.toTimelineItems()))
-            assert(tweetsDao.getCachedTimeline(localTweetTime) == freshApiTweet.toTimelineItems())
+            assert(result == Result.Success(freshApiTweet.toTweetItems()))
+            assert(tweetsDao.getCachedTimeline(localTweetTime) == freshApiTweet.toTweetItems())
         }
 
     @Test
@@ -97,8 +97,8 @@ class UserServiceTest : BaseTest() {
             tweetsDao.saveTweets(listOf(localTweet))
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(7)
             val result = sut().fetchTimelineTweets(null, null)
-            assert(result == Result.Success(localTweet.toTimelineItems()))
-            assert(tweetsDao.getCachedTimeline(Instant.EPOCH.atZone(ZoneOffset.UTC)) == localTweet.toTimelineItems())
+            assert(result == Result.Success(localTweet.toTweetItems()))
+            assert(tweetsDao.getCachedTimeline(Instant.EPOCH.atZone(ZoneOffset.UTC)) == localTweet.toTweetItems())
         }
 
 }

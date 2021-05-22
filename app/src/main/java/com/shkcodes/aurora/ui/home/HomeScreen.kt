@@ -39,7 +39,7 @@ import com.shkcodes.aurora.ui.BottomNavScreens.SETTINGS
 import com.shkcodes.aurora.ui.BottomNavScreens.TWEETS
 import com.shkcodes.aurora.ui.home.HomeContract.State
 import com.shkcodes.aurora.ui.settings.SettingsScreen
-import com.shkcodes.aurora.ui.timeline.TweetsTimeline
+import com.shkcodes.aurora.ui.timeline.HomeTimeline
 import com.shkcodes.aurora.util.TempScreen
 
 @Composable
@@ -57,7 +57,7 @@ fun HomeScreen(primaryNavController: NavController) {
                 startDestination = TWEETS.name,
             ) {
                 composable(TWEETS.name) {
-                    TweetsTimeline(primaryNavController)
+                    HomeTimeline(primaryNavController)
                 }
                 composable(MENTIONS.name) {
                     TempScreen(content = MENTIONS.name)

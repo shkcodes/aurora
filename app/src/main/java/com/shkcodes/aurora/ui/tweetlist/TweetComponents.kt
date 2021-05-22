@@ -1,4 +1,4 @@
-package com.shkcodes.aurora.ui.timeline
+package com.shkcodes.aurora.ui.tweetlist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,7 +28,7 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
-import com.shkcodes.aurora.ui.tweetlist.TweetListHandler
+import com.shkcodes.aurora.ui.timeline.CustomClickableText
 import com.shkcodes.aurora.util.contentFormatter
 
 private const val USER_HANDLE_OPACITY = 0.5F

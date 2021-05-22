@@ -12,20 +12,20 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.service.UserService
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.HandleAnnotationClick
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MarkItemsAsSeen
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.ScrollIndexChange
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.UserProfile
-import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.OpenUrl
-import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.RetainScrollState
-import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.ScrollToTop
-import com.shkcodes.aurora.ui.timeline.TimelineContract.ViewModel
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.HandleAnnotationClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MarkItemsAsSeen
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MediaClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Refresh
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Retry
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.ScrollIndexChange
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.MediaViewer
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.UserProfile
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.RetainScrollState
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.ScrollToTop
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -34,7 +34,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class TimelineViewModel @Inject constructor(
+class HomeTimelineViewModel @Inject constructor(
     override val dispatcherProvider: DispatcherProvider,
     private val userService: UserService,
     private val errorHandler: ErrorHandler,
@@ -59,7 +59,7 @@ class TimelineViewModel @Inject constructor(
             }
 
             is LoadNextPage -> {
-                val afterId = currentState.items.last().tweetId
+                val afterId = currentState.tweets.last().tweetId
                 if (!currentState.isPaginatedLoading) {
                     eventBus.emitEvent(TogglePaginatedLoading(true))
                     currentState =
@@ -70,7 +70,7 @@ class TimelineViewModel @Inject constructor(
 
             is Refresh -> {
                 currentState = currentState.copy(isLoading = true)
-                val latestTweet = currentState.items.first().primaryTweet
+                val latestTweet = currentState.tweets.first().primaryTweet
                 fetchTweets(newerThan = latestTweet)
             }
 
@@ -86,13 +86,13 @@ class TimelineViewModel @Inject constructor(
             }
 
             is MarkItemsAsSeen -> {
-                currentState = currentState.copy(newItems = emptyList())
+                currentState = currentState.copy(newTweets = emptyList())
                 onSideEffect(SideEffect.Action(ScrollToTop))
             }
 
             is ScrollIndexChange -> {
-                if (currentState.newItems.isNotEmpty() && intent.index < currentState.newItems.size) {
-                    currentState = currentState.copy(newItems = currentState.newItems.dropLast(1))
+                if (currentState.newTweets.isNotEmpty() && intent.index < currentState.newTweets.size) {
+                    currentState = currentState.copy(newTweets = currentState.newTweets.dropLast(1))
                 }
             }
 
@@ -118,8 +118,8 @@ class TimelineViewModel @Inject constructor(
                 eventBus.sendEvent(TogglePaginatedLoading(false))
                 currentState = currentState.copy(
                     isLoading = false, isPaginatedLoading = false, autoplayVideos = autoplayVideos,
-                    items = if (newerThan != null) it + currentState.items else it,
-                    newItems = newItems
+                    tweets = if (newerThan != null) it + currentState.tweets else it,
+                    newTweets = newItems
                 )
             }, {
                 Timber.e(it)

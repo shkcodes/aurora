@@ -1,19 +1,20 @@
 package com.shkcodes.aurora.ui.timeline
 
 import com.shkcodes.aurora.base.BaseViewModel
+import com.shkcodes.aurora.ui.tweetlist.TweetItems
 
-class TimelineContract {
+class HomeTimelineContract {
     abstract class ViewModel : BaseViewModel<State, Intent>(State())
 
     data class State(
         val isLoading: Boolean = true,
-        val items: TimelineItems = emptyList(),
+        val tweets: TweetItems = emptyList(),
         val isPaginatedLoading: Boolean = false,
         val isPaginatedError: Boolean = false,
         val autoplayVideos: Boolean = false,
         val isTerminalError: Boolean = false,
         val errorMessage: String = "",
-        val newItems: TimelineItems = emptyList()
+        val newTweets: TweetItems = emptyList()
     )
 
     sealed class Intent {
@@ -28,7 +29,7 @@ class TimelineContract {
 
     sealed class TimelineSideEffect {
         object ScrollToTop : TimelineSideEffect()
-        data class RetainScrollState(val newItemsCount: Int) : TimelineSideEffect()
+        data class RetainScrollState(val newTweetsCount: Int) : TimelineSideEffect()
         data class OpenUrl(val url: String) : TimelineSideEffect()
     }
 

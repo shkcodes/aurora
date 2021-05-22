@@ -11,7 +11,7 @@ import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.cache.entities.toCachedTweets
 import com.shkcodes.aurora.cache.entities.toMediaEntity
-import com.shkcodes.aurora.ui.timeline.TimelineItems
+import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import java.time.ZonedDateTime
 
 @Dao
@@ -23,12 +23,12 @@ abstract class TweetsDao {
     abstract suspend fun getCachedTimeline(
         createdAt: ZonedDateTime,
         isTimelineTweet: Boolean = true
-    ): TimelineItems
+    ): TweetItems
 
     @Transaction
     @Query("SELECT * FROM tweets" +
             " where (isTimelineTweet = :isTimelineTweet) AND (userId = :userId) ORDER BY createdAt DESC")
-    abstract suspend fun getUserTweets(userId: Long, isTimelineTweet: Boolean = true): TimelineItems
+    abstract suspend fun getUserTweets(userId: Long, isTimelineTweet: Boolean = true): TweetItems
 
     @Query("SELECT * FROM tweets where id = :tweetId")
     abstract suspend fun getTweet(tweetId: Long): TweetEntity

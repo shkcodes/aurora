@@ -1,6 +1,6 @@
 @file:Suppress("MagicNumber")
 
-package com.shkcodes.aurora.ui.timeline
+package com.shkcodes.aurora.ui.tweetlist
 
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT

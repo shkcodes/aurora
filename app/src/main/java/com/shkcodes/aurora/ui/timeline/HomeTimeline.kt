@@ -35,18 +35,18 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.common.TerminalError
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.HandleAnnotationClick
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MarkItemsAsSeen
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.ScrollIndexChange
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.UserProfile
-import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.OpenUrl
-import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.RetainScrollState
-import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.ScrollToTop
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.HandleAnnotationClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MarkItemsAsSeen
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MediaClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Refresh
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Retry
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.ScrollIndexChange
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.MediaViewer
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.UserProfile
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.RetainScrollState
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.ScrollToTop
 import com.shkcodes.aurora.ui.tweetlist.TweetList
 import com.shkcodes.aurora.ui.tweetlist.TweetListHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetListState
@@ -56,12 +56,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @Composable
-fun TweetsTimeline(navController: NavController) {
-    val viewModel = hiltNavGraphViewModel<TimelineViewModel>()
+fun HomeTimeline(navController: NavController) {
+    val viewModel = hiltNavGraphViewModel<HomeTimelineViewModel>()
     val state = viewModel.composableState()
     val listState = rememberLazyListState()
 
-    val newItemsCount = state.newItems.size
+    val newItemsCount = state.newTweets.size
     val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(Unit) {
@@ -71,7 +71,7 @@ fun TweetsTimeline(navController: NavController) {
                     is SideEffect.Action<*> -> {
                         when (val action = it.action) {
                             is RetainScrollState -> {
-                                listState.scrollToItem(action.newItemsCount)
+                                listState.scrollToItem(action.newTweetsCount)
                             }
                             is ScrollToTop -> {
                                 listState.animateScrollToItem(0)
@@ -100,7 +100,7 @@ fun TweetsTimeline(navController: NavController) {
             }
         } else {
             val shouldLoadMore =
-                listState.isAtTheBottom && !state.isPaginatedError && state.items.isNotEmpty()
+                listState.isAtTheBottom && !state.isPaginatedError && state.tweets.isNotEmpty()
 
             if (shouldLoadMore) {
                 viewModel.handleIntent(LoadNextPage)
@@ -110,7 +110,7 @@ fun TweetsTimeline(navController: NavController) {
             Box(contentAlignment = Alignment.TopCenter) {
                 with(state) {
                     TweetList(
-                        state = TweetListState(items, autoplayVideos, isLoading, isPaginatedError),
+                        state = TweetListState(tweets, autoplayVideos, isLoading, isPaginatedError),
                         handler = tweetsHandler,
                         listState = listState
                     )
@@ -125,7 +125,7 @@ fun TweetsTimeline(navController: NavController) {
 @Composable
 private fun NewTweetsIndicator(
     newItemsCount: Int,
-    viewModel: TimelineViewModel,
+    viewModel: HomeTimelineViewModel,
     listState: LazyListState
 ) {
     AnimatedVisibility(
@@ -159,7 +159,7 @@ private fun NewTweetsIndicator(
     }
 }
 
-private fun tweetListHandler(viewModel: TimelineViewModel): TweetListHandler {
+private fun tweetListHandler(viewModel: HomeTimelineViewModel): TweetListHandler {
     return object : TweetListHandler {
         override fun refresh() {
             viewModel.handleIntent(Refresh)

@@ -8,7 +8,7 @@ import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
-import com.shkcodes.aurora.ui.timeline.TimelineItems
+import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
@@ -38,7 +38,7 @@ class UserService @Inject constructor(
     suspend fun fetchTimelineTweets(
         newerThan: TweetEntity?,
         afterId: Long?
-    ): Result<TimelineItems> {
+    ): Result<TweetItems> {
         return execute {
             if (isTimelineStale || afterId != null || newerThan != null) {
                 val freshTweets = userApi.getTimelineTweets(afterId = afterId)
@@ -61,7 +61,7 @@ class UserService @Inject constructor(
         return execute { userApi.getUserProfile(userHandle) }
     }
 
-    suspend fun fetchUserTweets(): Result<TimelineItems> {
+    suspend fun fetchUserTweets(): Result<TweetItems> {
         return execute {
             val tweets = userApi.getUserTweets()
             tweetsDao.cacheTimeline(tweets)

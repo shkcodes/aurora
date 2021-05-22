@@ -10,19 +10,19 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferencesService
 import com.shkcodes.aurora.service.UserService
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.HandleAnnotationClick
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.LoadNextPage
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MarkItemsAsSeen
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Refresh
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.Retry
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.ScrollIndexChange
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.MediaViewer
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Screen.UserProfile
-import com.shkcodes.aurora.ui.timeline.TimelineContract.State
-import com.shkcodes.aurora.ui.timeline.TimelineContract.TimelineSideEffect.OpenUrl
-import com.shkcodes.aurora.ui.timeline.TimelineItem
-import com.shkcodes.aurora.ui.timeline.TimelineViewModel
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.HandleAnnotationClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MarkItemsAsSeen
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MediaClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Refresh
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Retry
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.ScrollIndexChange
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.MediaViewer
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.UserProfile
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
+import com.shkcodes.aurora.ui.timeline.HomeTimelineViewModel
+import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -34,7 +34,7 @@ import java.time.ZonedDateTime
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
-class TimelineViewModelTest : BaseTest() {
+class HomeTimelineViewModelTest : BaseTest() {
 
     private val time = LocalDateTime.of(1993, 12, 23, 1, 0, 0)
     private val tweetTime = ZonedDateTime.of(time, ZoneId.systemDefault())
@@ -45,20 +45,20 @@ class TimelineViewModelTest : BaseTest() {
         every { createdAt } returns tweetTime
     }
 
-    private val timelineItem = TimelineItem(tweetEntity, emptyList())
+    private val tweetItem = TweetItem(tweetEntity, emptyList())
 
     private val freshTweet =
         tweetEntity.copy(createdAt = tweetTime.withHour(2))
-    private val freshTimelineItem = TimelineItem(freshTweet, emptyList())
+    private val freshtweetItem = TweetItem(freshTweet, emptyList())
 
     private val userService: UserService = mockk(relaxUnitFun = true) {
-        coEvery { fetchTimelineTweets(null, null) } returns Result.Success(listOf(timelineItem))
+        coEvery { fetchTimelineTweets(null, null) } returns Result.Success(listOf(tweetItem))
         coEvery {
             fetchTimelineTweets(tweetEntity, null)
-        } returns Result.Success(listOf(freshTimelineItem))
+        } returns Result.Success(listOf(freshtweetItem))
         coEvery {
             fetchTimelineTweets(null, 23121993)
-        } returns Result.Success(listOf(timelineItem, freshTimelineItem))
+        } returns Result.Success(listOf(tweetItem, freshtweetItem))
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -71,8 +71,8 @@ class TimelineViewModelTest : BaseTest() {
         every { autoplayVideos } returns false
     }
 
-    private fun viewModel(): TimelineViewModel {
-        return TimelineViewModel(
+    private fun viewModel(): HomeTimelineViewModel {
+        return HomeTimelineViewModel(
             testDispatcherProvider,
             userService,
             errorHandler,
@@ -86,7 +86,7 @@ class TimelineViewModelTest : BaseTest() {
         val sut = viewModel()
         sut.testStates {
             assert(expectItem() == State(true))
-            assert(expectItem() == State(false, listOf(timelineItem)))
+            assert(expectItem() == State(false, listOf(tweetItem)))
         }
     }
 
@@ -115,7 +115,7 @@ class TimelineViewModelTest : BaseTest() {
     fun `state updates correctly on retry`() = test {
         coEvery {
             userService.fetchTimelineTweets(any(), any())
-        } returns Result.Failure(Exception()) andThen Result.Success(listOf(timelineItem))
+        } returns Result.Failure(Exception()) andThen Result.Success(listOf(tweetItem))
         val sut = viewModel()
 
         sut.testStates {
@@ -131,7 +131,7 @@ class TimelineViewModelTest : BaseTest() {
 
             sut.handleIntent(Retry)
             assert(expectItem() == State(true))
-            assert(expectItem() == State(false, listOf(timelineItem)))
+            assert(expectItem() == State(false, listOf(tweetItem)))
         }
     }
 
@@ -145,21 +145,21 @@ class TimelineViewModelTest : BaseTest() {
         sut.testStates {
 
             assert(expectItem() == State(true))
-            assert(expectItem() == State(false, listOf(timelineItem)))
+            assert(expectItem() == State(false, listOf(tweetItem)))
 
             sut.handleIntent(LoadNextPage)
 
             assert(
                 expectItem() == State(
                     false,
-                    listOf(timelineItem),
+                    listOf(tweetItem),
                     isPaginatedLoading = true
                 )
             )
             assert(
                 expectItem() == State(
                     false,
-                    listOf(timelineItem),
+                    listOf(tweetItem),
                     isPaginatedLoading = false,
                     isPaginatedError = true
                 )
@@ -174,21 +174,21 @@ class TimelineViewModelTest : BaseTest() {
         sut.testStates {
 
             assert(expectItem() == State(true))
-            assert(expectItem() == State(false, listOf(timelineItem)))
+            assert(expectItem() == State(false, listOf(tweetItem)))
 
             sut.handleIntent(LoadNextPage)
 
             assert(
                 expectItem() == State(
                     false,
-                    listOf(timelineItem),
+                    listOf(tweetItem),
                     isPaginatedLoading = true
                 )
             )
             assert(
                 expectItem() == State(
                     false,
-                    listOf(timelineItem, freshTimelineItem),
+                    listOf(tweetItem, freshtweetItem),
                     isPaginatedLoading = false,
                 )
             )
@@ -201,16 +201,16 @@ class TimelineViewModelTest : BaseTest() {
 
         sut.testStates {
             assert(expectItem() == State(true))
-            assert(expectItem() == State(false, listOf(timelineItem)))
+            assert(expectItem() == State(false, listOf(tweetItem)))
 
             sut.handleIntent(Refresh)
 
-            assert(expectItem() == State(true, listOf(timelineItem)))
+            assert(expectItem() == State(true, listOf(tweetItem)))
             assert(
                 expectItem() == State(
                     false,
-                    listOf(freshTimelineItem, timelineItem),
-                    newItems = listOf(freshTimelineItem)
+                    listOf(freshtweetItem, tweetItem),
+                    newTweets = listOf(freshtweetItem)
                 )
             )
         }
@@ -234,10 +234,10 @@ class TimelineViewModelTest : BaseTest() {
             expectItem()
             sut.handleIntent(Refresh)
             expectItem()
-            assert(expectItem().newItems.size == 1)
+            assert(expectItem().newTweets.size == 1)
 
             sut.handleIntent(MarkItemsAsSeen)
-            assert(expectItem().newItems.isEmpty())
+            assert(expectItem().newTweets.isEmpty())
         }
     }
 
@@ -249,10 +249,10 @@ class TimelineViewModelTest : BaseTest() {
             expectItem()
             sut.handleIntent(Refresh)
             expectItem()
-            assert(expectItem().newItems.size == 1)
+            assert(expectItem().newTweets.size == 1)
 
             sut.handleIntent(ScrollIndexChange(0))
-            assert(expectItem().newItems.isEmpty())
+            assert(expectItem().newTweets.isEmpty())
         }
     }
 
