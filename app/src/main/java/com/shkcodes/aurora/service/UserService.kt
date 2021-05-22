@@ -3,6 +3,7 @@ package com.shkcodes.aurora.service
 import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.execute
+import com.shkcodes.aurora.api.response.User
 import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
 import com.shkcodes.aurora.cache.entities.MediaEntity
@@ -54,5 +55,17 @@ class UserService @Inject constructor(
 
     suspend fun getMediaForTweet(tweetId: Long): List<MediaEntity> {
         return tweetsDao.getTweetMedia(tweetId)
+    }
+
+    suspend fun fetchUserProfile(userHandle: String): Result<User> {
+        return execute { userApi.getUserProfile(userHandle) }
+    }
+
+    suspend fun fetchUserTweets(): Result<TimelineItems> {
+        return execute {
+            val tweets = userApi.getUserTweets()
+            tweetsDao.cacheTimeline(tweets)
+            tweetsDao.getUserTweets(tweets.first().user.id)
+        }
     }
 }

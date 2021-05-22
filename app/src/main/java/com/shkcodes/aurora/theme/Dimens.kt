@@ -21,6 +21,7 @@ object Dimens {
 
     val corner_radius: Dp @Composable get() = 4.dp
 
+    // Timeline
     val tweet_profile_pic: Dp @Composable get() = 32.dp
     val single_row_media_height: Dp @Composable get() = 170.dp
     val multi_row_media_height: Dp @Composable get() = 100.dp
@@ -30,4 +31,8 @@ object Dimens {
     val video_player_max_height: Dp @Composable get() = 200.dp
     val default_corner_radius: Dp @Composable get() = 2.dp
     val bottom_nav_indicator_height: Dp @Composable get() = 0.2.dp
+
+    // Profile
+    val profile_pic_size: Dp @Composable get() = 100.dp
+    val banner_height: Dp @Composable get() = 180.dp
 }

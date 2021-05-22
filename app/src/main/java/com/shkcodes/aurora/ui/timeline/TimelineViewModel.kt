@@ -99,7 +99,7 @@ class TimelineViewModel @Inject constructor(
             is HandleAnnotationClick -> {
                 when (intent.data.first()) {
                     'h' -> onSideEffect(SideEffect.Action(OpenUrl(intent.data)))
-                    '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.data)))
+                    '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.data.substring(1))))
                 }
             }
         }

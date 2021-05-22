@@ -32,4 +32,8 @@ class FakeTweetsDao : TweetsDao() {
     override suspend fun getTweetMedia(tweetId: Long): List<MediaEntity> {
         return savedMedia
     }
+
+    override suspend fun getUserTweets(userId: Long, isTimelineTweet: Boolean) =
+        savedTweets.map { TimelineItem(it) }.filter { it.primaryTweet.userId == userId }
+
 }

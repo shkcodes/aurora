@@ -6,6 +6,7 @@
 
     <string name="accessibility_retweet_icon">Retweet Icon</string>
     <string name="accessibility_user_profile_image">User Profile Image</string>
+    <string name="accessibility_user_profile_banner">User Banner Image</string>
 
     <!--errors-->
     <string name="error_no_internet">No internet connection</string>

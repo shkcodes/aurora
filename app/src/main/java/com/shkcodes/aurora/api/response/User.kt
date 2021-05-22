@@ -55,4 +55,6 @@ data class User(
     val profileUseBackgroundImage: Boolean,
     @Json(name = "statuses_count")
     val statusesCount: Int
-)
+) {
+    val profileImageUrlLarge = profileImageUrl.replace("_normal", "")
+}

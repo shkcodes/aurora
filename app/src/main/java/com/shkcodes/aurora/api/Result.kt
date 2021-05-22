@@ -1,5 +1,8 @@
 package com.shkcodes.aurora.api
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+
 sealed class Result<T> {
 
     data class Success<T>(val value: T) : Result<T>()
@@ -30,5 +33,31 @@ suspend fun <T> execute(action: suspend (() -> T)): Result<T> {
         Result.Success(result)
     } catch (e: Exception) {
         Result.Failure(e)
+    }
+}
+
+suspend fun <T1, T2> CoroutineScope.zip(
+    a: Result<T1>,
+    b: Result<T2>
+): Pair<Result<T1>, Result<T2>> {
+    val call1 = async { a }
+    val call2 = async { b }
+    return Pair(call1.await(), call2.await())
+}
+
+fun <T1, T2> Pair<Result<T1>, Result<T2>>.evaluate(
+    onSuccess: (Pair<T1, T2>) -> Unit,
+    onFailure: (exception: Throwable) -> Unit
+) {
+    when {
+        first.isFailure -> {
+            onFailure(first.exception)
+        }
+        second.isFailure -> {
+            onFailure(second.exception)
+        }
+        else -> {
+            onSuccess(Pair(first.value, second.value))
+        }
     }
 }

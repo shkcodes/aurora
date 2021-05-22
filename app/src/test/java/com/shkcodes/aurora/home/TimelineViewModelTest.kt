@@ -288,7 +288,7 @@ class TimelineViewModelTest : BaseTest() {
             val userHandle = "@don't_@_me"
             sut.handleIntent(HandleAnnotationClick(userHandle))
             events.emit(AutoplayVideosToggled)
-            assert(expectItem() == SideEffect.DisplayScreen(UserProfile(userHandle)))
+            assert(expectItem() == SideEffect.DisplayScreen(UserProfile(userHandle.substring(1))))
         }
     }
 }
