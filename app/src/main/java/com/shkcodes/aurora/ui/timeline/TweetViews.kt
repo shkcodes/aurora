@@ -28,8 +28,7 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.theme.Dimens
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.HandleAnnotationClick
-import com.shkcodes.aurora.ui.timeline.TimelineContract.Intent.MediaClick
+import com.shkcodes.aurora.ui.tweetlist.TweetListHandler
 import com.shkcodes.aurora.util.contentFormatter
 
 private const val USER_HANDLE_OPACITY = 0.5F
@@ -69,7 +68,7 @@ fun RepliedToUsers(users: List<String>, action: (String) -> Unit) {
 fun QuoteTweet(
     tweet: TweetEntity?,
     media: List<MediaEntity>,
-    viewModel: TimelineViewModel,
+    handler: TweetListHandler,
     exoPlayer: SimpleExoPlayer,
 ) {
     tweet?.let {
@@ -86,10 +85,10 @@ fun QuoteTweet(
                     it.userHandle
                 )
                 RichContent(it) {
-                    viewModel.handleIntent(HandleAnnotationClick(it))
+                    handler.annotationClick(it)
                 }
                 TweetMedia(media, exoPlayer, false) { index ->
-                    viewModel.handleIntent(MediaClick(index, it.id))
+                    handler.mediaClick(index, it.id)
                 }
             }
         }

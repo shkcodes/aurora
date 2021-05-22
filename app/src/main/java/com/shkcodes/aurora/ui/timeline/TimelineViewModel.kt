@@ -132,6 +132,7 @@ class TimelineViewModel @Inject constructor(
                 } else {
                     currentState.copy(isPaginatedError = true, isPaginatedLoading = false)
                 }
+                eventBus.sendEvent(TogglePaginatedLoading(false))
             })
         }
     }
