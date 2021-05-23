@@ -37,7 +37,9 @@ class ProfileViewModel @Inject constructor(
     override fun handleIntent(intent: Intent) {
         when (intent) {
             is Init -> {
-                fetchData(intent.userHandle)
+                if (currentState.user == null) {
+                    fetchData(intent.userHandle)
+                }
             }
 
             is Retry -> {

@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,8 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import coil.transform.CircleCropTransformation
@@ -60,7 +63,12 @@ interface TweetListHandler {
 }
 
 @Composable
-fun TweetList(state: TweetListState, listState: LazyListState, handler: TweetListHandler) {
+fun TweetList(
+    state: TweetListState,
+    listState: LazyListState,
+    handler: TweetListHandler,
+    contentPadding: Dp = 0.dp
+) {
 
     val context = LocalContext.current
     val exoPlayer = remember {
@@ -78,7 +86,11 @@ fun TweetList(state: TweetListState, listState: LazyListState, handler: TweetLis
 
     VideoPlayer(exoPlayer, currentlyPlayingItem)
 
-    LazyColumn(state = listState, modifier = Modifier.fillMaxWidth()) {
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(top = contentPadding)
+    ) {
         items(state.items) {
             TweetItem(it, urlsMetaData, exoPlayer, currentlyPlayingItem == it, handler)
         }

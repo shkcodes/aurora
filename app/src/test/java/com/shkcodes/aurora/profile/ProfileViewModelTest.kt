@@ -254,4 +254,17 @@ class ProfileViewModelTest : BaseTest() {
         }
     }
 
+    @Test
+    fun `does nothing if data already fetched`() = test {
+        val sut = viewModel()
+
+        sut.testStates {
+            sut.handleIntent(Init("@@"))
+            assert(expectItem() == State())
+            assert(expectItem() == State(false, user, listOf(tweetItem), autoplayVideos = true))
+            sut.handleIntent(Init("@@"))
+            expectNoEvents()
+        }
+    }
+
 }

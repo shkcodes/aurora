@@ -30,6 +30,13 @@ object Dimens {
     val bottom_nav_indicator_height = 0.2.dp
 
     // Profile
-    val profile_pic_size = 100.dp
-    val banner_height = 180.dp
+    val banner_height = 200.dp
+    val tab_height = 60.dp
+    val banner_bottom_clip = 20.dp
+    val banner_arc_radius = 0.dp to 40.dp
+    val profile_image_radius = 40.dp to 80.dp
+    val profile_image_offset = 60.dp to 53.dp
+    val tab_bar_offset = 60.dp
+    val scrim_height = 65.dp
+    val scrim_offset = 70.dp
 }
