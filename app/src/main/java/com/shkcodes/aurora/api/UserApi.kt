@@ -19,6 +19,10 @@ interface UserApi {
 
     @GET("1.1/statuses/user_timeline.json")
     suspend fun getUserTweets(
-        @Query("tweet_mode") tweetMode: String = "extended"
+        @Query("screen_name") userHandle: String,
+        @Query("max_id") afterId: Long? = null,
+        @Query("tweet_mode") tweetMode: String = "extended",
+        @Query("count") count: Int = 30,
+        @Query("exclude_replies") excludeReplies: Boolean = true
     ): Tweets
 }

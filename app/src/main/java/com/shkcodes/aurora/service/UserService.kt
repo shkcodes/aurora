@@ -61,9 +61,9 @@ class UserService @Inject constructor(
         return execute { userApi.getUserProfile(userHandle) }
     }
 
-    suspend fun fetchUserTweets(): Result<TweetItems> {
+    suspend fun fetchUserTweets(userHandle: String, afterId: Long? = null): Result<TweetItems> {
         return execute {
-            val tweets = userApi.getUserTweets()
+            val tweets = userApi.getUserTweets(userHandle, afterId)
             tweetsDao.cacheTimeline(tweets)
             tweetsDao.getUserTweets(tweets.first().user.id)
         }

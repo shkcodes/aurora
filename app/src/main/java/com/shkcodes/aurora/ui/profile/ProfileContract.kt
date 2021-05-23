@@ -11,14 +11,28 @@ interface ProfileContract {
     data class State(
         val isLoading: Boolean = true,
         val user: User? = null,
-        val items: TweetItems = emptyList(),
+        val tweets: TweetItems = emptyList(),
+        val isPaginatedLoading: Boolean = false,
         val isPaginatedError: Boolean = false,
         val isTerminalError: Boolean = false,
+        val autoplayVideos: Boolean = false,
         val errorMessage: String = ""
     )
 
     sealed class Intent {
+        object LoadNextPage : Intent()
         data class Init(val userHandle: String) : Intent()
         data class Retry(val userHandle: String) : Intent()
+        data class MediaClick(val index: Int, val tweetId: Long) : Intent()
+        data class HandleAnnotationClick(val data: String) : Intent()
+    }
+
+    sealed class ProfileSideEffect {
+        data class OpenUrl(val url: String) : ProfileSideEffect()
+    }
+
+    sealed class Screen {
+        data class MediaViewer(val index: Int, val tweetId: Long) : Screen()
+        data class UserProfile(val userHandle: String) : Screen()
     }
 }

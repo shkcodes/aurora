@@ -33,9 +33,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.rememberCoilPainter
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -51,12 +48,10 @@ import kotlin.math.abs
 data class TweetListState(
     val items: TweetItems = emptyList(),
     val autoplayVideos: Boolean = false,
-    val isLoading: Boolean = false,
     val isPaginatedError: Boolean = false
 )
 
 interface TweetListHandler {
-    fun refresh()
     fun annotationClick(annotation: String)
     fun paginatedErrorAction()
     fun mediaClick(index: Int, id: Long)
@@ -81,24 +76,13 @@ fun TweetList(state: TweetListState, listState: LazyListState, handler: TweetLis
 
     VideoPlayer(exoPlayer, currentlyPlayingItem)
 
-    SwipeRefresh(
-        state = rememberSwipeRefreshState(isRefreshing = state.isLoading),
-        onRefresh = { handler.refresh() },
-        indicator = { swipeRefreshState, trigger ->
-            SwipeRefreshIndicator(
-                state = swipeRefreshState,
-                refreshTriggerDistance = trigger,
-                contentColor = colors.secondary,
-            )
-        }) {
-        LazyColumn(state = listState, modifier = Modifier.fillMaxWidth()) {
-            items(state.items) {
-                TweetItem(it, urlsMetaData, exoPlayer, currentlyPlayingItem == it, handler)
-            }
-            if (state.isPaginatedError) {
-                item {
-                    PaginatedError { handler.paginatedErrorAction() }
-                }
+    LazyColumn(state = listState, modifier = Modifier.fillMaxWidth()) {
+        items(state.items) {
+            TweetItem(it, urlsMetaData, exoPlayer, currentlyPlayingItem == it, handler)
+        }
+        if (state.isPaginatedError) {
+            item {
+                PaginatedError { handler.paginatedErrorAction() }
             }
         }
     }

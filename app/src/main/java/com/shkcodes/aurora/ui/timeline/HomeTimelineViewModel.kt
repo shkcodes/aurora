@@ -10,7 +10,7 @@ import com.shkcodes.aurora.base.Event.TogglePaginatedLoading
 import com.shkcodes.aurora.base.EventBus
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
-import com.shkcodes.aurora.service.PreferencesService
+import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.HandleAnnotationClick
@@ -38,7 +38,7 @@ class HomeTimelineViewModel @Inject constructor(
     override val dispatcherProvider: DispatcherProvider,
     private val userService: UserService,
     private val errorHandler: ErrorHandler,
-    private val preferencesService: PreferencesService,
+    private val preferenceService: PreferenceService,
     private val eventBus: EventBus
 ) : ViewModel() {
 
@@ -48,7 +48,7 @@ class HomeTimelineViewModel @Inject constructor(
     }
 
     private val autoplayVideos: Boolean
-        get() = preferencesService.autoplayVideos
+        get() = preferenceService.autoplayVideos
 
     override fun handleIntent(intent: Intent) {
         when (intent) {
@@ -75,14 +75,7 @@ class HomeTimelineViewModel @Inject constructor(
             }
 
             is MediaClick -> {
-                onSideEffect(
-                    SideEffect.DisplayScreen(
-                        MediaViewer(
-                            intent.index,
-                            intent.tweetId
-                        )
-                    )
-                )
+                onSideEffect(SideEffect.DisplayScreen(MediaViewer(intent.index, intent.tweetId)))
             }
 
             is MarkItemsAsSeen -> {

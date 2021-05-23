@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PreferencesService @Inject constructor(
+class PreferenceService @Inject constructor(
     private val preferenceManager: PreferenceManager
 ) {
 

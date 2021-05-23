@@ -24,12 +24,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.theme.Dimens
@@ -50,10 +54,10 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.S
 import com.shkcodes.aurora.ui.tweetlist.TweetList
 import com.shkcodes.aurora.ui.tweetlist.TweetListHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetListState
+import com.shkcodes.aurora.util.isAtTheBottom
 import com.shkcodes.aurora.util.pluralResource
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 
 @Composable
 fun HomeTimeline(navController: NavController) {
@@ -65,24 +69,10 @@ fun HomeTimeline(navController: NavController) {
     val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(Unit) {
-        launch {
-            viewModel.getSideEffects().collect {
-                when (it) {
-                    is SideEffect.Action<*> -> {
-                        when (val action = it.action) {
-                            is RetainScrollState -> {
-                                listState.scrollToItem(action.newTweetsCount)
-                            }
-                            is ScrollToTop -> {
-                                listState.animateScrollToItem(0)
-                            }
-                            is OpenUrl -> {
-                                uriHandler.openUri(action.url)
-                            }
-                        }
-                    }
-                    is SideEffect.DisplayScreen<*> -> handleNavigation(it, navController)
-                }
+        viewModel.getSideEffects().collect {
+            when (it) {
+                is SideEffect.Action<*> -> handleSideEffects(it, uriHandler, listState)
+                is SideEffect.DisplayScreen<*> -> handleNavigation(it, navController)
             }
         }
     }
@@ -109,11 +99,23 @@ fun HomeTimeline(navController: NavController) {
 
             Box(contentAlignment = Alignment.TopCenter) {
                 with(state) {
-                    TweetList(
-                        state = TweetListState(tweets, autoplayVideos, isLoading, isPaginatedError),
-                        handler = tweetsHandler,
-                        listState = listState
-                    )
+                    SwipeRefresh(
+                        state = rememberSwipeRefreshState(isRefreshing = state.isLoading),
+                        onRefresh = { viewModel.handleIntent(Refresh) },
+                        indicator = { swipeRefreshState, trigger ->
+                            SwipeRefreshIndicator(
+                                state = swipeRefreshState,
+                                refreshTriggerDistance = trigger,
+                                contentColor = colors.secondary,
+                            )
+                        }
+                    ) {
+                        TweetList(
+                            state = TweetListState(tweets, autoplayVideos, isPaginatedError),
+                            handler = tweetsHandler,
+                            listState = listState
+                        )
+                    }
                 }
                 NewTweetsIndicator(newItemsCount, viewModel, listState)
             }
@@ -161,10 +163,6 @@ private fun NewTweetsIndicator(
 
 private fun tweetListHandler(viewModel: HomeTimelineViewModel): TweetListHandler {
     return object : TweetListHandler {
-        override fun refresh() {
-            viewModel.handleIntent(Refresh)
-        }
-
         override fun annotationClick(annotation: String) {
             viewModel.handleIntent(HandleAnnotationClick(annotation))
         }
@@ -175,6 +173,24 @@ private fun tweetListHandler(viewModel: HomeTimelineViewModel): TweetListHandler
 
         override fun mediaClick(index: Int, id: Long) {
             viewModel.handleIntent(MediaClick(index, id))
+        }
+    }
+}
+
+private suspend fun handleSideEffects(
+    sideEffect: SideEffect.Action<*>,
+    uriHandler: UriHandler,
+    listState: LazyListState
+) {
+    when (val action = sideEffect.action) {
+        is RetainScrollState -> {
+            listState.scrollToItem(action.newTweetsCount)
+        }
+        is ScrollToTop -> {
+            listState.animateScrollToItem(0)
+        }
+        is OpenUrl -> {
+            uriHandler.openUri(action.url)
         }
     }
 }
@@ -194,10 +210,3 @@ private fun handleNavigation(
         }
     }
 }
-
-private val LazyListState.isAtTheBottom: Boolean
-    get() {
-        return with(layoutInfo) {
-            visibleItemsInfo.isNotEmpty() && visibleItemsInfo.last().index == totalItemsCount - 1
-        }
-    }

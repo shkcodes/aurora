@@ -2,7 +2,7 @@ package com.shkcodes.aurora.settings
 
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.EventBus
-import com.shkcodes.aurora.service.PreferencesService
+import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.ui.settings.SettingsContract.Intent.ToggleAutoplayVideos
 import com.shkcodes.aurora.ui.settings.SettingsContract.State
 import com.shkcodes.aurora.ui.settings.SettingsViewModel
@@ -14,14 +14,14 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class SettingsViewModelTest : BaseTest() {
 
-    private val preferencesService: PreferencesService = mockk {
+    private val preferenceService: PreferenceService = mockk {
         every { autoplayVideos } returns true
     }
 
     private val eventBus: EventBus = mockk()
 
     private fun viewModel(): SettingsViewModel {
-        return SettingsViewModel(testDispatcherProvider, preferencesService, eventBus)
+        return SettingsViewModel(testDispatcherProvider, preferenceService, eventBus)
     }
 
     @Test

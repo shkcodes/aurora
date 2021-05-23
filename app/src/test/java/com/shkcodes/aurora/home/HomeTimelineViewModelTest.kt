@@ -8,7 +8,7 @@ import com.shkcodes.aurora.base.Event.AutoplayVideosToggled
 import com.shkcodes.aurora.base.EventBus
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
-import com.shkcodes.aurora.service.PreferencesService
+import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.HandleAnnotationClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
@@ -49,16 +49,16 @@ class HomeTimelineViewModelTest : BaseTest() {
 
     private val freshTweet =
         tweetEntity.copy(createdAt = tweetTime.withHour(2))
-    private val freshtweetItem = TweetItem(freshTweet, emptyList())
+    private val freshTweetItem = TweetItem(freshTweet, emptyList())
 
     private val userService: UserService = mockk(relaxUnitFun = true) {
         coEvery { fetchTimelineTweets(null, null) } returns Result.Success(listOf(tweetItem))
         coEvery {
             fetchTimelineTweets(tweetEntity, null)
-        } returns Result.Success(listOf(freshtweetItem))
+        } returns Result.Success(listOf(freshTweetItem))
         coEvery {
             fetchTimelineTweets(null, 23121993)
-        } returns Result.Success(listOf(tweetItem, freshtweetItem))
+        } returns Result.Success(listOf(tweetItem, freshTweetItem))
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -67,7 +67,7 @@ class HomeTimelineViewModelTest : BaseTest() {
     private val eventBus: EventBus = mockk {
         every { getEvents() } returns events
     }
-    private val preferencesService: PreferencesService = mockk {
+    private val preferenceService: PreferenceService = mockk {
         every { autoplayVideos } returns false
     }
 
@@ -76,7 +76,7 @@ class HomeTimelineViewModelTest : BaseTest() {
             testDispatcherProvider,
             userService,
             errorHandler,
-            preferencesService,
+            preferenceService,
             eventBus
         )
     }
@@ -188,7 +188,7 @@ class HomeTimelineViewModelTest : BaseTest() {
             assert(
                 expectItem() == State(
                     false,
-                    listOf(tweetItem, freshtweetItem),
+                    listOf(tweetItem, freshTweetItem),
                     isPaginatedLoading = false,
                 )
             )
@@ -209,8 +209,8 @@ class HomeTimelineViewModelTest : BaseTest() {
             assert(
                 expectItem() == State(
                     false,
-                    listOf(freshtweetItem, tweetItem),
-                    newTweets = listOf(freshtweetItem)
+                    listOf(freshTweetItem, tweetItem),
+                    newTweets = listOf(freshTweetItem)
                 )
             )
         }
@@ -258,7 +258,7 @@ class HomeTimelineViewModelTest : BaseTest() {
 
     @Test
     fun `state updates correctly on autoplay video toggle`() = test {
-        every { preferencesService.autoplayVideos } returns false andThen true andThen false
+        every { preferenceService.autoplayVideos } returns false andThen true andThen false
         val sut = viewModel()
         sut.testStates {
             expectItem()
@@ -276,7 +276,6 @@ class HomeTimelineViewModelTest : BaseTest() {
         sut.testSideEffects {
             val url = "https://www.www.com"
             sut.handleIntent(HandleAnnotationClick(url))
-            events.emit(AutoplayVideosToggled)
             assert(expectItem() == SideEffect.Action(OpenUrl(url)))
         }
     }
@@ -287,7 +286,6 @@ class HomeTimelineViewModelTest : BaseTest() {
         sut.testSideEffects {
             val userHandle = "@don't_@_me"
             sut.handleIntent(HandleAnnotationClick(userHandle))
-            events.emit(AutoplayVideosToggled)
             assert(expectItem() == SideEffect.DisplayScreen(UserProfile(userHandle.substring(1))))
         }
     }

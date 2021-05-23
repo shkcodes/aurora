@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                             Screen.PROFILE.arguments
                         ) {
                             val userHandle = it.arguments?.getString("userHandle")!!
-                            ProfileScreen(userHandle)
+                            ProfileScreen(userHandle, navController)
                         }
                     }
                 }
