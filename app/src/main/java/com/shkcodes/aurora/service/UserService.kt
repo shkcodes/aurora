@@ -3,11 +3,17 @@ package com.shkcodes.aurora.service
 import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.execute
+import com.shkcodes.aurora.api.response.Tweet
+import com.shkcodes.aurora.api.response.Tweets
 import com.shkcodes.aurora.api.response.User
 import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
+import com.shkcodes.aurora.cache.entities.toMediaEntity
+import com.shkcodes.aurora.cache.entities.toTweetEntity
+import com.shkcodes.aurora.ui.tweetlist.TweetItem
+import com.shkcodes.aurora.ui.tweetlist.TweetItem.TweetDto
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import java.time.Duration
 import java.time.Instant
@@ -64,8 +70,35 @@ class UserService @Inject constructor(
     suspend fun fetchUserTweets(userHandle: String, afterId: Long? = null): Result<TweetItems> {
         return execute {
             val tweets = userApi.getUserTweets(userHandle, afterId)
-            tweetsDao.cacheTimeline(tweets)
-            tweetsDao.getUserTweets(tweets.first().user.id)
+            tweets.toTweetItems(tweetsDao)
         }
+    }
+
+    private suspend fun Tweets.toTweetItems(tweetsDao: TweetsDao): TweetItems {
+        return map { primaryTweet ->
+            val primaryTweetMedia = primaryTweet.toMediaEntity().orEmpty()
+            val retweet = primaryTweet.retweet?.toTweetDto()
+            val quoteTweet = primaryTweet.quoteTweet?.toTweetDto()
+            val retweetQuote = primaryTweet.retweet?.quoteTweet?.toTweetDto()
+
+            tweetsDao.saveMedia(
+                primaryTweetMedia +
+                        retweet?.media.orEmpty() +
+                        quoteTweet?.media.orEmpty() +
+                        retweetQuote?.media.orEmpty()
+            )
+
+            TweetItem(
+                primaryTweet.toTweetEntity(false),
+                primaryTweetMedia = primaryTweetMedia,
+                retweetDto = retweet,
+                quoteTweetDto = quoteTweet,
+                retweetQuoteDto = retweetQuote
+            )
+        }
+    }
+
+    private fun Tweet.toTweetDto(): TweetDto {
+        return TweetDto(toTweetEntity(false), toMediaEntity().orEmpty())
     }
 }

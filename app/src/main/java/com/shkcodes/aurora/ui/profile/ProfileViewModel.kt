@@ -98,7 +98,10 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             userService.fetchUserTweets(currentState.user!!.screenName, afterId)
                 .evaluate({
-                    currentState = currentState.copy(tweets = it, isPaginatedLoading = false)
+                    currentState = currentState.copy(
+                        tweets = currentState.tweets + it.drop(1),
+                        isPaginatedLoading = false
+                    )
                 }, {
                     Timber.e(it)
                     currentState =

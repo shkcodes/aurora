@@ -34,7 +34,7 @@ data class TweetEntity(
     val repliedToUsers: List<String>
 )
 
-private fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEntity(
+fun Tweet.toTweetEntity(isTimelineTweet: Boolean): TweetEntity = TweetEntity(
     id = id,
     content = displayableContent,
     createdAt = createdAt,

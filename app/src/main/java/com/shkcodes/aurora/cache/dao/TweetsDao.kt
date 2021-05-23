@@ -25,11 +25,6 @@ abstract class TweetsDao {
         isTimelineTweet: Boolean = true
     ): TweetItems
 
-    @Transaction
-    @Query("SELECT * FROM tweets" +
-            " where (isTimelineTweet = :isTimelineTweet) AND (userId = :userId) ORDER BY createdAt DESC")
-    abstract suspend fun getUserTweets(userId: Long, isTimelineTweet: Boolean = true): TweetItems
-
     @Query("SELECT * FROM tweets where id = :tweetId")
     abstract suspend fun getTweet(tweetId: Long): TweetEntity
 

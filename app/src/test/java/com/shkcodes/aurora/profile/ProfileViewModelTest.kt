@@ -210,12 +210,14 @@ class ProfileViewModelTest : BaseTest() {
         sut.handleIntent(MediaClick(3, 3333))
 
         sut.testSideEffects {
-            assert(expectItem() == SideEffect.DisplayScreen(
-                MediaViewer(
-                    3,
-                    3333
+            assert(
+                expectItem() == SideEffect.DisplayScreen(
+                    MediaViewer(
+                        3,
+                        3333
+                    )
                 )
-            ))
+            )
         }
     }
 
@@ -226,11 +228,13 @@ class ProfileViewModelTest : BaseTest() {
             val url = "https://www.www.com"
             sut.handleIntent(HandleAnnotationClick(url))
 
-            assert(expectItem() == SideEffect.Action(
-                OpenUrl(
-                    url
+            assert(
+                expectItem() == SideEffect.Action(
+                    OpenUrl(
+                        url
+                    )
                 )
-            ))
+            )
         }
     }
 
@@ -240,11 +244,13 @@ class ProfileViewModelTest : BaseTest() {
         sut.testSideEffects {
             val userHandle = "@don't_@_me"
             sut.handleIntent(HandleAnnotationClick(userHandle))
-            assert(expectItem() == SideEffect.DisplayScreen(
-                UserProfile(
-                    userHandle.substring(1)
+            assert(
+                expectItem() == SideEffect.DisplayScreen(
+                    UserProfile(
+                        userHandle.substring(1)
+                    )
                 )
-            ))
+            )
         }
     }
 
