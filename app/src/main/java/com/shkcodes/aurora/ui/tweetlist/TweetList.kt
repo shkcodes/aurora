@@ -2,6 +2,7 @@ package com.shkcodes.aurora.ui.tweetlist
 
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,6 +56,7 @@ interface TweetListHandler {
     fun annotationClick(annotation: String)
     fun paginatedErrorAction()
     fun mediaClick(index: Int, id: Long)
+    fun showProfile(userHandle: String)
 }
 
 @Composable
@@ -113,7 +115,9 @@ private fun TweetItem(
                 },
             ),
             contentDescription = stringResource(id = R.string.accessibility_user_profile_image),
-            modifier = Modifier.size(Dimens.tweet_profile_pic)
+            modifier = Modifier
+                .size(Dimens.tweet_profile_pic)
+                .clickable { handler.showProfile("@${tweet.userHandle}") }
         )
         Column(
             modifier = Modifier

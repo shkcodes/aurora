@@ -174,6 +174,10 @@ private fun tweetListHandler(viewModel: HomeTimelineViewModel): TweetListHandler
         override fun mediaClick(index: Int, id: Long) {
             viewModel.handleIntent(MediaClick(index, id))
         }
+
+        override fun showProfile(userHandle: String) {
+            viewModel.handleIntent(HandleAnnotationClick(userHandle))
+        }
     }
 }
 

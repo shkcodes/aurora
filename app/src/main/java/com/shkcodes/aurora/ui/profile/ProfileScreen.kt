@@ -133,6 +133,10 @@ private fun tweetListHandler(viewModel: ProfileViewModel): TweetListHandler {
         override fun mediaClick(index: Int, id: Long) {
             viewModel.handleIntent(MediaClick(index, id))
         }
+
+        override fun showProfile(userHandle: String) {
+            viewModel.handleIntent(HandleAnnotationClick(userHandle))
+        }
     }
 }
 
@@ -148,7 +152,7 @@ private fun Header(user: User) {
             painter = rememberCoilPainter(request = user.profileBannerUrl),
             contentDescription = stringResource(id = R.string.accessibility_user_profile_banner),
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.Crop
         )
         Image(
             painter = rememberCoilPainter(request = user.profileImageUrlLarge,
