@@ -10,7 +10,7 @@ object Versions {
     const val appCompat = "1.2.0"
 
     const val compose = "1.0.0-beta05"
-    const val composeActivity = "1.3.0-alpha05"
+    const val composeActivity = "1.3.0-alpha07"
     const val composeViewModel = "1.0.0-alpha03"
     const val composeNavigation = "1.0.0-alpha09"
 
