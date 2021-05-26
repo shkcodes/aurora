@@ -42,3 +42,8 @@ enum class BottomNavScreens(val icon: ImageVector) {
     FAVORITES(Icons.Default.Favorite),
     SETTINGS(Icons.Default.Settings),
 }
+
+sealed class Screen2 { // how imaginative
+    object Login : Screen2()
+    object Home : Screen2()
+}

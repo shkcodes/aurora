@@ -8,6 +8,7 @@ buildscript {
         classpath Dependencies.kotlinPlugin
         classpath Dependencies.hiltGradlePlugin
         classpath Dependencies.detektGradlePlugin
+        classpath Dependencies.navigationSafeArgs
     }
 }
 

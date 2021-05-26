@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'io.gitlab.arturbosch.detekt'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -19,8 +20,8 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += [
-                        "room.incremental":"true",
-                        "room.expandProjection":"true"]
+                        "room.incremental"     : "true",
+                        "room.expandProjection": "true"]
             }
         }
 

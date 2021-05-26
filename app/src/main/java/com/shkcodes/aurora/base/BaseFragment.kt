@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -58,4 +60,8 @@ abstract class BaseFragment<S, I> : Fragment() {
     open fun handleNavigation(sideEffect: SideEffect.DisplayScreen<*>) {}
 
     open fun renderState(state: S) {}
+
+    fun navigate(navDirections: NavDirections) {
+        findNavController().navigate(navDirections)
+    }
 }
