@@ -9,16 +9,17 @@ object Versions {
     const val coreKtx = "1.3.2"
     const val appCompat = "1.2.0"
 
-    const val compose = "1.0.0-beta05"
-    const val composeActivity = "1.3.0-alpha07"
-    const val composeViewModel = "1.0.0-alpha03"
-    const val composeNavigation = "1.0.0-alpha09"
+    const val compose = "1.0.0-beta07"
+    const val composeActivity = "1.3.0-alpha08"
+    const val composeViewModel = "1.0.0-alpha05"
+    const val composeNavigation = "2.4.0-alpha01"
 
-    const val viewModel = "2.3.0"
+    const val viewModel = "2.4.0-alpha01"
 
-    const val hilt = "2.35"
-    const val hiltJetpack = "1.0.0-alpha03"
-    const val hiltComposeNavigation = "1.0.0-alpha01"
+    const val hilt = "2.35.1"
+    const val hiltJetpack = "1.0.0"
+    const val hiltViewModel = "1.0.0-alpha03"
+    const val hiltComposeNavigation = "1.0.0-alpha02"
 
     const val coroutines = "1.4.3"
 
@@ -32,7 +33,7 @@ object Versions {
     const val okhttp = "4.9.0"
     const val moshi = "1.12.0"
 
-    const val accompanist = "0.8.1"
+    const val accompanist = "0.10.0"
 
     const val desugarLib = "1.0.9"
     const val room = "2.3.0"
@@ -71,7 +72,7 @@ object Dependencies {
     const val hilt = "com.google.dagger:hilt-android:${Versions.hilt}"
     const val hiltCompiler = "com.google.dagger:hilt-compiler:${Versions.hilt}"
     const val hiltCompilerJetpack = "androidx.hilt:hilt-compiler:${Versions.hiltJetpack}"
-    const val hiltViewModel = "androidx.hilt:hilt-lifecycle-viewmodel:${Versions.hiltJetpack}"
+    const val hiltViewModel = "androidx.hilt:hilt-lifecycle-viewmodel:${Versions.hiltViewModel}"
     const val hiltComposeNavigation =
         "androidx.hilt:hilt-navigation-compose:${Versions.hiltComposeNavigation}"
 

@@ -46,7 +46,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.google.accompanist.coil.rememberCoilPainter
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.SideEffect

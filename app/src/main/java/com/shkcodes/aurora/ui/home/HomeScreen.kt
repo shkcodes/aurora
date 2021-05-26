@@ -25,11 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.BottomNavScreens
@@ -119,7 +117,7 @@ fun BottomNavBar(navController: NavController, state: State) {
                     selected = currentRoute == screen.name,
                     onClick = {
                         navController.navigate(screen.name) {
-                            popUpTo = navController.graph.startDestination
+                            popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
                         }
                     }
@@ -132,5 +130,5 @@ fun BottomNavBar(navController: NavController, state: State) {
 @Composable
 private fun currentRoute(navController: NavController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    return navBackStackEntry?.arguments?.getString(KEY_ROUTE)
+    return navBackStackEntry?.destination?.route
 }

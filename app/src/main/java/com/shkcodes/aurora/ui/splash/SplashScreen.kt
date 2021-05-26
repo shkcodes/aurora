@@ -16,8 +16,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
-import androidx.navigation.compose.popUpTo
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.ui.Screen

@@ -13,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
-import androidx.navigation.compose.popUpTo
 import com.shkcodes.aurora.BuildConfig
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.ui.Screen

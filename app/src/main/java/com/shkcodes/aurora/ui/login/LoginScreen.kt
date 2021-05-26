@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.theme.Dimens

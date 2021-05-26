@@ -156,7 +156,7 @@ private fun PagerItem(source: String) {
                 AndroidView(factory = {
                     GestureImageView(it).apply {
                         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-                        setImageDrawable(state.result)
+//                        setImageDrawable(state.result.)
                     }
                 })
             }
