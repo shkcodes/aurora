@@ -9,6 +9,10 @@ object Versions {
     const val coreKtx = "1.3.2"
     const val appCompat = "1.2.0"
 
+    const val navigation = "2.4.0-alpha01"
+    const val material = "1.4.0-beta01"
+    const val lifecycle = "2.4.0-alpha01"
+
     const val compose = "1.0.0-beta05"
     const val composeActivity = "1.3.0-alpha07"
     const val composeViewModel = "1.0.0-alpha03"
@@ -57,13 +61,20 @@ object Dependencies {
     const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.compose}"
     const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
     const val composeIconsCore = "androidx.compose.material:material-icons-core:${Versions.compose}"
-    const val composeIconsExtended = "androidx.compose.material:material-icons-extended:${Versions.compose}"
+    const val composeIconsExtended =
+        "androidx.compose.material:material-icons-extended:${Versions.compose}"
     const val composeActivity =
         "androidx.activity:activity-compose:${Versions.composeActivity}"
     const val composeViewModel =
         "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.composeViewModel}"
     const val composeNavigation =
         "androidx.navigation:navigation-compose:${Versions.composeNavigation}"
+
+    const val navigation = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
+    const val navigationUi = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
+    const val material = "com.google.android.material:material:${Versions.material}"
+    const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
+    const val lifecycleCompiler = "androidx.lifecycle:lifecycle-compiler:${Versions.lifecycle}"
 
     const val viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.viewModel}"
 
@@ -92,7 +103,8 @@ object Dependencies {
     const val moshiConverter = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
 
     const val coil = "com.google.accompanist:accompanist-coil:${Versions.accompanist}"
-    const val swipeRefresh = "com.google.accompanist:accompanist-swiperefresh:${Versions.accompanist}"
+    const val swipeRefresh =
+        "com.google.accompanist:accompanist-swiperefresh:${Versions.accompanist}"
     const val viewPager = "com.google.accompanist:accompanist-pager:${Versions.accompanist}"
 
     const val desugarLib = "com.android.tools:desugar_jdk_libs:${Versions.desugarLib}"

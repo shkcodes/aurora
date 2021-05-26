@@ -45,6 +45,7 @@ android {
     }
     buildFeatures {
         compose true
+        viewBinding true
     }
     composeOptions {
         kotlinCompilerExtensionVersion Versions.compose
@@ -75,6 +76,11 @@ dependencies {
     implementation Dependencies.composeActivity
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeNavigation
+    implementation Dependencies.navigation
+    implementation Dependencies.navigationUi
+    implementation Dependencies.material
+    implementation Dependencies.lifecycle
+    kapt Dependencies.lifecycleCompiler
 
     implementation Dependencies.viewModel
 

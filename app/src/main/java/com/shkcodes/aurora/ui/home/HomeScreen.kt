@@ -29,7 +29,6 @@ import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.BottomNavScreens
@@ -117,12 +116,7 @@ fun BottomNavBar(navController: NavController, state: State) {
                     selectedContentColor = colors.primary,
                     unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
                     selected = currentRoute == screen.name,
-                    onClick = {
-                        navController.navigate(screen.name) {
-                            popUpTo = navController.graph.startDestination
-                            launchSingleTop = true
-                        }
-                    }
+                    onClick = { navController.navigate(screen.name) }
                 )
             }
         }

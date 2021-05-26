@@ -21,7 +21,7 @@ abstract class BaseViewModel<S, I>(private val initialState: S) : ViewModel() {
     var currentState = initialState
         set(value) {
             field = value
-            viewStateFlow.tryEmit(field)
+            viewStateFlow.tryEmit(value)
         }
 
     @Composable
