@@ -46,4 +46,5 @@ enum class BottomNavScreens(val icon: ImageVector) {
 sealed class Screen2 { // how imaginative
     object Login : Screen2()
     object Home : Screen2()
+    object Auth : Screen2()
 }

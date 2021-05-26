@@ -1,8 +1,6 @@
 package com.shkcodes.aurora.ui.splash
 
 import android.graphics.Paint
-import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.viewModels
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
@@ -21,8 +19,7 @@ class SplashFragment : BaseFragment<State, Intent>() {
 
     override val viewModel by viewModels<SplashViewModel>()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setupView() {
         with(binding.name) {
             paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
         }

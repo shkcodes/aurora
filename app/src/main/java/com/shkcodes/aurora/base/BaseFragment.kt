@@ -13,11 +13,14 @@ import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@Suppress("TooManyFunctions")
 abstract class BaseFragment<S, I> : Fragment() {
 
     abstract val viewModel: BaseViewModel<S, I>
 
     abstract val binding: ViewBinding
+
+    open fun setupView() {}
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +33,7 @@ abstract class BaseFragment<S, I> : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         observeViewState()
         observeSideEffects()
+        setupView()
     }
 
     private fun observeViewState() {

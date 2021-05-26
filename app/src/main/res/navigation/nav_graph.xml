@@ -8,23 +8,34 @@
     <fragment
         android:id="@+id/splash"
         android:name="com.shkcodes.aurora.ui.splash.SplashFragment"
-        tools:layout="@layout/fragment_splash" >
+        tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/move_to_login"
-            app:destination="@id/login" />
+            app:destination="@id/login"
+            app:popUpTo="@id/nav_graph" />
         <action
             android:id="@+id/move_to_home"
-            app:destination="@id/home" />
+            app:destination="@id/home"
+            app:popUpTo="@id/nav_graph" />
     </fragment>
 
     <fragment
         android:id="@+id/login"
         android:name="com.shkcodes.aurora.ui.login.LoginFragment"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/move_to_auth"
+            app:destination="@id/auth" />
+    </fragment>
 
     <fragment
         android:id="@+id/home"
         android:name="com.shkcodes.aurora.ui.home.HomeFragment"
         tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/auth"
+        android:name="com.shkcodes.aurora.ui.auth.AuthFragment"
+        tools:layout="@layout/fragment_auth" />
 
 </navigation>
