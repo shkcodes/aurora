@@ -3,7 +3,6 @@ package com.shkcodes.aurora.ui.auth
 import com.shkcodes.aurora.base.BaseViewModel
 import com.shkcodes.aurora.ui.auth.AuthContract.Constant.AUTH_URL
 import com.shkcodes.aurora.ui.auth.AuthContract.State.Loading
-import com.shkcodes.aurora.ui.auth.AuthContract.State.RequestToken
 
 interface AuthContract {
 
@@ -20,7 +19,6 @@ interface AuthContract {
     sealed class Intent {
         object Retry : Intent()
         data class RequestAccessToken(
-            val tokenState: RequestToken,
             val authorizationResponse: String
         ) : Intent()
     }

@@ -6,7 +6,7 @@ import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.AuthService
-import com.shkcodes.aurora.ui.Screen
+import com.shkcodes.aurora.ui.Screen2
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.RequestAccessToken
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.Retry
@@ -32,13 +32,13 @@ class AuthViewModel @Inject constructor(
     override fun handleIntent(intent: Intent) {
         when (intent) {
             is RequestAccessToken -> {
-                val token = intent.tokenState.token
+                val token = (currentState as RequestToken).token
                 val verifier = intent.authorizationResponse.split("=").last()
                 currentState = Loading
                 viewModelScope.launch {
                     authService.getAccessToken(verifier, token).evaluate({
                         authService.isLoggedIn = true
-                        onSideEffect(SideEffect.DisplayScreen(Screen.HOME))
+                        onSideEffect(SideEffect.DisplayScreen(Screen2.Home))
                     }, {
                         currentState = Error(errorHandler.getErrorMessage(it))
                     })

@@ -29,13 +29,18 @@
     </fragment>
 
     <fragment
+        android:id="@+id/auth"
+        android:name="com.shkcodes.aurora.ui.auth.AuthFragment"
+        tools:layout="@layout/fragment_auth">
+        <action
+            android:id="@+id/move_to_home"
+            app:destination="@id/home"
+            app:popUpTo="@id/nav_graph" />
+    </fragment>
+
+    <fragment
         android:id="@+id/home"
         android:name="com.shkcodes.aurora.ui.home.HomeFragment"
         tools:layout="@layout/fragment_home" />
-
-    <fragment
-        android:id="@+id/auth"
-        android:name="com.shkcodes.aurora.ui.auth.AuthFragment"
-        tools:layout="@layout/fragment_auth" />
 
 </navigation>

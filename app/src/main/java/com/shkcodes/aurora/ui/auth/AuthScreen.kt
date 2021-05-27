@@ -13,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
-import androidx.navigation.compose.popUpTo
 import com.shkcodes.aurora.BuildConfig
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.ui.Screen
@@ -51,7 +49,7 @@ fun AuthScreen(navController: NavController) {
                             favicon: Bitmap?
                         ) {
                             if (url.startsWith(BuildConfig.CALLBACK_URL)) {
-                                viewModel.handleIntent(RequestAccessToken(state, url))
+                                viewModel.handleIntent(RequestAccessToken(url))
                             }
                         }
                     }

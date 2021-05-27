@@ -2,7 +2,7 @@
     <string name="app_name">Aurora</string>
     <string name="login_prompt">You need to authorize Aurora to access your Twitter account</string>
     <string name="proceed">PROCEED</string>
-    <string name="retry">RETRY</string>
+    <string name="retry">Retry</string>
 
     <string name="accessibility_retweet_icon">Retweet Icon</string>
     <string name="accessibility_user_profile_image">User Profile Image</string>

@@ -5,7 +5,7 @@ import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.AuthService
-import com.shkcodes.aurora.ui.Screen
+import com.shkcodes.aurora.ui.Screen2
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.RequestAccessToken
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.Retry
 import com.shkcodes.aurora.ui.auth.AuthContract.State
@@ -61,18 +61,13 @@ class AuthViewModelTest : BaseTest() {
             assert(expectItem() == State.Loading)
             assert(expectItem() == State.RequestToken("token"))
 
-            sut.handleIntent(
-                RequestAccessToken(
-                    State.RequestToken("token"),
-                    "verifier=verifierer"
-                )
-            )
+            sut.handleIntent(RequestAccessToken("verifier=verifierer"))
 
             assert(expectItem() == State.Loading)
         }
 
         sut.testSideEffects {
-            assert(SideEffect.DisplayScreen(Screen.HOME) == expectItem())
+            assert(SideEffect.DisplayScreen(Screen2.Home) == expectItem())
         }
     }
 
@@ -88,10 +83,7 @@ class AuthViewModelTest : BaseTest() {
             assert(expectItem() == State.RequestToken("token"))
 
             sut.handleIntent(
-                RequestAccessToken(
-                    State.RequestToken("token"),
-                    "verifier=verifierer"
-                )
+                RequestAccessToken("verifier=verifierer")
             )
 
             assert(expectItem() == State.Loading)
