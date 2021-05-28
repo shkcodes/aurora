@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
 import androidx.navigation.compose.NamedNavArgument
 import androidx.navigation.compose.navArgument
+import com.shkcodes.aurora.R
 
 enum class Screen(private val args: Map<String, NavType<*>> = emptyMap()) {
     SPLASH,
@@ -48,3 +49,5 @@ sealed class Screen2 { // how imaginative
     object Home : Screen2()
     object Auth : Screen2()
 }
+
+val bottomNavScreens = listOf(R.id.home, R.id.temp)

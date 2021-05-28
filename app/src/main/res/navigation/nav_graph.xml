@@ -43,4 +43,10 @@
         android:name="com.shkcodes.aurora.ui.home.HomeFragment"
         tools:layout="@layout/fragment_home" />
 
+    <fragment
+        android:id="@+id/temp"
+        android:name="com.shkcodes.aurora.util.TempFragment"
+        tools:layout="@layout/fragment_temp" />
+
+
 </navigation>
