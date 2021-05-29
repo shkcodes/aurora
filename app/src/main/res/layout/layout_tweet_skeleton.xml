@@ -14,34 +14,40 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/userName"
-        style="@style/TextAppearance.MaterialComponents.Subtitle2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textSize="@dimen/text_body"
-        app:layout_constraintStart_toEndOf="@id/profilePic"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Shashank Mishra" />
-
-    <TextView
-        android:id="@+id/userHandle"
-        style="@style/TextAppearance.MaterialComponents.Body2"
+    <LinearLayout
+        android:id="@+id/userInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space"
         android:layout_marginEnd="@dimen/space_small"
-        android:alpha="0.5"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textSize="@dimen/text_caption"
-        app:layout_constraintBottom_toBottomOf="@id/userName"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toStartOf="@id/time"
-        app:layout_constraintStart_toEndOf="@id/userName"
-        app:layout_constraintTop_toTopOf="@id/userName"
-        tools:text="shkm9" />
+        app:layout_constraintStart_toEndOf="@id/profilePic"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/userName"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="@dimen/text_body"
+            tools:text="Shashank Mishra" />
+
+        <TextView
+            android:id="@+id/userHandle"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.5"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="@dimen/text_caption"
+            tools:text=" @shkm9" />
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/time"
@@ -49,9 +55,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="@id/userName"
+        app:layout_constraintBottom_toBottomOf="@id/userInfo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/userName"
+        app:layout_constraintTop_toTopOf="@id/userInfo"
         tools:text="1 h ago" />
 
     <TextView

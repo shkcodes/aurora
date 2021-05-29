@@ -11,8 +11,8 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentC
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
-import com.shkcodes.aurora.util.openUrl
 import com.shkcodes.aurora.util.formattedTweetContent
+import com.shkcodes.aurora.util.openUrl
 import com.shkcodes.aurora.util.viewBinding
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
