@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
+import coil.ImageLoader
 import com.shkcodes.aurora.cache.AuroraDatabase
 import com.shkcodes.aurora.util.CacheConstants.PREFERENCES_NAME
 import dagger.Module
@@ -35,4 +36,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideTweetsDao(database: AuroraDatabase) = database.tweetsDao()
+
+    @Provides
+    @Singleton
+    fun provideImageLoader(application: Application) = ImageLoader(application)
 }

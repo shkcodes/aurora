@@ -26,6 +26,10 @@ object Versions {
 
     const val coroutines = "1.4.3"
 
+    const val groupie = "2.9.0"
+    const val coil = "1.2.1"
+    const val swipeRefresh = "1.1.0"
+
     const val detekt = "1.16.0"
 
     const val junit = "4.13.2"
@@ -72,7 +76,8 @@ object Dependencies {
 
     const val navigation = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
-    const val navigationSafeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navigation}"
+    const val navigationSafeArgs =
+        "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navigation}"
     const val material = "com.google.android.material:material:${Versions.material}"
     const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
     const val lifecycleCompiler = "androidx.lifecycle:lifecycle-compiler:${Versions.lifecycle}"
@@ -92,6 +97,13 @@ object Dependencies {
     const val coroutinesAndroid =
         "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
 
+    const val groupie = "com.github.lisawray.groupie:groupie:${Versions.groupie}"
+    const val groupieViewBinding =
+        "com.github.lisawray.groupie:groupie-viewbinding:${Versions.groupie}"
+    const val coil = "io.coil-kt:coil:${Versions.coil}"
+    const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefresh}"
+
+
     const val detektGradlePlugin =
         "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detekt}"
     const val detektFormatter = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detekt}"
@@ -103,8 +115,8 @@ object Dependencies {
     const val scalarsConverter = "com.squareup.retrofit2:converter-scalars:${Versions.retrofit}"
     const val moshiConverter = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
 
-    const val coil = "com.google.accompanist:accompanist-coil:${Versions.accompanist}"
-    const val swipeRefresh =
+    const val coilCompose = "com.google.accompanist:accompanist-coil:${Versions.accompanist}"
+    const val swipeRefreshCompose =
         "com.google.accompanist:accompanist-swiperefresh:${Versions.accompanist}"
     const val viewPager = "com.google.accompanist:accompanist-pager:${Versions.accompanist}"
 

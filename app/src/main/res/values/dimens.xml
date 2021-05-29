@@ -9,5 +9,6 @@
     <dimen name="keyline_1">16dp</dimen>
 
     <dimen name="bottom_nav_indicator_height">0.2dp</dimen>
+    <dimen name="tweet_profile_pic">32dp</dimen>
 
 </resources>

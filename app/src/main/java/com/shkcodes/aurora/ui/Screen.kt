@@ -50,4 +50,4 @@ sealed class Screen2 { // how imaginative
     object Auth : Screen2()
 }
 
-val bottomNavScreens = listOf(R.id.home, R.id.temp)
+val bottomNavScreens = listOf(R.id.home_timeline, R.id.home, R.id.temp)

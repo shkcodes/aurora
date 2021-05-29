@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@id/home"
+        android:id="@id/home_timeline"
         android:icon="@drawable/ic_home"
-        android:checked="true"
-        android:title="@string/title_home" />
+        android:title="@string/title_home_timeline" />
 
     <item
         android:id="@id/temp"

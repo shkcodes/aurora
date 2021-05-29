@@ -94,6 +94,12 @@ dependencies {
     implementation Dependencies.coroutinesCore
     implementation Dependencies.coroutinesAndroid
 
+    implementation Dependencies.groupie
+    implementation Dependencies.groupieViewBinding
+
+    implementation Dependencies.coil
+    implementation Dependencies.swipeRefresh
+
     detektPlugins Dependencies.detektFormatter
 
     implementation Dependencies.retrofit
@@ -103,8 +109,8 @@ dependencies {
     implementation Dependencies.scalarsConverter
     kapt Dependencies.moshiCompiler
 
-    implementation Dependencies.coil
-    implementation Dependencies.swipeRefresh
+    implementation Dependencies.coilCompose
+    implementation Dependencies.swipeRefreshCompose
     implementation Dependencies.viewPager
 
     coreLibraryDesugaring Dependencies.desugarLib

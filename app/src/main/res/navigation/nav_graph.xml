@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/splash">
+    app:startDestination="@id/home_timeline">
 
     <fragment
         android:id="@+id/splash"
@@ -15,7 +15,7 @@
             app:popUpTo="@id/nav_graph" />
         <action
             android:id="@+id/move_to_home"
-            app:destination="@id/home"
+            app:destination="@id/home_timeline"
             app:popUpTo="@id/nav_graph" />
     </fragment>
 
@@ -34,7 +34,7 @@
         tools:layout="@layout/fragment_auth">
         <action
             android:id="@+id/move_to_home"
-            app:destination="@id/home"
+            app:destination="@id/home_timeline"
             app:popUpTo="@id/nav_graph" />
     </fragment>
 
@@ -42,6 +42,11 @@
         android:id="@+id/home"
         android:name="com.shkcodes.aurora.ui.home.HomeFragment"
         tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/home_timeline"
+        android:name="com.shkcodes.aurora.ui.timeline.HomeTimelineFragment"
+        tools:layout="@layout/fragment_home_timeline" />
 
     <fragment
         android:id="@+id/temp"
