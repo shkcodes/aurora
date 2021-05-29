@@ -10,6 +10,7 @@ import coil.load
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.databinding.TweetMediaBinding
+import com.shkcodes.aurora.util.pixelSize
 
 class TweetMedia @JvmOverloads constructor(
     context: Context,
@@ -35,7 +36,7 @@ class TweetMedia @JvmOverloads constructor(
             image4.isVisible = media.size == 4
 
             row1.layoutParams.height =
-                resources.getDimensionPixelSize(
+                context.pixelSize(
                     if (media.size <= 2) {
                         R.dimen.single_row_media_height
                     } else {

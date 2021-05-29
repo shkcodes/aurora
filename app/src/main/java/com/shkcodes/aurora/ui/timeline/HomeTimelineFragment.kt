@@ -11,8 +11,8 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentC
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
-import com.shkcodes.aurora.util.contentFormatter2
 import com.shkcodes.aurora.util.openUrl
+import com.shkcodes.aurora.util.formattedTweetContent
 import com.shkcodes.aurora.util.viewBinding
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -42,14 +42,17 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
         with(binding) {
             swipeRefresh.isRefreshing = state.isLoading
         }
-        val tweetItems = state.tweets.map {
-            val content = requireContext().contentFormatter2(
-                it.tweet.content,
-                it.tweet.sharedUrls,
-                it.tweet.hashtags,
-                ::onTweetContentClick
-            )
-            TweetAdapterItem(content, it, imageLoader)
+        val tweetItems = state.tweets.map { tweetItem ->
+            val content =
+                requireContext().formattedTweetContent(tweetItem.tweet, ::onTweetContentClick)
+            val quoteTweetContent =
+                tweetItem.quoteTweet?.let {
+                    requireContext().formattedTweetContent(
+                        it,
+                        ::onTweetContentClick
+                    )
+                }
+            TweetAdapterItem(content, quoteTweetContent, tweetItem, imageLoader)
         }
         timelineAdapter.update(tweetItems)
     }

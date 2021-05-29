@@ -6,86 +6,46 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/keyline_1">
 
-    <ImageView
-        android:id="@+id/profilePic"
-        android:layout_width="@dimen/tweet_profile_pic"
-        android:layout_height="@dimen/tweet_profile_pic"
-        android:contentDescription="@string/accessibility_user_profile_image"
+    <include
+        android:id="@+id/primaryTweet"
+        layout="@layout/layout_tweet_skeleton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/userName"
-        style="@style/TextAppearance.MaterialComponents.Subtitle2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textSize="@dimen/text_body"
-        app:layout_constraintStart_toEndOf="@id/profilePic"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Shashank Mishra" />
-
-    <TextView
-        android:id="@+id/userHandle"
-        style="@style/TextAppearance.MaterialComponents.Body2"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/quoteTweetCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/space_small"
-        android:alpha="0.5"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textSize="@dimen/text_caption"
-        app:layout_constraintBottom_toBottomOf="@id/userName"
-        app:layout_constraintEnd_toStartOf="@id/time"
-        app:layout_constraintStart_toEndOf="@id/userName"
-        app:layout_constraintTop_toTopOf="@id/userName"
-        tools:text="shkm9" />
-
-    <TextView
-        android:id="@+id/time"
-        style="@style/TextAppearance.MaterialComponents.Overline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="@id/userName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/userName"
-        tools:text="1 h ago" />
-
-    <TextView
-        android:id="@+id/content"
-        style="@style/TextAppearance.MaterialComponents.Body2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space"
-        app:layout_constraintBottom_toTopOf="@id/tweetMedia"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/profilePic"
-        app:layout_constraintTop_toBottomOf="@id/profilePic"
-        tools:text="What a nice thing to tweet" />
-
-    <com.shkcodes.aurora.widget.TweetMedia
-        android:id="@+id/tweetMedia"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space"
+        android:layout_marginStart="@dimen/primary_tweet_safe_area"
         android:layout_marginTop="@dimen/space"
+        android:backgroundTint="@color/colorSurface"
+        app:cardCornerRadius="@dimen/two_dp"
+        app:contentPadding="@dimen/space"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/profilePic"
-        app:layout_constraintTop_toBottomOf="@id/content" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/primaryTweet">
+
+        <include
+            android:id="@+id/quoteTweet"
+            layout="@layout/layout_tweet_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.cardview.widget.CardView>
+
 
     <ImageView
         android:id="@+id/retweetIndicator"
         android:layout_width="@dimen/keyline_1"
         android:layout_height="@dimen/keyline_1"
-        android:layout_marginStart="@dimen/space"
+        android:layout_marginStart="@dimen/primary_tweet_safe_area"
         android:layout_marginTop="@dimen/keyline_1"
+        android:contentDescription="@string/accessibility_retweet_icon"
         android:src="@drawable/ic_repeat"
-        app:layout_constraintStart_toEndOf="@id/profilePic"
-        app:layout_constraintTop_toBottomOf="@id/tweetMedia"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quoteTweetCard"
         app:tint="@color/colorSecondary" />
 
     <TextView
@@ -101,7 +61,7 @@
         app:layout_constraintBottom_toBottomOf="@id/retweetIndicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/retweetIndicator"
-        app:layout_constraintTop_toBottomOf="@id/tweetMedia"
+        app:layout_constraintTop_toBottomOf="@id/quoteTweetCard"
         tools:text="Shashank Retweeted" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

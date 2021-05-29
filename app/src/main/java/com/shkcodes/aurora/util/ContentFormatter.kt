@@ -15,6 +15,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.api.response.Url
+import com.shkcodes.aurora.cache.entities.TweetEntity
 import org.jsoup.Jsoup
 
 // from https://github.com/android/compose-samples/blob/main/Jetchat/app/src/main/java/com/example/compose/jetchat/conversation/MessageFormatter.kt
@@ -163,6 +164,13 @@ private class TweetClickableSpan(
     override fun updateDrawState(ds: TextPaint) {
         ds.color = color
     }
+}
+
+fun Context.formattedTweetContent(
+    tweet: TweetEntity,
+    handler: (String) -> Unit
+): SpannableStringBuilder {
+    return contentFormatter2(tweet.content, tweet.sharedUrls, tweet.hashtags, handler)
 }
 
 fun Context.contentFormatter2(

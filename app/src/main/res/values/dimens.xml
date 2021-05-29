@@ -10,6 +10,8 @@
 
     <dimen name="bottom_nav_indicator_height">0.2dp</dimen>
     <dimen name="tweet_profile_pic">32dp</dimen>
+    <dimen name="quote_tweet_profile_pic">24dp</dimen>
+    <dimen name="primary_tweet_safe_area">40dp</dimen>
     <dimen name="single_row_media_height">170dp</dimen>
     <dimen name="multi_row_media_height">100dp</dimen>
 
