@@ -77,4 +77,31 @@
         app:layout_constraintStart_toEndOf="@id/profilePic"
         app:layout_constraintTop_toBottomOf="@id/content" />
 
+    <ImageView
+        android:id="@+id/retweetIndicator"
+        android:layout_width="@dimen/keyline_1"
+        android:layout_height="@dimen/keyline_1"
+        android:layout_marginStart="@dimen/space"
+        android:layout_marginTop="@dimen/keyline_1"
+        android:src="@drawable/ic_repeat"
+        app:layout_constraintStart_toEndOf="@id/profilePic"
+        app:layout_constraintTop_toBottomOf="@id/tweetMedia"
+        app:tint="@color/colorSecondary" />
+
+    <TextView
+        android:id="@+id/retweeter"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_small"
+        android:layout_marginTop="@dimen/keyline_1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/colorSecondary"
+        app:layout_constraintBottom_toBottomOf="@id/retweetIndicator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/retweetIndicator"
+        app:layout_constraintTop_toBottomOf="@id/tweetMedia"
+        tools:text="Shashank Retweeted" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

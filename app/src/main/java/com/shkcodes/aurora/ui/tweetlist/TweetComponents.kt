@@ -100,7 +100,7 @@ fun RetweetIndicator(userName: String) {
     Row(modifier = Modifier.padding(top = Dimens.keyline_1)) {
         Image(
             imageVector = Icons.Default.Repeat,
-            contentDescription = stringResource(id = R.string.accessibility_retweet_icon),
+            contentDescription = null,
             modifier = Modifier.size(Dimens.keyline_1),
             colorFilter = ColorFilter.tint(
                 colors.secondary

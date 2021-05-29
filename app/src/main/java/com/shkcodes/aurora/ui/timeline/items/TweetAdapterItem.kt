@@ -34,6 +34,7 @@ class TweetAdapterItem(
 
     override fun bind(binding: ItemTweetBinding, position: Int) {
         with(binding) {
+            val context = root.context
             with(content) {
                 text = tweetContent
                 movementMethod = LinkMovementMethod.getInstance()
@@ -45,9 +46,13 @@ class TweetAdapterItem(
             }
             userName.text = tweet.userName
             userHandle.text =
-                root.context.getString(R.string.user_handle_placeholder, tweet.userHandle)
+                context.getString(R.string.user_handle_placeholder, tweet.userHandle)
             time.text = tweet.createdAt.toPrettyTime()
             tweetMedia.show(media, imageLoader)
+            retweetIndicator.isVisible = tweetItem.isRetweet
+            retweeter.isVisible = tweetItem.isRetweet
+            retweeter.text =
+                context.getString(R.string.retweet_indicator_placeholder, tweetItem.retweeter)
         }
     }
 
