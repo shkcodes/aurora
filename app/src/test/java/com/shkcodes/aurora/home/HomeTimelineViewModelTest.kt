@@ -10,7 +10,7 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
-import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.HandleAnnotationClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MediaClick
@@ -275,7 +275,7 @@ class HomeTimelineViewModelTest : BaseTest() {
         val sut = viewModel()
         sut.testSideEffects {
             val url = "https://www.www.com"
-            sut.handleIntent(HandleAnnotationClick(url))
+            sut.handleIntent(TweetContentClick(url))
             assert(expectItem() == SideEffect.Action(OpenUrl(url)))
         }
     }
@@ -285,7 +285,7 @@ class HomeTimelineViewModelTest : BaseTest() {
         val sut = viewModel()
         sut.testSideEffects {
             val userHandle = "@don't_@_me"
-            sut.handleIntent(HandleAnnotationClick(userHandle))
+            sut.handleIntent(TweetContentClick(userHandle))
             assert(expectItem() == SideEffect.DisplayScreen(UserProfile(userHandle.substring(1))))
         }
     }

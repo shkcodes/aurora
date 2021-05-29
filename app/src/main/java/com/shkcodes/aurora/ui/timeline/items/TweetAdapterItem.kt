@@ -1,5 +1,8 @@
 package com.shkcodes.aurora.ui.timeline.items
 
+import android.graphics.Color
+import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
 import android.view.View
 import androidx.core.view.isVisible
 import coil.ImageLoader
@@ -13,6 +16,7 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.viewbinding.BindableItem
 
 class TweetAdapterItem(
+    private val tweetContent: SpannableStringBuilder,
     private val tweetItem: TweetItem,
     private val imageLoader: ImageLoader
 ) : BindableItem<ItemTweetBinding>() {
@@ -30,7 +34,11 @@ class TweetAdapterItem(
 
     override fun bind(binding: ItemTweetBinding, position: Int) {
         with(binding) {
-            content.text = tweet.content
+            with(content) {
+                text = tweetContent
+                movementMethod = LinkMovementMethod.getInstance()
+                highlightColor = Color.TRANSPARENT
+            }
             content.isVisible = tweet.content.isNotEmpty()
             profilePic.load(tweet.userProfileImageUrl, imageLoader) {
                 transformations(CircleCropTransformation())

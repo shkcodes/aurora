@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -39,7 +38,7 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.common.TerminalError
-import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.HandleAnnotationClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MediaClick
@@ -164,7 +163,7 @@ private fun NewTweetsIndicator(
 private fun tweetListHandler(viewModel: HomeTimelineViewModel): TweetListHandler {
     return object : TweetListHandler {
         override fun annotationClick(annotation: String) {
-            viewModel.handleIntent(HandleAnnotationClick(annotation))
+            viewModel.handleIntent(TweetContentClick(annotation))
         }
 
         override fun paginatedErrorAction() {
@@ -176,7 +175,7 @@ private fun tweetListHandler(viewModel: HomeTimelineViewModel): TweetListHandler
         }
 
         override fun showProfile(userHandle: String) {
-            viewModel.handleIntent(HandleAnnotationClick(userHandle))
+            viewModel.handleIntent(TweetContentClick(userHandle))
         }
     }
 }

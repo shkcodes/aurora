@@ -1,5 +1,11 @@
 package com.shkcodes.aurora.util
 
+import android.content.Context
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.style.ClickableSpan
+import android.view.View
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -7,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import com.shkcodes.aurora.R
 import com.shkcodes.aurora.api.response.Url
 import org.jsoup.Jsoup
 
@@ -142,4 +149,67 @@ private fun annotationForType(
             tag = type.data
         )
     )
+}
+
+private class TweetClickableSpan(
+    private val color: Int,
+    private val handler: () -> Unit
+) : ClickableSpan() {
+
+    override fun onClick(widget: View) {
+        handler()
+    }
+
+    override fun updateDrawState(ds: TextPaint) {
+        ds.color = color
+    }
+}
+
+fun Context.contentFormatter2(
+    text: String,
+    urls: List<Url> = emptyList(),
+    hashtags: List<String> = emptyList(),
+    handler: (String) -> Unit
+): SpannableStringBuilder {
+    val cleanedText = Jsoup.parse(text).wholeText()
+    val tokens = symbolPattern.findAll(cleanedText)
+    var cursorPosition = 0
+    val output = SpannableStringBuilder("")
+    for (token in tokens) {
+        output.append(cleanedText.slice(cursorPosition until token.range.first))
+
+        val result = token.value
+
+        val (isValidSpan, clickableContent, displayableContent) = when (result.first()) {
+            '#' -> {
+                Triple(hashtags.contains(result.substring(1)), result, result)
+            }
+            'h' -> {
+                val relevantUrl = urls.first { result.contains(it.shortenedUrl) }
+                Triple(true, relevantUrl.url, relevantUrl.displayUrl)
+            }
+            else -> {
+                Triple(true, result, result)
+            }
+        }
+        if (isValidSpan) {
+            val clickableSpan = TweetClickableSpan(getColor(R.color.colorPrimary)) {
+                handler(clickableContent)
+            }
+            output.withSpan(clickableSpan) { append(displayableContent) }
+        }
+        cursorPosition = token.range.last + 1
+    }
+    output.append(cleanedText.slice(cursorPosition..cleanedText.lastIndex))
+    return output
+}
+
+private inline fun SpannableStringBuilder.withSpan(
+    span: Any,
+    action: SpannableStringBuilder.() -> Unit
+): SpannableStringBuilder {
+    val from = length
+    action()
+    setSpan(span, from, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    return this
 }

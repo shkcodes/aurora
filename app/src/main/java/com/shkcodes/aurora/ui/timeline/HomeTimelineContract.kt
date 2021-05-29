@@ -24,7 +24,7 @@ class HomeTimelineContract {
         object MarkItemsAsSeen : Intent()
         data class MediaClick(val index: Int, val tweetId: Long) : Intent()
         data class ScrollIndexChange(val index: Int) : Intent()
-        data class HandleAnnotationClick(val data: String) : Intent()
+        data class TweetContentClick(val text: String) : Intent()
     }
 
     sealed class TimelineSideEffect {

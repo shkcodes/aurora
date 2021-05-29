@@ -13,7 +13,7 @@ import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent
-import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.HandleAnnotationClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MediaClick
@@ -89,10 +89,10 @@ class HomeTimelineViewModel @Inject constructor(
                 }
             }
 
-            is HandleAnnotationClick -> {
-                when (intent.data.first()) {
-                    'h' -> onSideEffect(SideEffect.Action(OpenUrl(intent.data)))
-                    '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.data.substring(1))))
+            is TweetContentClick -> {
+                when (intent.text.first()) {
+                    'h' -> onSideEffect(SideEffect.Action(OpenUrl(intent.text)))
+                    '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.text.substring(1))))
                 }
             }
         }
