@@ -61,10 +61,20 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tweetMedia"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/profilePic"
         app:layout_constraintTop_toBottomOf="@id/profilePic"
         tools:text="What a nice thing to tweet" />
+
+    <com.shkcodes.aurora.widget.TweetMedia
+        android:id="@+id/tweetMedia"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space"
+        android:layout_marginTop="@dimen/space"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/profilePic"
+        app:layout_constraintTop_toBottomOf="@id/content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

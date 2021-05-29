@@ -16,4 +16,9 @@
         <item name="fontFamily">@font/app_fonts</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
+
+    <style name="roundedCornerShape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">2dp</item>
+    </style>
 </resources>

@@ -39,6 +39,7 @@ class TweetAdapterItem(
             userHandle.text =
                 root.context.getString(R.string.user_handle_placeholder, tweet.userHandle)
             time.text = tweet.createdAt.toPrettyTime()
+            tweetMedia.show(media, imageLoader)
         }
     }
 
