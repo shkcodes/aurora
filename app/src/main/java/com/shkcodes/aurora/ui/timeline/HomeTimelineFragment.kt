@@ -58,7 +58,7 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
     }
 
     override fun onTweetContentClick(text: String) {
-        viewModel.handleIntent(TweetContentClick(text))
+        dispatchIntent(TweetContentClick(text))
     }
 
     override fun handleAction(sideEffect: SideEffect.Action<*>) {

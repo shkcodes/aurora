@@ -41,10 +41,7 @@ class UserService @Inject constructor(
             return difference.toMinutes() >= TIMELINE_REFRESH_THRESHOLD
         }
 
-    suspend fun fetchTimelineTweets(
-        newerThan: TweetEntity?,
-        afterId: Long?
-    ): Result<TweetItems> {
+    suspend fun fetchTimelineTweets(newerThan: TweetEntity?, afterId: Long?): Result<TweetItems> {
         return execute {
             if (isTimelineStale || afterId != null || newerThan != null) {
                 val freshTweets = userApi.getTimelineTweets(afterId = afterId)
@@ -83,9 +80,9 @@ class UserService @Inject constructor(
 
             tweetsDao.saveMedia(
                 primaryTweetMedia +
-                        retweet?.media.orEmpty() +
-                        quoteTweet?.media.orEmpty() +
-                        retweetQuote?.media.orEmpty()
+                    retweet?.media.orEmpty() +
+                    quoteTweet?.media.orEmpty() +
+                    retweetQuote?.media.orEmpty()
             )
 
             TweetItem(

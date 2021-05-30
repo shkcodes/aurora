@@ -1,22 +1,27 @@
 package com.shkcodes.aurora.ui.main
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.shkcodes.aurora.R
+import com.shkcodes.aurora.base.BaseActivity
 import com.shkcodes.aurora.databinding.ActivityMainBinding
 import com.shkcodes.aurora.ui.bottomNavScreens
+import com.shkcodes.aurora.ui.main.MainContract.Intent
+import com.shkcodes.aurora.ui.main.MainContract.State
+import com.shkcodes.aurora.util.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity<State, Intent>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override val viewModel by viewModels<MainViewModel>()
+
+    override val binding by viewBinding(ActivityMainBinding::inflate)
+
+    override fun setUpActivity(savedInstanceState: Bundle?) {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navController = navHostFragment.navController

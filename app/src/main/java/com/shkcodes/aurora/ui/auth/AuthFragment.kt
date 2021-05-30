@@ -23,10 +23,10 @@ class AuthFragment : BaseFragment<State, Intent>() {
     override fun setupView() {
         with(binding) {
             webView.webViewClient = AuthWebViewClient {
-                viewModel.handleIntent(RequestAccessToken(it))
+                dispatchIntent(RequestAccessToken(it))
             }
             retryButton.setOnClickListener {
-                viewModel.handleIntent(Retry)
+                dispatchIntent(Retry)
             }
         }
     }

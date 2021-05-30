@@ -36,7 +36,8 @@ import com.shkcodes.aurora.ui.BottomNavScreens.FAVORITES
 import com.shkcodes.aurora.ui.BottomNavScreens.MENTIONS
 import com.shkcodes.aurora.ui.BottomNavScreens.SETTINGS
 import com.shkcodes.aurora.ui.BottomNavScreens.TWEETS
-import com.shkcodes.aurora.ui.home.HomeContract.State
+import com.shkcodes.aurora.ui.main.MainContract.State
+import com.shkcodes.aurora.ui.main.MainViewModel
 import com.shkcodes.aurora.ui.settings.SettingsScreen
 import com.shkcodes.aurora.ui.timeline.HomeTimeline
 import com.shkcodes.aurora.util.TempScreen
@@ -44,7 +45,7 @@ import com.shkcodes.aurora.util.TempScreen
 @Composable
 fun HomeScreen(primaryNavController: NavController) {
     val navController = rememberNavController()
-    val viewModel = hiltNavGraphViewModel<HomeViewModel>()
+    val viewModel = hiltNavGraphViewModel<MainViewModel>()
     val state = viewModel.composableState()
 
     Scaffold(bottomBar = {

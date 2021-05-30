@@ -20,7 +20,7 @@ class LoginFragment : BaseFragment<State, Intent>() {
 
     override fun setupView() {
         binding.proceed.setOnClickListener {
-            viewModel.handleIntent(ShowAuthScreen)
+            dispatchIntent(ShowAuthScreen)
         }
     }
 

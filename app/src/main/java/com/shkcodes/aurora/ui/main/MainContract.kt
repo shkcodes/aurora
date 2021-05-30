@@ -1,8 +1,8 @@
-package com.shkcodes.aurora.ui.home
+package com.shkcodes.aurora.ui.main
 
 import com.shkcodes.aurora.base.BaseViewModel
 
-interface HomeContract {
+interface MainContract {
 
     abstract class ViewModel : BaseViewModel<State, Intent>(State())
 
