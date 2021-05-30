@@ -14,5 +14,7 @@
     <dimen name="primary_tweet_safe_area">40dp</dimen>
     <dimen name="single_row_media_height">170dp</dimen>
     <dimen name="multi_row_media_height">100dp</dimen>
+    <dimen name="gif_indicator_size">28dp</dimen>
+    <dimen name="play_icon_size">36dp</dimen>
 
 </resources>

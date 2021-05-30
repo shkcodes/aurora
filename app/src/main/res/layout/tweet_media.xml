@@ -6,21 +6,23 @@
     android:layout_height="wrap_content"
     tools:showIn="@layout/item_tweet">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/row1"
         android:layout_width="match_parent"
         android:layout_height="@dimen/multi_row_media_height"
         android:layout_weight="1"
-        android:orientation="horizontal"
         android:visibility="gone"
         tools:visibility="visible">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image1"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="0dp"
             android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/image2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearance="@style/roundedCornerShape"
             tools:src="@tools:sample/backgrounds/scenic" />
 
@@ -29,12 +31,52 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/space_small"
-            android:layout_weight="1"
             android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/image1"
+            app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearance="@style/roundedCornerShape"
             tools:src="@tools:sample/backgrounds/scenic" />
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/playIcon"
+            android:layout_width="@dimen/play_icon_size"
+            android:layout_height="@dimen/play_icon_size"
+            android:background="@drawable/bg_animated_media_indicator"
+            android:src="@drawable/ic_play"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/colorSecondary" />
+
+        <ImageView
+            android:id="@+id/gifIndicator"
+            android:layout_width="@dimen/gif_indicator_size"
+            android:layout_height="@dimen/gif_indicator_size"
+            android:layout_margin="@dimen/space_small"
+            android:background="@drawable/bg_animated_media_indicator"
+            android:src="@drawable/ic_gif"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/colorSecondary" />
+
+        <TextView
+            android:id="@+id/videoDuration"
+            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/space_small"
+            android:background="@drawable/bg_animated_media_indicator"
+            android:padding="@dimen/space_small"
+            android:textColor="@color/colorSecondary"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="00:60" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/row2"

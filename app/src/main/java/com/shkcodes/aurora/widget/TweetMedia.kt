@@ -9,8 +9,12 @@ import coil.ImageLoader
 import coil.load
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
+import com.shkcodes.aurora.cache.entities.MediaType
 import com.shkcodes.aurora.databinding.TweetMediaBinding
 import com.shkcodes.aurora.util.pixelSize
+import java.time.Duration
+
+private const val SECONDS_PER_MINUTE = 60
 
 class TweetMedia @JvmOverloads constructor(
     context: Context,
@@ -26,14 +30,17 @@ class TweetMedia @JvmOverloads constructor(
     }
 
     @Suppress("MagicNumber")
-    fun show(media: List<MediaEntity>, imageLoader: ImageLoader) {
+    fun show(media: List<MediaEntity>, imageLoader: ImageLoader, duration: Long? = null) {
         isVisible = media.isNotEmpty()
         with(binding) {
             row1.isVisible = media.isNotEmpty()
             row2.isVisible = media.size > 2
 
-            image2.isVisible = media.size > 1
-            image4.isVisible = media.size == 4
+            val isVideo = media.any { it.mediaType == MediaType.VIDEO }
+            playIcon.isVisible = isVideo
+            gifIndicator.isVisible = media.any { it.mediaType == MediaType.GIF }
+            videoDuration.isVisible = isVideo
+            videoDuration.text = formatDuration(duration ?: media.firstOrNull()?.duration)
 
             row1.layoutParams.height =
                 context.pixelSize(
@@ -49,6 +56,11 @@ class TweetMedia @JvmOverloads constructor(
             image3.loadMedia(media.getUrl(2), imageLoader)
             image4.loadMedia(media.getUrl(3), imageLoader)
         }
+    }
+
+    private fun formatDuration(millis: Long?): String {
+        val duration = Duration.ofMillis(millis ?: 0)
+        return "${"%02d".format(duration.toMinutes())}:${"%02d".format((duration.seconds % SECONDS_PER_MINUTE))}"
     }
 
     private fun ImageView.loadMedia(url: String?, imageLoader: ImageLoader) {
