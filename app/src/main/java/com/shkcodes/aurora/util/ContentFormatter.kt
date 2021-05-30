@@ -205,6 +205,8 @@ fun Context.contentFormatter2(
                 handler(clickableContent)
             }
             output.withSpan(clickableSpan) { append(displayableContent) }
+        } else {
+            output.append(result)
         }
         cursorPosition = token.range.last + 1
     }
