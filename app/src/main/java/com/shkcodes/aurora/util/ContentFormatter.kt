@@ -173,6 +173,38 @@ fun Context.formattedTweetContent(
     return contentFormatter2(tweet.content, tweet.sharedUrls, tweet.hashtags, handler)
 }
 
+fun Context.repliedToUsers(
+    tweet: TweetEntity,
+    handler: (String) -> Unit
+): SpannableStringBuilder {
+    return contentFormatter2(
+        getString(
+            R.string.users_replied_placeholder,
+            getRepliedUsers(this, tweet.repliedToUsers)
+        ), handler = handler
+    )
+}
+
+private fun getRepliedUsers(context: Context, users: List<String>): String {
+    return with(context) {
+        when (users.size) {
+            0 -> ""
+            1 -> getString(R.string.single_replied_placeholder, users.single())
+            2 -> getString(
+                R.string.two_users_replied_placeholder,
+                users.first(),
+                users.last()
+            )
+            else -> getString(
+                R.string.multiple_users_replied_placeholder,
+                users[0],
+                users[1],
+                users.size - 2
+            )
+        }
+    }
+}
+
 fun Context.contentFormatter2(
     text: String,
     urls: List<Url> = emptyList(),

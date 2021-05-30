@@ -1,8 +1,6 @@
 package com.shkcodes.aurora.ui.timeline.items
 
-import android.graphics.Color
 import android.text.SpannableStringBuilder
-import android.text.method.LinkMovementMethod
 import android.view.View
 import androidx.core.view.isVisible
 import coil.ImageLoader
@@ -12,6 +10,7 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.databinding.ItemTweetBinding
 import com.shkcodes.aurora.databinding.LayoutTweetSkeletonBinding
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
+import com.shkcodes.aurora.util.handleClickableSpans
 import com.shkcodes.aurora.util.setSize
 import com.shkcodes.aurora.util.toPrettyTime
 import com.xwray.groupie.Item
@@ -20,6 +19,7 @@ import com.xwray.groupie.viewbinding.BindableItem
 class TweetAdapterItem(
     private val tweetContent: SpannableStringBuilder,
     private val quoteTweetContent: SpannableStringBuilder?,
+    private val tweetRepliedUsers: SpannableStringBuilder,
     private val tweetItem: TweetItem,
     private val imageLoader: ImageLoader
 ) : BindableItem<ItemTweetBinding>() {
@@ -39,11 +39,8 @@ class TweetAdapterItem(
         with(binding) {
             val context = root.context
             with(primaryTweet) {
-                with(content) {
-                    text = tweetContent
-                    movementMethod = LinkMovementMethod.getInstance()
-                    highlightColor = Color.TRANSPARENT
-                }
+                content.text = tweetContent
+                content.handleClickableSpans()
                 content.isVisible = tweet.content.isNotEmpty()
                 profilePic.load(tweet.userProfileImageUrl, imageLoader) {
                     transformations(CircleCropTransformation())
@@ -53,6 +50,9 @@ class TweetAdapterItem(
                     context.getString(R.string.user_handle_placeholder, tweet.userHandle)
                 time.text = tweet.createdAt.toPrettyTime()
                 tweetMedia.show(media, imageLoader)
+                repliedUsers.isVisible = tweet.repliedToUsers.isNotEmpty()
+                repliedUsers.text = tweetRepliedUsers
+                repliedUsers.handleClickableSpans()
             }
             retweetIndicator.isVisible = tweetItem.isRetweet
             retweeter.isVisible = tweetItem.isRetweet
@@ -73,11 +73,8 @@ class TweetAdapterItem(
             userName.text = quoteTweet?.userName
             userHandle.text =
                 context.getString(R.string.user_handle_placeholder, quoteTweet?.userHandle)
-            with(content) {
-                text = quoteTweetContent
-                movementMethod = LinkMovementMethod.getInstance()
-                highlightColor = Color.TRANSPARENT
-            }
+            content.text = quoteTweetContent
+            content.handleClickableSpans()
             tweetMedia.show(quoteTweetMedia, imageLoader)
         }
     }

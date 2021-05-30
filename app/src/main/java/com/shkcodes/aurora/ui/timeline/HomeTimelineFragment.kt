@@ -13,6 +13,7 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
 import com.shkcodes.aurora.util.PagedAdapter
+import com.shkcodes.aurora.util.repliedToUsers
 import com.shkcodes.aurora.util.formattedTweetContent
 import com.shkcodes.aurora.util.openUrl
 import com.shkcodes.aurora.util.viewBinding
@@ -52,7 +53,9 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
                         ::onTweetContentClick
                     )
                 }
-            TweetAdapterItem(content, quoteTweetContent, tweetItem, imageLoader)
+            val repliedUsers =
+                requireContext().repliedToUsers(tweetItem.tweet, ::onTweetContentClick)
+            TweetAdapterItem(content, quoteTweetContent, repliedUsers, tweetItem, imageLoader)
         }
         timelineAdapter.update(tweetItems)
     }
