@@ -7,15 +7,15 @@ import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentHomeTimelineBinding
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
+import com.shkcodes.aurora.util.PagedAdapter
 import com.shkcodes.aurora.util.formattedTweetContent
 import com.shkcodes.aurora.util.openUrl
 import com.shkcodes.aurora.util.viewBinding
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.GroupieViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -24,7 +24,7 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
 
     @Inject
     lateinit var imageLoader: ImageLoader
-    private val timelineAdapter = GroupAdapter<GroupieViewHolder>()
+    private val timelineAdapter = PagedAdapter(::loadNextPage)
 
     override val viewModel by viewModels<HomeTimelineViewModel>()
 
@@ -67,6 +67,10 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
                 requireContext().openUrl(action.url)
             }
         }
+    }
+
+    private fun loadNextPage() {
+        dispatchIntent(LoadNextPage)
     }
 }
 

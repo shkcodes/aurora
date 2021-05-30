@@ -22,12 +22,23 @@ class MainActivity : BaseActivity<State, Intent>() {
     override val binding by viewBinding(ActivityMainBinding::inflate)
 
     override fun setUpActivity(savedInstanceState: Bundle?) {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        binding.bottomNav.setupWithNavController(navController)
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.bottomNavigationGroup.isVisible = bottomNavScreens.contains(destination.id)
+        with(binding) {
+            val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
+            val navController = navHostFragment.navController
+            bottomNav.setupWithNavController(navController)
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                bottomNavigationGroup.isVisible = bottomNavScreens.contains(destination.id)
+            }
+        }
+    }
+
+    override fun renderState(state: State) {
+        with(binding) {
+            progressBarBackground.animate().alpha(if (state.isLoading) 1F else 0F).start()
+            bottomNavIndicator.animate().scaleY(if (state.isLoading) 0F else 1F).start()
+            progressBar.pivotY = progressBar.height.toFloat()
+            progressBar.animate().scaleY(if (state.isLoading) 1F else 0F).start()
         }
     }
 }
