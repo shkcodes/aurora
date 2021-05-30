@@ -166,21 +166,21 @@ private class TweetClickableSpan(
     }
 }
 
-fun Context.formattedTweetContent(
-    tweet: TweetEntity,
+fun TweetEntity.formattedContent(
+    context: Context,
     handler: (String) -> Unit
 ): SpannableStringBuilder {
-    return contentFormatter2(tweet.content, tweet.sharedUrls, tweet.hashtags, handler)
+    return context.contentFormatter2(content, sharedUrls, hashtags, handler)
 }
 
-fun Context.repliedToUsers(
-    tweet: TweetEntity,
+fun TweetEntity.repliedUsers(
+    context: Context,
     handler: (String) -> Unit
 ): SpannableStringBuilder {
-    return contentFormatter2(
-        getString(
+    return context.contentFormatter2(
+        context.getString(
             R.string.users_replied_placeholder,
-            getRepliedUsers(this, tweet.repliedToUsers)
+            getRepliedUsers(context, repliedToUsers)
         ), handler = handler
     )
 }

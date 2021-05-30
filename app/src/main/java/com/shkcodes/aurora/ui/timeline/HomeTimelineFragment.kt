@@ -13,9 +13,9 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
 import com.shkcodes.aurora.util.PagedAdapter
-import com.shkcodes.aurora.util.repliedToUsers
-import com.shkcodes.aurora.util.formattedTweetContent
+import com.shkcodes.aurora.util.formattedContent
 import com.shkcodes.aurora.util.openUrl
+import com.shkcodes.aurora.util.repliedUsers
 import com.shkcodes.aurora.util.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -45,16 +45,11 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
         }
         val tweetItems = state.tweets.map { tweetItem ->
             val content =
-                requireContext().formattedTweetContent(tweetItem.tweet, ::onTweetContentClick)
+                tweetItem.tweet.formattedContent(requireContext(), ::onTweetContentClick)
             val quoteTweetContent =
-                tweetItem.quoteTweet?.let {
-                    requireContext().formattedTweetContent(
-                        it,
-                        ::onTweetContentClick
-                    )
-                }
+                tweetItem.quoteTweet?.formattedContent(requireContext(), ::onTweetContentClick)
             val repliedUsers =
-                requireContext().repliedToUsers(tweetItem.tweet, ::onTweetContentClick)
+                tweetItem.tweet.repliedUsers(requireContext(), ::onTweetContentClick)
             TweetAdapterItem(content, quoteTweetContent, repliedUsers, tweetItem, imageLoader)
         }
         timelineAdapter.update(tweetItems)
