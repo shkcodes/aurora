@@ -58,7 +58,9 @@ class UserServiceTest : BaseTest() {
     private val fakeTime = LocalDateTime.of(2021, 4, 16, 23, 10)
 
     private val userApi = mockk<UserApi> {
-        coEvery { getTimelineTweets() } returns listOf(apiTweet) andThen listOf(freshApiTweet)
+        coEvery { getTimelineTweets(any(), any(), any(), any()) } returns listOf(apiTweet) andThen listOf(
+            freshApiTweet
+        )
     }
 
     private val tweetsDao = FakeTweetsDao()
@@ -84,7 +86,7 @@ class UserServiceTest : BaseTest() {
     fun `get timeline tweets returns fresh tweets if refreshed manually`() =
         testDispatcher.runBlockingTest {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
-            sut().fetchTimelineTweets(null, null)
+            sut().fetchTimelineTweets(localTweet, null)
             val result =
                 sut().fetchTimelineTweets(listOf(apiTweet).toCachedTweets(true).first(), null)
             assert(result == Result.Success(freshApiTweet.toTweetItems()))

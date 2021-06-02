@@ -8,6 +8,7 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentHomeTimelineBinding
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
@@ -36,6 +37,7 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
             timeline.adapter = timelineAdapter
             swipeRefresh.setProgressBackgroundColorSchemeColor(requireContext().getColor(R.color.colorSurface))
             swipeRefresh.setColorSchemeColors(requireContext().getColor(R.color.colorSecondary))
+            swipeRefresh.setOnRefreshListener { dispatchIntent(Refresh) }
         }
     }
 

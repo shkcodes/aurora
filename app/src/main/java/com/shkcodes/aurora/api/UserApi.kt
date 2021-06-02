@@ -11,7 +11,8 @@ interface UserApi {
     suspend fun getTimelineTweets(
         @Query("count") count: Int = 30,
         @Query("tweet_mode") tweetMode: String = "extended",
-        @Query("max_id") afterId: Long? = null
+        @Query("max_id") afterId: Long? = null,
+        @Query("since_id") sinceId: Long? = null
     ): Tweets
 
     @GET("1.1/users/show.json")

@@ -44,7 +44,7 @@ class UserService @Inject constructor(
     suspend fun fetchTimelineTweets(newerThan: TweetEntity?, afterId: Long?): Result<TweetItems> {
         return execute {
             if (isTimelineStale || afterId != null || newerThan != null) {
-                val freshTweets = userApi.getTimelineTweets(afterId = afterId)
+                val freshTweets = userApi.getTimelineTweets(afterId = afterId, sinceId = newerThan?.id)
                 tweetsDao.cacheTimeline(freshTweets)
                 if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()
             }
