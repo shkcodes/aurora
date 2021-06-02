@@ -129,5 +129,6 @@ dependencies {
     testImplementation TestDependencies.junit
     testImplementation TestDependencies.coroutines
     testImplementation TestDependencies.mockk
+    testImplementation TestDependencies.mockkJvmAgent
     testImplementation TestDependencies.turbine
 }

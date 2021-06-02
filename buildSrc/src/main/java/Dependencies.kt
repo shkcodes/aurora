@@ -139,5 +139,6 @@ object TestDependencies {
     const val junit = "junit:junit:${Versions.junit}"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
+    const val mockkJvmAgent = "io.mockk:mockk-agent-jvm:${Versions.mockk}"
     const val turbine = "app.cash.turbine:turbine:${Versions.turbine}"
 }
