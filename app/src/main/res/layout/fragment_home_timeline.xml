@@ -24,4 +24,22 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/newTweetsIndicator"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/keyline_1"
+        android:backgroundTint="?attr/colorSecondary"
+        android:gravity="center"
+        android:textColor="?attr/colorSurface"
+        android:visibility="gone"
+        app:fontFamily="@font/montserrat_semibold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearance="@style/circularShape"
+        tools:text="7 new tweets"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
