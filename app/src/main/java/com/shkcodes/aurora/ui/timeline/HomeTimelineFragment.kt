@@ -16,7 +16,9 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.ScrollIndexCh
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.ScrollToTop
+import com.shkcodes.aurora.ui.timeline.items.PaginatedErrorItem
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
 import com.shkcodes.aurora.util.PagedAdapter
 import com.shkcodes.aurora.util.formattedContent
@@ -25,6 +27,7 @@ import com.shkcodes.aurora.util.observeScrolling
 import com.shkcodes.aurora.util.openUrl
 import com.shkcodes.aurora.util.repliedUsers
 import com.shkcodes.aurora.util.viewBinding
+import com.xwray.groupie.viewbinding.BindableItem
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -75,7 +78,14 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
                 tweetItem.tweet.repliedUsers(requireContext(), ::onTweetContentClick)
             TweetAdapterItem(content, quoteTweetContent, repliedUsers, tweetItem, imageLoader)
         }
-        timelineAdapter.update(tweetItems)
+        timelineAdapter.canLoadMore = !state.isPaginatedError
+        val items = mutableListOf<BindableItem<*>>().apply {
+            addAll(tweetItems)
+            if (state.isPaginatedError) {
+                add(PaginatedErrorItem(::loadNextPage))
+            }
+        }
+        timelineAdapter.update(items)
     }
 
     override fun onTweetContentClick(text: String) {
@@ -89,6 +99,9 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
             }
             is ScrollToTop -> {
                 binding.timeline.scrollToPosition(0)
+            }
+            is ScrollToBottom -> {
+                binding.timeline.scrollToPosition(action.lastIndex)
             }
         }
     }

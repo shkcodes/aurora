@@ -31,6 +31,7 @@ class HomeTimelineContract {
         object ScrollToTop : TimelineSideEffect()
         data class RetainScrollState(val newTweetsCount: Int) : TimelineSideEffect()
         data class OpenUrl(val url: String) : TimelineSideEffect()
+        data class ScrollToBottom(val lastIndex: Int) : TimelineSideEffect()
     }
 
     sealed class Screen {

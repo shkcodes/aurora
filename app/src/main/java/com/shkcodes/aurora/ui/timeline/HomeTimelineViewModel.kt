@@ -24,6 +24,7 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.RetainScrollState
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.ScrollToTop
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -124,6 +125,9 @@ class HomeTimelineViewModel @Inject constructor(
                     )
                 } else {
                     currentState.copy(isPaginatedError = true, isPaginatedLoading = false)
+                }
+                if (afterId != null) {
+                    onSideEffect(SideEffect.Action(ScrollToBottom(currentState.tweets.size)))
                 }
                 eventBus.sendEvent(TogglePaginatedLoading(false))
             })
