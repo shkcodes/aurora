@@ -8,6 +8,7 @@ import androidx.annotation.DimenRes
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 
 fun View.setSize(@DimenRes dimen: Int) {
     layoutParams.height = context.pixelSize(dimen)
@@ -32,6 +33,12 @@ fun RecyclerView.observeScrolling(lifecycle: Lifecycle, onScroll: () -> Unit) {
     addOnScrollListener(scrollListener)
 }
 
-private fun Lifecycle.onDestroy(action: () -> Unit) {
-    GenericLifecycleObserver(this, action)
+fun ViewPager2.observePageChanges(lifecycle: Lifecycle, onPageChange: (Int) -> Unit) {
+    val callback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            onPageChange(position)
+        }
+    }
+    lifecycle.onDestroy { unregisterOnPageChangeCallback(callback) }
+    registerOnPageChangeCallback(callback)
 }

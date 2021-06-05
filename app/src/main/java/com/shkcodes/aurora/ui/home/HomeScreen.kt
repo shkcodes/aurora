@@ -43,7 +43,7 @@ import com.shkcodes.aurora.ui.timeline.HomeTimeline
 import com.shkcodes.aurora.util.TempScreen
 
 @Composable
-fun HomeScreen(primaryNavController: NavController) {
+fun HomeScreen() {
     val navController = rememberNavController()
     val viewModel = hiltNavGraphViewModel<MainViewModel>()
     val state = viewModel.composableState()
@@ -57,7 +57,7 @@ fun HomeScreen(primaryNavController: NavController) {
                 startDestination = TWEETS.name,
             ) {
                 composable(TWEETS.name) {
-                    HomeTimeline(primaryNavController)
+                    HomeTimeline()
                 }
                 composable(MENTIONS.name) {
                     TempScreen(content = MENTIONS.name)
@@ -117,7 +117,7 @@ fun BottomNavBar(navController: NavController, state: State) {
                     selectedContentColor = colors.primary,
                     unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
                     selected = currentRoute == screen.name,
-                    onClick = { navController.navigate(screen.name) }
+                    onClick = {}
                 )
             }
         }

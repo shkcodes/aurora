@@ -18,3 +18,7 @@ class GenericLifecycleObserver(
         destroyAction()
     }
 }
+
+fun Lifecycle.onDestroy(action: () -> Unit) {
+    GenericLifecycleObserver(this, action)
+}

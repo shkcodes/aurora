@@ -9,6 +9,7 @@ import coil.transform.CircleCropTransformation
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.databinding.ItemTweetBinding
 import com.shkcodes.aurora.databinding.LayoutTweetSkeletonBinding
+import com.shkcodes.aurora.ui.timeline.TweetListHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import com.shkcodes.aurora.util.handleClickableSpans
 import com.shkcodes.aurora.util.setSize
@@ -21,7 +22,8 @@ class TweetAdapterItem(
     private val quoteTweetContent: SpannableStringBuilder?,
     private val tweetRepliedUsers: SpannableStringBuilder,
     private val tweetItem: TweetItem,
-    private val imageLoader: ImageLoader
+    private val imageLoader: ImageLoader,
+    private val handler: TweetListHandler
 ) : BindableItem<ItemTweetBinding>() {
 
     private val tweet = tweetItem.tweet
@@ -49,7 +51,7 @@ class TweetAdapterItem(
                 userHandle.text =
                     context.getString(R.string.user_handle_placeholder, tweet.userHandle)
                 time.text = tweet.createdAt.toPrettyTime()
-                tweetMedia.show(media, imageLoader)
+                tweetMedia.show(media, imageLoader, handler)
                 repliedUsers.isVisible = tweet.repliedToUsers.isNotEmpty()
                 repliedUsers.text = tweetRepliedUsers
                 repliedUsers.handleClickableSpans()
@@ -75,7 +77,7 @@ class TweetAdapterItem(
                 context.getString(R.string.user_handle_placeholder, quoteTweet?.userHandle)
             content.text = quoteTweetContent
             content.handleClickableSpans()
-            tweetMedia.show(quoteTweetMedia, imageLoader)
+            tweetMedia.show(quoteTweetMedia, imageLoader, handler)
         }
     }
 

@@ -11,6 +11,7 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.MediaType
 import com.shkcodes.aurora.databinding.TweetMediaBinding
+import com.shkcodes.aurora.ui.timeline.TweetListHandler
 import com.shkcodes.aurora.util.pixelSize
 import java.time.Duration
 
@@ -30,7 +31,12 @@ class TweetMedia @JvmOverloads constructor(
     }
 
     @Suppress("MagicNumber")
-    fun show(media: List<MediaEntity>, imageLoader: ImageLoader, duration: Long? = null) {
+    fun show(
+        media: List<MediaEntity>,
+        imageLoader: ImageLoader,
+        handler: TweetListHandler,
+        duration: Long? = null
+    ) {
         isVisible = media.isNotEmpty()
         with(binding) {
             row1.isVisible = media.isNotEmpty()
@@ -51,10 +57,10 @@ class TweetMedia @JvmOverloads constructor(
                     }
                 )
 
-            image1.loadMedia(media.getUrl(0), imageLoader)
-            image2.loadMedia(media.getUrl(1), imageLoader)
-            image3.loadMedia(media.getUrl(2), imageLoader)
-            image4.loadMedia(media.getUrl(3), imageLoader)
+            listOf(image1, image2, image3, image4).forEachIndexed { index, imageView ->
+                imageView.loadMedia(media.getUrl(index), imageLoader)
+                imageView.setOnClickListener { handler.onMediaClick(index, media[index].tweetId) }
+            }
         }
     }
 

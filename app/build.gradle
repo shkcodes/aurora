@@ -99,6 +99,7 @@ dependencies {
 
     implementation Dependencies.coil
     implementation Dependencies.swipeRefresh
+    implementation Dependencies.viewPager
 
     detektPlugins Dependencies.detektFormatter
 
@@ -111,7 +112,7 @@ dependencies {
 
     implementation Dependencies.coilCompose
     implementation Dependencies.swipeRefreshCompose
-    implementation Dependencies.viewPager
+    implementation Dependencies.viewPagerCompose
 
     coreLibraryDesugaring Dependencies.desugarLib
 

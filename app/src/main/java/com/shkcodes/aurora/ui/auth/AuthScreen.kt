@@ -12,10 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
-import androidx.navigation.NavController
 import com.shkcodes.aurora.BuildConfig
-import com.shkcodes.aurora.base.SideEffect
-import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.RequestAccessToken
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.Retry
 import com.shkcodes.aurora.ui.auth.AuthContract.State
@@ -24,12 +21,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @Composable
-fun AuthScreen(navController: NavController) {
+fun AuthScreen() {
     val viewModel = hiltNavGraphViewModel<AuthViewModel>()
 
     LaunchedEffect(Unit) {
         launch {
-            viewModel.getSideEffects().collect { handleActions(it, navController) }
+            viewModel.getSideEffects().collect {}
         }
     }
 
@@ -60,16 +57,6 @@ fun AuthScreen(navController: NavController) {
         is State.Error -> {
             TerminalError(message = state.message) {
                 viewModel.handleIntent(Retry)
-            }
-        }
-    }
-}
-
-private fun handleActions(sideEffect: SideEffect, navController: NavController) {
-    when (sideEffect) {
-        is SideEffect.DisplayScreen<*> -> {
-            navController.navigate((sideEffect.screen as Screen).route) {
-                popUpTo(Screen.LOGIN.route) { inclusive = true }
             }
         }
     }

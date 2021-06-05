@@ -9,7 +9,7 @@ object Versions {
     const val coreKtx = "1.3.2"
     const val appCompat = "1.2.0"
 
-    const val navigation = "2.4.0-alpha01"
+    const val navigation = "2.3.5"
     const val material = "1.4.0-beta01"
     const val lifecycle = "2.4.0-alpha01"
 
@@ -29,6 +29,7 @@ object Versions {
     const val groupie = "2.9.0"
     const val coil = "1.2.1"
     const val swipeRefresh = "1.1.0"
+    const val viewPager = "1.0.0"
 
     const val detekt = "1.16.0"
 
@@ -102,6 +103,7 @@ object Dependencies {
         "com.github.lisawray.groupie:groupie-viewbinding:${Versions.groupie}"
     const val coil = "io.coil-kt:coil:${Versions.coil}"
     const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefresh}"
+    const val viewPager = "androidx.viewpager2:viewpager2:${Versions.viewPager}"
 
 
     const val detektGradlePlugin =
@@ -118,7 +120,7 @@ object Dependencies {
     const val coilCompose = "com.google.accompanist:accompanist-coil:${Versions.accompanist}"
     const val swipeRefreshCompose =
         "com.google.accompanist:accompanist-swiperefresh:${Versions.accompanist}"
-    const val viewPager = "com.google.accompanist:accompanist-pager:${Versions.accompanist}"
+    const val viewPagerCompose = "com.google.accompanist:accompanist-pager:${Versions.accompanist}"
 
     const val desugarLib = "com.android.tools:desugar_jdk_libs:${Versions.desugarLib}"
 

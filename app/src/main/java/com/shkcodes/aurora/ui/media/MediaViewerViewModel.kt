@@ -5,7 +5,6 @@ import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.media.MediaViewerContract.Intent
 import com.shkcodes.aurora.ui.media.MediaViewerContract.Intent.Init
-import com.shkcodes.aurora.ui.media.MediaViewerContract.State.Content
 import com.shkcodes.aurora.ui.media.MediaViewerContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -22,7 +21,7 @@ class MediaViewerViewModel @Inject constructor(
             is Init -> {
                 viewModelScope.launch {
                     val media = userService.getMediaForTweet(intent.tweetId)
-                    currentState = Content(intent.index, media)
+                    currentState = currentState.copy(initialIndex = intent.index, media = media)
                 }
             }
         }

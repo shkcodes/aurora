@@ -76,7 +76,7 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
                 tweetItem.quoteTweet?.formattedContent(requireContext(), ::onTweetContentClick)
             val repliedUsers =
                 tweetItem.tweet.repliedUsers(requireContext(), ::onTweetContentClick)
-            TweetAdapterItem(content, quoteTweetContent, repliedUsers, tweetItem, imageLoader)
+            TweetAdapterItem(content, quoteTweetContent, repliedUsers, tweetItem, imageLoader, this)
         }
         timelineAdapter.canLoadMore = !state.isPaginatedError
         val items = mutableListOf<BindableItem<*>>().apply {
@@ -90,6 +90,10 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
 
     override fun onTweetContentClick(text: String) {
         dispatchIntent(TweetContentClick(text))
+    }
+
+    override fun onMediaClick(index: Int, tweetId: Long) {
+        navigate(HomeTimelineFragmentDirections.moveToMediaViewer(tweetId, index))
     }
 
     override fun handleAction(sideEffect: SideEffect.Action<*>) {
@@ -137,4 +141,5 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
 
 interface TweetListHandler {
     fun onTweetContentClick(text: String)
+    fun onMediaClick(index: Int, tweetId: Long)
 }

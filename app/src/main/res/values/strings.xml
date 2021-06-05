@@ -7,6 +7,8 @@
     <string name="accessibility_retweet_icon">Retweet Icon</string>
     <string name="accessibility_user_profile_image">User Profile Image</string>
     <string name="accessibility_user_profile_banner">User Banner Image</string>
+    <string name="accessibility_play_icon">Play Icon</string>
+    <string name="accessibility_gif_indicator">Gif Indicator</string>
 
     <!--errors-->
     <string name="error_no_internet">No internet connection</string>
@@ -32,4 +34,5 @@
         <item quantity="one">%1$d new tweet</item>
         <item quantity="other">%1$d new tweets</item>
     </plurals>
+    <string name="media_page_indicator">%1$d\u0020\/\u0020\%2$d</string>
 </resources>

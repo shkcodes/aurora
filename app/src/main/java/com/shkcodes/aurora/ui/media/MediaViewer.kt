@@ -42,7 +42,6 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.media.MediaViewerContract.Intent.Init
-import com.shkcodes.aurora.ui.media.MediaViewerContract.State.Content
 import com.shkcodes.aurora.util.inflate
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -56,15 +55,12 @@ fun MediaViewer(index: Int, tweetId: Long) {
             viewModel.getSideEffects().collect { }
         }
     }
-    when (val state = viewModel.composableState()) {
-        is Content -> {
-            with(state) {
-                if (media.first().isAnimatedMedia) {
-                    VideoPlayer(media.first())
-                } else {
-                    ImagesPager(initialIndex = initialIndex, media = media)
-                }
-            }
+    val state = viewModel.composableState()
+    with(state) {
+        if (media.first().isAnimatedMedia) {
+            VideoPlayer(media.first())
+        } else {
+            ImagesPager(initialIndex = initialIndex, media = media)
         }
     }
 }
