@@ -51,7 +51,9 @@ class TweetAdapterItem(
                 userHandle.text =
                     context.getString(R.string.user_handle_placeholder, tweet.userHandle)
                 time.text = tweet.createdAt.toPrettyTime()
-                tweetMedia.show(media, imageLoader, handler)
+                tweetMedia.show(media, imageLoader, { imageView, index ->
+                    handler.onMediaClick(media[index], index, imageView, root.parent as View)
+                })
                 repliedUsers.isVisible = tweet.repliedToUsers.isNotEmpty()
                 repliedUsers.text = tweetRepliedUsers
                 repliedUsers.handleClickableSpans()
@@ -77,7 +79,9 @@ class TweetAdapterItem(
                 context.getString(R.string.user_handle_placeholder, quoteTweet?.userHandle)
             content.text = quoteTweetContent
             content.handleClickableSpans()
-            tweetMedia.show(quoteTweetMedia, imageLoader, handler)
+            tweetMedia.show(quoteTweetMedia, imageLoader, { imageView, index ->
+                handler.onMediaClick(media[index], index, imageView, root.parent as View)
+            })
         }
     }
 

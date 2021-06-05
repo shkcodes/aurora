@@ -2,15 +2,17 @@ package com.shkcodes.aurora.ui.timeline
 
 import android.animation.AnimatorInflater
 import android.view.View
+import android.widget.ImageView
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.transition.Fade
 import coil.ImageLoader
+import com.google.android.material.transition.MaterialSharedAxis
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
+import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.databinding.FragmentHomeTimelineBinding
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
@@ -60,8 +62,6 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
                 postponeEnterTransition()
                 doOnPreDraw { startPostponedEnterTransition() }
             }
-            exitTransition = Fade()
-            reenterTransition = Fade()
         }
     }
 
@@ -102,11 +102,14 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
         dispatchIntent(TweetContentClick(text))
     }
 
-    override fun onMediaClick(view: View, mediaId: Long, index: Int, tweetId: Long) {
+    override fun onMediaClick(media: MediaEntity, index: Int, imageView: ImageView, root: View) {
         val extras = FragmentNavigatorExtras(
-            view to "$mediaId"
+            imageView to "${media.id}"
         )
-        navigate(HomeTimelineFragmentDirections.moveToMediaViewer(tweetId, index), extras)
+        val isAboveCenter = root.y + root.height / 2 < binding.timeline.height / 2
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Y, !isAboveCenter)
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Y, isAboveCenter)
+        navigate(HomeTimelineFragmentDirections.moveToMediaViewer(media.tweetId, index), extras)
     }
 
     override fun handleAction(sideEffect: SideEffect.Action<*>) {
@@ -154,5 +157,5 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
 
 interface TweetListHandler {
     fun onTweetContentClick(text: String)
-    fun onMediaClick(view: View, mediaId: Long, index: Int, tweetId: Long)
+    fun onMediaClick(media: MediaEntity, index: Int, imageView: ImageView, root: View)
 }

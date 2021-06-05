@@ -11,7 +11,6 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.MediaType
 import com.shkcodes.aurora.databinding.TweetMediaBinding
-import com.shkcodes.aurora.ui.timeline.TweetListHandler
 import com.shkcodes.aurora.util.pixelSize
 import java.time.Duration
 
@@ -34,7 +33,7 @@ class TweetMedia @JvmOverloads constructor(
     fun show(
         media: List<MediaEntity>,
         imageLoader: ImageLoader,
-        handler: TweetListHandler,
+        onClick: (ImageView, Int) -> Unit,
         duration: Long? = null
     ) {
         isVisible = media.isNotEmpty()
@@ -61,12 +60,7 @@ class TweetMedia @JvmOverloads constructor(
                 with(imageView) {
                     loadMedia(media.getUrl(index), imageLoader)
                     setOnClickListener {
-                        handler.onMediaClick(
-                            imageView,
-                            media.getOrNull(index)?.id ?: 0L,
-                            index,
-                            media[index].tweetId
-                        )
+                        onClick(imageView, index)
                     }
                     transitionName = "${media.getOrNull(index)?.id}"
                 }
