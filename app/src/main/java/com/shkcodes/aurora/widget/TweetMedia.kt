@@ -58,8 +58,18 @@ class TweetMedia @JvmOverloads constructor(
                 )
 
             listOf(image1, image2, image3, image4).forEachIndexed { index, imageView ->
-                imageView.loadMedia(media.getUrl(index), imageLoader)
-                imageView.setOnClickListener { handler.onMediaClick(index, media[index].tweetId) }
+                with(imageView) {
+                    loadMedia(media.getUrl(index), imageLoader)
+                    setOnClickListener {
+                        handler.onMediaClick(
+                            imageView,
+                            media.getOrNull(index)?.id ?: 0L,
+                            index,
+                            media[index].tweetId
+                        )
+                    }
+                    transitionName = "${media.getOrNull(index)?.id}"
+                }
             }
         }
     }
@@ -71,7 +81,9 @@ class TweetMedia @JvmOverloads constructor(
 
     private fun ImageView.loadMedia(url: String?, imageLoader: ImageLoader) {
         isVisible = url != null
-        load(url, imageLoader)
+        load(url, imageLoader) {
+            allowHardware(false)
+        }
     }
 
     private fun List<MediaEntity>.getUrl(index: Int): String? {

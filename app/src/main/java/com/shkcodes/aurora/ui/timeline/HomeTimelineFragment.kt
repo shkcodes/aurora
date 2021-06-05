@@ -1,8 +1,12 @@
 package com.shkcodes.aurora.ui.timeline
 
 import android.animation.AnimatorInflater
+import android.view.View
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.transition.Fade
 import coil.ImageLoader
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
@@ -52,6 +56,12 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
             }
             newTweetsIndicator.setOnClickListener { dispatchIntent(MarkItemsAsSeen) }
             observeTimeline()
+            with(binding.root) {
+                postponeEnterTransition()
+                doOnPreDraw { startPostponedEnterTransition() }
+            }
+            exitTransition = Fade()
+            reenterTransition = Fade()
         }
     }
 
@@ -92,8 +102,11 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
         dispatchIntent(TweetContentClick(text))
     }
 
-    override fun onMediaClick(index: Int, tweetId: Long) {
-        navigate(HomeTimelineFragmentDirections.moveToMediaViewer(tweetId, index))
+    override fun onMediaClick(view: View, mediaId: Long, index: Int, tweetId: Long) {
+        val extras = FragmentNavigatorExtras(
+            view to "$mediaId"
+        )
+        navigate(HomeTimelineFragmentDirections.moveToMediaViewer(tweetId, index), extras)
     }
 
     override fun handleAction(sideEffect: SideEffect.Action<*>) {
@@ -141,5 +154,5 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
 
 interface TweetListHandler {
     fun onTweetContentClick(text: String)
-    fun onMediaClick(index: Int, tweetId: Long)
+    fun onMediaClick(view: View, mediaId: Long, index: Int, tweetId: Long)
 }

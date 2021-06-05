@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavDirections
+import androidx.navigation.Navigator
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 
@@ -33,7 +34,11 @@ abstract class BaseFragment<S, I> : Fragment(), ViewModelOwner<S, I> {
         setupView()
     }
 
-    fun navigate(navDirections: NavDirections) {
-        findNavController().navigate(navDirections)
+    fun navigate(navDirections: NavDirections, extras: Navigator.Extras? = null) {
+        if (extras == null) {
+            findNavController().navigate(navDirections)
+        } else {
+            findNavController().navigate(navDirections, extras)
+        }
     }
 }

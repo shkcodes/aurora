@@ -1,9 +1,11 @@
 package com.shkcodes.aurora.ui.media
 
 import android.net.Uri
+import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import androidx.transition.TransitionInflater
 import coil.ImageLoader
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -38,6 +40,15 @@ class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener 
 
     override val binding by viewBinding(FragmentMediaViewerBinding::inflate)
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        postponeEnterTransition()
+        sharedElementEnterTransition =
+            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
+        sharedElementReturnTransition =
+            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
+    }
+
     override fun setupView() {
         dispatchIntent(Init(args.index, args.tweetId))
         binding.pager.adapter = pagerAdapter
@@ -56,6 +67,7 @@ class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener 
     }
 
     private fun showVideo(media: MediaEntity) {
+        startPostponedEnterTransition()
         with(binding) {
             val videoPlayer = instantiatePlayer(media.url)
             with(playerView) {
@@ -70,7 +82,7 @@ class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener 
 
     private fun showImagesPager(state: State) {
         with(state) {
-            val items = media.map { ImageAdapterItem(it.url, imageLoader) }
+            val items = media.map { ImageAdapterItem(it, imageLoader) }
             pagerAdapter.update(items)
             binding.pageIndicator.isVisible = true
             with(binding.pager) {
@@ -85,6 +97,7 @@ class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener 
     private fun updatePageIndicator(currentIndex: Int) {
         binding.pageIndicator.text =
             getString(R.string.media_page_indicator, currentIndex + 1, pagerAdapter.itemCount)
+        startPostponedEnterTransition()
     }
 
     override fun onPlaybackStateChanged(state: Int) {
