@@ -32,7 +32,20 @@ class TweetAdapterItem(
     private val quoteTweetMedia = tweetItem.quoteTweetMedia
 
     override fun initializeViewBinding(view: View): ItemTweetBinding {
-        return ItemTweetBinding.bind(view)
+        val binding = ItemTweetBinding.bind(view)
+        val context = binding.root.context
+        val primaryTweetUser = context.getString(R.string.user_handle_placeholder, tweet.userHandle).trim()
+        val quoteTweetUser =
+            context.getString(R.string.user_handle_placeholder, quoteTweet?.userHandle).trim()
+        with(binding.primaryTweet) {
+            userInfo.setOnClickListener { handler.onProfileClick(primaryTweetUser) }
+            profilePic.setOnClickListener { handler.onProfileClick(primaryTweetUser) }
+        }
+        with(binding.quoteTweet) {
+            userInfo.setOnClickListener { handler.onProfileClick(quoteTweetUser) }
+            profilePic.setOnClickListener { handler.onProfileClick(quoteTweetUser) }
+        }
+        return binding
     }
 
     override fun getLayout() = R.layout.item_tweet

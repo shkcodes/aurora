@@ -1,33 +1,28 @@
 package com.shkcodes.aurora.ui.timeline
 
 import android.animation.AnimatorInflater
-import android.view.View
-import android.widget.ImageView
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import coil.ImageLoader
-import com.google.android.material.transition.MaterialSharedAxis
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
-import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.databinding.FragmentHomeTimelineBinding
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.ScrollIndexChange
-import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.ScrollToTop
 import com.shkcodes.aurora.ui.timeline.items.PaginatedErrorItem
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
-import com.shkcodes.aurora.util.AnimationConstants
 import com.shkcodes.aurora.util.PagedAdapter
+import com.shkcodes.aurora.util.applySharedAxisExitTransition
 import com.shkcodes.aurora.util.formattedContent
 import com.shkcodes.aurora.util.linearLayoutManager
 import com.shkcodes.aurora.util.observeScrolling
@@ -39,11 +34,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
+class HomeTimelineFragment : BaseFragment<State, Intent>() {
 
     @Inject
     lateinit var imageLoader: ImageLoader
     private val timelineAdapter = PagedAdapter(::loadNextPage)
+    private val handler = HomeTweetListHandler(this)
 
     override val viewModel by viewModels<HomeTimelineViewModel>()
 
@@ -82,12 +78,12 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
         }
         val tweetItems = state.tweets.map { tweetItem ->
             val content =
-                tweetItem.tweet.formattedContent(requireContext(), ::onTweetContentClick)
+                tweetItem.tweet.formattedContent(requireContext()) { handler.onTweetContentClick(it) }
             val quoteTweetContent =
-                tweetItem.quoteTweet?.formattedContent(requireContext(), ::onTweetContentClick)
+                tweetItem.quoteTweet?.formattedContent(requireContext()) { handler.onTweetContentClick(it) }
             val repliedUsers =
-                tweetItem.tweet.repliedUsers(requireContext(), ::onTweetContentClick)
-            TweetAdapterItem(content, quoteTweetContent, repliedUsers, tweetItem, imageLoader, this)
+                tweetItem.tweet.repliedUsers(requireContext()) { handler.onTweetContentClick(it) }
+            TweetAdapterItem(content, quoteTweetContent, repliedUsers, tweetItem, imageLoader, handler)
         }
         timelineAdapter.canLoadMore = !state.isPaginatedError
         val items = mutableListOf<BindableItem<*>>().apply {
@@ -97,24 +93,6 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
             }
         }
         timelineAdapter.update(items)
-    }
-
-    override fun onTweetContentClick(text: String) {
-        dispatchIntent(TweetContentClick(text))
-    }
-
-    override fun onMediaClick(media: MediaEntity, index: Int, imageView: ImageView, root: View) {
-        val extras = FragmentNavigatorExtras(
-            imageView to "${media.id}"
-        )
-        val isAboveCenter = root.y + root.height / 2 < binding.timeline.height / 2
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Y, !isAboveCenter).apply {
-            duration = AnimationConstants.DEFAULT_DURATION
-        }
-        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Y, isAboveCenter).apply {
-            duration = AnimationConstants.DEFAULT_DURATION
-        }
-        navigate(HomeTimelineFragmentDirections.moveToMediaViewer(media.tweetId, index), extras)
     }
 
     override fun handleAction(sideEffect: SideEffect.Action<*>) {
@@ -127,6 +105,15 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
             }
             is ScrollToBottom -> {
                 binding.timeline.scrollToPosition(action.lastIndex)
+            }
+        }
+    }
+
+    override fun handleNavigation(sideEffect: SideEffect.DisplayScreen<*>) {
+        when (val screen = sideEffect.screen) {
+            is UserProfile -> {
+                applySharedAxisExitTransition()
+                navigate(HomeTimelineFragmentDirections.moveToProfile(screen.userHandle))
             }
         }
     }
@@ -158,9 +145,4 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
     private fun loadNextPage() {
         dispatchIntent(LoadNextPage)
     }
-}
-
-interface TweetListHandler {
-    fun onTweetContentClick(text: String)
-    fun onMediaClick(media: MediaEntity, index: Int, imageView: ImageView, root: View)
 }
