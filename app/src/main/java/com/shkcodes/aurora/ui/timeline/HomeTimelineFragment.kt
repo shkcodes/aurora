@@ -27,6 +27,7 @@ import com.shkcodes.aurora.util.formattedContent
 import com.shkcodes.aurora.util.linearLayoutManager
 import com.shkcodes.aurora.util.observeScrolling
 import com.shkcodes.aurora.util.openUrl
+import com.shkcodes.aurora.util.reenterTransitionListener
 import com.shkcodes.aurora.util.repliedUsers
 import com.shkcodes.aurora.util.viewBinding
 import com.xwray.groupie.viewbinding.BindableItem
@@ -60,6 +61,10 @@ class HomeTimelineFragment : BaseFragment<State, Intent>() {
                 doOnPreDraw { startPostponedEnterTransition() }
             }
         }
+        if (reenterTransition == null) applySharedAxisExitTransition()
+        reenterTransitionListener(onEnd = {
+            applySharedAxisExitTransition()
+        })
     }
 
     override fun renderState(state: State) {
@@ -112,7 +117,6 @@ class HomeTimelineFragment : BaseFragment<State, Intent>() {
     override fun handleNavigation(sideEffect: SideEffect.DisplayScreen<*>) {
         when (val screen = sideEffect.screen) {
             is UserProfile -> {
-                applySharedAxisExitTransition()
                 navigate(HomeTimelineFragmentDirections.moveToProfile(screen.userHandle))
             }
         }
