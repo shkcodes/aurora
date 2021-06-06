@@ -8,3 +8,7 @@ object ApiConstants {
 object CacheConstants {
     const val PREFERENCES_NAME = "DATA_STORE"
 }
+
+object AnimationConstants {
+    const val DEFAULT_DURATION = 200L
+}

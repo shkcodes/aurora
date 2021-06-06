@@ -26,6 +26,7 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.S
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.ScrollToTop
 import com.shkcodes.aurora.ui.timeline.items.PaginatedErrorItem
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
+import com.shkcodes.aurora.util.AnimationConstants
 import com.shkcodes.aurora.util.PagedAdapter
 import com.shkcodes.aurora.util.formattedContent
 import com.shkcodes.aurora.util.linearLayoutManager
@@ -107,8 +108,12 @@ class HomeTimelineFragment : BaseFragment<State, Intent>(), TweetListHandler {
             imageView to "${media.id}"
         )
         val isAboveCenter = root.y + root.height / 2 < binding.timeline.height / 2
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Y, !isAboveCenter)
-        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Y, isAboveCenter)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Y, !isAboveCenter).apply {
+            duration = AnimationConstants.DEFAULT_DURATION
+        }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Y, isAboveCenter).apply {
+            duration = AnimationConstants.DEFAULT_DURATION
+        }
         navigate(HomeTimelineFragmentDirections.moveToMediaViewer(media.tweetId, index), extras)
     }
 

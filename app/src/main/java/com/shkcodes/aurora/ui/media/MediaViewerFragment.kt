@@ -20,6 +20,7 @@ import com.shkcodes.aurora.databinding.FragmentMediaViewerBinding
 import com.shkcodes.aurora.ui.media.MediaViewerContract.Intent
 import com.shkcodes.aurora.ui.media.MediaViewerContract.Intent.Init
 import com.shkcodes.aurora.ui.media.MediaViewerContract.State
+import com.shkcodes.aurora.util.AnimationConstants
 import com.shkcodes.aurora.util.observePageChanges
 import com.shkcodes.aurora.util.onDestroy
 import com.shkcodes.aurora.util.viewBinding
@@ -44,9 +45,13 @@ class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener 
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
         sharedElementEnterTransition =
-            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
+            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move).apply {
+                duration = AnimationConstants.DEFAULT_DURATION
+            }
         sharedElementReturnTransition =
-            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
+            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move).apply {
+                duration = AnimationConstants.DEFAULT_DURATION
+            }
     }
 
     override fun setupView() {
