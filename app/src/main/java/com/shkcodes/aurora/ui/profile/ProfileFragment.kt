@@ -14,6 +14,7 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
+import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.State
 import com.shkcodes.aurora.ui.timeline.items.PaginatedErrorItem
@@ -59,6 +60,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     override fun renderState(state: State) {
         with(binding) {
             progressBar.isVisible = state.user == null
+            paginatedLoading.isVisible = state.isPaginatedLoading
             listOf(timeline, profileImage, bannerImage).forEach { it.isVisible = state.user != null }
             if (state.user != null) renderDataState(state)
         }
@@ -88,7 +90,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
                     handler
                 )
             }
-            timelineAdapter.canLoadMore = !state.isPaginatedError
+            timelineAdapter.canLoadMore = !state.isPaginatedError && !state.isPaginatedLoading
             val items = mutableListOf<BindableItem<*>>().apply {
                 addAll(tweetItems)
                 if (state.isPaginatedError) {
@@ -103,6 +105,9 @@ class ProfileFragment : BaseFragment<State, Intent>() {
         when (val action = sideEffect.action) {
             is OpenUrl -> {
                 requireContext().openUrl(action.url)
+            }
+            is ScrollToBottom -> {
+                binding.timeline.scrollToPosition(action.lastIndex)
             }
         }
     }

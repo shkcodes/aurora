@@ -9,12 +9,13 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
-import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Retry
+import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
+import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.ViewModel
@@ -43,16 +44,14 @@ class ProfileViewModel @Inject constructor(
             }
 
             is Retry -> {
-                currentState =
-                    currentState.copy(isLoading = true, isTerminalError = false, errorMessage = "")
+                currentState = currentState.copy(isLoading = true, isTerminalError = false, errorMessage = "")
                 fetchData(intent.userHandle)
             }
 
             LoadNextPage -> {
                 val afterId = currentState.tweets.last().tweetId
                 if (!currentState.isPaginatedLoading) {
-                    currentState =
-                        currentState.copy(isPaginatedLoading = true, isPaginatedError = false)
+                    currentState = currentState.copy(isPaginatedLoading = true, isPaginatedError = false)
                     fetchTweets(afterId)
                 }
             }
@@ -81,7 +80,6 @@ class ProfileViewModel @Inject constructor(
                         isLoading = false,
                         user = it.first,
                         tweets = it.second,
-                        isPaginatedLoading = false,
                         autoplayVideos = autoplayVideos
                     )
             }, {
@@ -89,8 +87,7 @@ class ProfileViewModel @Inject constructor(
                 currentState = currentState.copy(
                     isLoading = false,
                     isTerminalError = true,
-                    errorMessage = errorHandler.getErrorMessage(it),
-                    isPaginatedLoading = false
+                    errorMessage = errorHandler.getErrorMessage(it)
                 )
             })
         }
@@ -106,8 +103,8 @@ class ProfileViewModel @Inject constructor(
                     )
                 }, {
                     Timber.e(it)
-                    currentState =
-                        currentState.copy(isPaginatedLoading = false, isPaginatedError = true)
+                    currentState = currentState.copy(isPaginatedLoading = false, isPaginatedError = true)
+                    onSideEffect(SideEffect.Action(ScrollToBottom(currentState.tweets.size)))
                 })
         }
     }
