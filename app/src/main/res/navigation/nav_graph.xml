@@ -41,17 +41,7 @@
     <fragment
         android:id="@+id/home_timeline"
         android:name="com.shkcodes.aurora.ui.timeline.HomeTimelineFragment"
-        tools:layout="@layout/fragment_home_timeline">
-
-        <action
-            android:id="@+id/move_to_media_viewer"
-            app:destination="@id/media_viewer" />
-
-        <action
-            android:id="@+id/move_to_profile"
-            app:destination="@id/profile" />
-
-    </fragment>
+        tools:layout="@layout/fragment_home_timeline" />
 
     <fragment
         android:id="@+id/media_viewer"
@@ -83,5 +73,11 @@
         android:name="com.shkcodes.aurora.util.TempFragment"
         tools:layout="@layout/fragment_temp" />
 
+    <action
+        android:id="@+id/move_to_media_viewer"
+        app:destination="@id/media_viewer" />
 
+    <action
+        android:id="@+id/move_to_profile"
+        app:destination="@id/profile" />
 </navigation>

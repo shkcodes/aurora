@@ -9,7 +9,7 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
-import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.HandleAnnotationClick
+import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
@@ -61,10 +61,10 @@ class ProfileViewModel @Inject constructor(
                 onSideEffect(SideEffect.DisplayScreen(MediaViewer(intent.index, intent.tweetId)))
             }
 
-            is HandleAnnotationClick -> {
-                when (intent.data.first()) {
-                    'h' -> onSideEffect(SideEffect.Action(OpenUrl(intent.data)))
-                    '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.data.substring(1))))
+            is TweetContentClick -> {
+                when (intent.text.first()) {
+                    'h' -> onSideEffect(SideEffect.Action(OpenUrl(intent.text)))
+                    '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.text.substring(1))))
                 }
             }
         }

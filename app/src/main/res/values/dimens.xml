@@ -8,8 +8,9 @@
     <dimen name="space_xxxlarge">56dp</dimen>
 
     <dimen name="keyline_1">16dp</dimen>
-
     <dimen name="bottom_nav_indicator_height">0.2dp</dimen>
+
+    <!--    Timeline-->
     <dimen name="tweet_profile_pic">32dp</dimen>
     <dimen name="quote_tweet_profile_pic">24dp</dimen>
     <dimen name="primary_tweet_safe_area">40dp</dimen>
@@ -17,5 +18,9 @@
     <dimen name="multi_row_media_height">100dp</dimen>
     <dimen name="gif_indicator_size">28dp</dimen>
     <dimen name="play_icon_size">36dp</dimen>
+
+    <!--    Profile-->
+    <dimen name="profile_banner_height">200dp</dimen>
+    <dimen name="profile_image_size">80dp</dimen>
 
 </resources>

@@ -53,7 +53,7 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.common.TerminalError
-import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.HandleAnnotationClick
+import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
@@ -195,7 +195,7 @@ private fun Header(state: State, bannerOffset: Float, animationProgress: Float) 
         )
         TabBar(scrimOffset = scrimOffset, offset = tabBarOffset, color = tabColor)
         Image(
-            painter = rememberCoilPainter(request = state.user!!.profileImageUrlLarge),
+            painter = rememberCoilPainter(request = state.user.profileImageUrlLarge),
             contentDescription = null,
             modifier = Modifier
                 .graphicsLayer { translationY = profileImageOffset }
@@ -269,7 +269,7 @@ private fun tweetListHandler(viewModel: ProfileViewModel): TweetListHandler {
     return object : TweetListHandler {
 
         override fun annotationClick(annotation: String) {
-            viewModel.handleIntent(HandleAnnotationClick(annotation))
+            viewModel.handleIntent(TweetContentClick(annotation))
         }
 
         override fun paginatedErrorAction() {
@@ -281,7 +281,7 @@ private fun tweetListHandler(viewModel: ProfileViewModel): TweetListHandler {
         }
 
         override fun showProfile(userHandle: String) {
-            viewModel.handleIntent(HandleAnnotationClick(userHandle))
+            viewModel.handleIntent(TweetContentClick(userHandle))
         }
     }
 }

@@ -8,7 +8,7 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
-import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.HandleAnnotationClick
+import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.TweetContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
@@ -226,7 +226,7 @@ class ProfileViewModelTest : BaseTest() {
         val sut = viewModel()
         sut.testSideEffects {
             val url = "https://www.www.com"
-            sut.handleIntent(HandleAnnotationClick(url))
+            sut.handleIntent(TweetContentClick(url))
 
             assert(
                 expectItem() == SideEffect.Action(
@@ -243,7 +243,7 @@ class ProfileViewModelTest : BaseTest() {
         val sut = viewModel()
         sut.testSideEffects {
             val userHandle = "@don't_@_me"
-            sut.handleIntent(HandleAnnotationClick(userHandle))
+            sut.handleIntent(TweetContentClick(userHandle))
             assert(
                 expectItem() == SideEffect.DisplayScreen(
                     UserProfile(
