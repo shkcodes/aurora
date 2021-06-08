@@ -5,13 +5,13 @@ import android.widget.ImageView
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import com.google.android.material.transition.MaterialSharedAxis
 import com.shkcodes.aurora.cache.entities.MediaEntity
-import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.util.applySharedAxisExitTransition
 
 class HomeTweetListHandler(private val fragment: HomeTimelineFragment) : TweetListHandler {
 
-    override fun onTweetContentClick(text: String) {
-        fragment.dispatchIntent(TweetContentClick(text))
+    override fun onAnnotationClick(text: String) {
+        fragment.dispatchIntent(AnnotatedContentClick(text))
     }
 
     override fun onMediaClick(media: MediaEntity, index: Int, imageView: ImageView, root: View) {
@@ -26,6 +26,6 @@ class HomeTweetListHandler(private val fragment: HomeTimelineFragment) : TweetLi
     }
 
     override fun onProfileClick(userHandle: String) {
-        fragment.dispatchIntent(TweetContentClick(userHandle))
+        fragment.dispatchIntent(AnnotatedContentClick(userHandle))
     }
 }

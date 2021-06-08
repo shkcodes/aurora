@@ -1,6 +1,5 @@
 package com.shkcodes.aurora.ui.timeline.items
 
-import android.text.SpannableStringBuilder
 import android.view.View
 import androidx.core.view.isVisible
 import coil.ImageLoader
@@ -11,6 +10,7 @@ import com.shkcodes.aurora.databinding.ItemTweetBinding
 import com.shkcodes.aurora.databinding.LayoutTweetSkeletonBinding
 import com.shkcodes.aurora.ui.timeline.TweetListHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
+import com.shkcodes.aurora.util.AnnotatedContent
 import com.shkcodes.aurora.util.handleClickableSpans
 import com.shkcodes.aurora.util.setSize
 import com.shkcodes.aurora.util.toPrettyTime
@@ -18,9 +18,7 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.viewbinding.BindableItem
 
 class TweetAdapterItem(
-    private val tweetContent: SpannableStringBuilder,
-    private val quoteTweetContent: SpannableStringBuilder?,
-    private val tweetRepliedUsers: SpannableStringBuilder,
+    private val annotatedContent: AnnotatedContent,
     private val tweetItem: TweetItem,
     private val imageLoader: ImageLoader,
     private val handler: TweetListHandler
@@ -54,7 +52,7 @@ class TweetAdapterItem(
         with(binding) {
             val context = root.context
             with(primaryTweet) {
-                content.text = tweetContent
+                content.text = annotatedContent.primaryContent
                 content.handleClickableSpans()
                 content.isVisible = tweet.content.isNotEmpty()
                 profilePic.load(tweet.userProfileImageUrl, imageLoader) {
@@ -68,7 +66,7 @@ class TweetAdapterItem(
                     handler.onMediaClick(media[index], index, imageView, root.parent as View)
                 })
                 repliedUsers.isVisible = tweet.repliedToUsers.isNotEmpty()
-                repliedUsers.text = tweetRepliedUsers
+                repliedUsers.text = annotatedContent.repliedUsers
                 repliedUsers.handleClickableSpans()
             }
             retweetIndicator.isVisible = tweetItem.isRetweet
@@ -90,7 +88,7 @@ class TweetAdapterItem(
             userName.text = quoteTweet?.userName
             userHandle.text =
                 context.getString(R.string.user_handle_placeholder, quoteTweet?.userHandle)
-            content.text = quoteTweetContent
+            content.text = annotatedContent.quotedContent
             content.handleClickableSpans()
             tweetMedia.show(quoteTweetMedia, imageLoader, { imageView, index ->
                 handler.onMediaClick(media[index], index, imageView, root.parent as View)

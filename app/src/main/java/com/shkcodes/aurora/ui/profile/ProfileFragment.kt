@@ -20,11 +20,10 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.State
 import com.shkcodes.aurora.ui.timeline.items.PaginatedErrorItem
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
 import com.shkcodes.aurora.util.PagedAdapter
+import com.shkcodes.aurora.util.annotatedContent
 import com.shkcodes.aurora.util.applySharedAxisEnterTransition
 import com.shkcodes.aurora.util.applySharedAxisExitTransition
-import com.shkcodes.aurora.util.formattedContent
 import com.shkcodes.aurora.util.openUrl
-import com.shkcodes.aurora.util.repliedUsers
 import com.shkcodes.aurora.util.viewBinding
 import com.xwray.groupie.viewbinding.BindableItem
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,24 +70,9 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             profileImage.load(state.user!!.profileImageUrlLarge, imageLoader)
             bannerImage.load(state.user.profileBannerUrl, imageLoader)
             val tweetItems = state.tweets.map { tweetItem ->
-                val content =
-                    tweetItem.tweet.formattedContent(requireContext()) { handler.onTweetContentClick(it) }
-                val quoteTweetContent =
-                    tweetItem.quoteTweet?.formattedContent(requireContext()) {
-                        handler.onTweetContentClick(
-                            it
-                        )
-                    }
-                val repliedUsers =
-                    tweetItem.tweet.repliedUsers(requireContext()) { handler.onTweetContentClick(it) }
-                TweetAdapterItem(
-                    content,
-                    quoteTweetContent,
-                    repliedUsers,
-                    tweetItem,
-                    imageLoader,
-                    handler
-                )
+                val annotatedContent =
+                    tweetItem.annotatedContent(requireContext()) { handler.onAnnotationClick(it) }
+                TweetAdapterItem(annotatedContent, tweetItem, imageLoader, handler)
             }
             timelineAdapter.canLoadMore = !state.isPaginatedError && !state.isPaginatedLoading
             val items = mutableListOf<BindableItem<*>>().apply {

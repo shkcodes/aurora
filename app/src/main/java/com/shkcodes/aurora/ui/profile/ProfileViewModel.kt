@@ -13,7 +13,7 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Retry
-import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.TweetContentClick
+import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.MediaViewer
@@ -60,7 +60,7 @@ class ProfileViewModel @Inject constructor(
                 onSideEffect(SideEffect.DisplayScreen(MediaViewer(intent.index, intent.tweetId)))
             }
 
-            is TweetContentClick -> {
+            is AnnotatedContentClick -> {
                 when (intent.text.first()) {
                     'h' -> onSideEffect(SideEffect.Action(OpenUrl(intent.text)))
                     '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.text.substring(1))))

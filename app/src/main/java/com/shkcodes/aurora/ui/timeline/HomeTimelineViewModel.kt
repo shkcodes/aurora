@@ -19,7 +19,7 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.ScrollIndexChange
-import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
@@ -90,7 +90,7 @@ class HomeTimelineViewModel @Inject constructor(
                 }
             }
 
-            is TweetContentClick -> {
+            is AnnotatedContentClick -> {
                 when (intent.text.first()) {
                     'h' -> onSideEffect(SideEffect.Action(OpenUrl(intent.text)))
                     '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.text.substring(1))))

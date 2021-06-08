@@ -53,7 +53,7 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.theme.Dimens
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.common.TerminalError
-import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.TweetContentClick
+import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
@@ -269,7 +269,7 @@ private fun tweetListHandler(viewModel: ProfileViewModel): TweetListHandler {
     return object : TweetListHandler {
 
         override fun annotationClick(annotation: String) {
-            viewModel.handleIntent(TweetContentClick(annotation))
+            viewModel.handleIntent(AnnotatedContentClick(annotation))
         }
 
         override fun paginatedErrorAction() {
@@ -281,7 +281,7 @@ private fun tweetListHandler(viewModel: ProfileViewModel): TweetListHandler {
         }
 
         override fun showProfile(userHandle: String) {
-            viewModel.handleIntent(TweetContentClick(userHandle))
+            viewModel.handleIntent(AnnotatedContentClick(userHandle))
         }
     }
 }

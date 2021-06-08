@@ -24,7 +24,7 @@ interface ProfileContract {
         data class Init(val userHandle: String) : Intent()
         data class Retry(val userHandle: String) : Intent()
         data class MediaClick(val index: Int, val tweetId: Long) : Intent()
-        data class TweetContentClick(val text: String) : Intent()
+        data class AnnotatedContentClick(val text: String) : Intent()
     }
 
     sealed class ProfileSideEffect {

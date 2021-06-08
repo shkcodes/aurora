@@ -16,6 +16,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.api.response.Url
 import com.shkcodes.aurora.cache.entities.TweetEntity
+import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import org.jsoup.Jsoup
 
 // from https://github.com/android/compose-samples/blob/main/Jetchat/app/src/main/java/com/example/compose/jetchat/conversation/MessageFormatter.kt
@@ -166,14 +167,30 @@ private class TweetClickableSpan(
     }
 }
 
-fun TweetEntity.formattedContent(
+data class AnnotatedContent(
+    val primaryContent: SpannableStringBuilder,
+    val quotedContent: SpannableStringBuilder?,
+    val repliedUsers: SpannableStringBuilder
+)
+
+fun TweetItem.annotatedContent(context: Context, handler: (String) -> Unit): AnnotatedContent {
+    val primaryContent =
+        tweet.formattedContent(context, handler)
+    val quoteContent =
+        quoteTweet?.formattedContent(context, handler)
+    val repliedUsers =
+        tweet.repliedUsers(context, handler)
+    return AnnotatedContent(primaryContent, quoteContent, repliedUsers)
+}
+
+private fun TweetEntity.formattedContent(
     context: Context,
     handler: (String) -> Unit
 ): SpannableStringBuilder {
     return context.contentFormatter2(content, sharedUrls, hashtags, handler)
 }
 
-fun TweetEntity.repliedUsers(
+private fun TweetEntity.repliedUsers(
     context: Context,
     handler: (String) -> Unit
 ): SpannableStringBuilder {
@@ -205,7 +222,7 @@ private fun getRepliedUsers(context: Context, users: List<String>): String {
     }
 }
 
-fun Context.contentFormatter2(
+private fun Context.contentFormatter2(
     text: String,
     urls: List<Url> = emptyList(),
     hashtags: List<String> = emptyList(),

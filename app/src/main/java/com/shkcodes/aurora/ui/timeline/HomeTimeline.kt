@@ -39,7 +39,7 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.ScrollIndexChange
-import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.TweetContentClick
+import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.tweetlist.TweetList
 import com.shkcodes.aurora.ui.tweetlist.TweetListHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetListState
@@ -143,7 +143,7 @@ private fun NewTweetsIndicator(
 private fun tweetListHandler(viewModel: HomeTimelineViewModel): TweetListHandler {
     return object : TweetListHandler {
         override fun annotationClick(annotation: String) {
-            viewModel.handleIntent(TweetContentClick(annotation))
+            viewModel.handleIntent(AnnotatedContentClick(annotation))
         }
 
         override fun paginatedErrorAction() {
@@ -155,7 +155,7 @@ private fun tweetListHandler(viewModel: HomeTimelineViewModel): TweetListHandler
         }
 
         override fun showProfile(userHandle: String) {
-            viewModel.handleIntent(TweetContentClick(userHandle))
+            viewModel.handleIntent(AnnotatedContentClick(userHandle))
         }
     }
 }
