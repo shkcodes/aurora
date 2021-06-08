@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import coil.ImageLoader
 import coil.load
@@ -17,6 +18,7 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.State
+import com.shkcodes.aurora.ui.timeline.UrlMetadataHandler
 import com.shkcodes.aurora.ui.timeline.items.PaginatedErrorItem
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
 import com.shkcodes.aurora.util.PagedAdapter
@@ -36,6 +38,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     lateinit var imageLoader: ImageLoader
     private val timelineAdapter = PagedAdapter(::loadNextPage)
     private val handler = ProfileTweetListHandler(this)
+    private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
     private val args by navArgs<ProfileFragmentArgs>()
 
     override val viewModel by viewModels<ProfileViewModel>()
@@ -72,7 +75,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             val tweetItems = state.tweets.map { tweetItem ->
                 val annotatedContent =
                     tweetItem.annotatedContent(requireContext()) { handler.onAnnotationClick(it) }
-                TweetAdapterItem(annotatedContent, tweetItem, imageLoader, handler)
+                TweetAdapterItem(annotatedContent, tweetItem, urlMetadataHandler, imageLoader, handler)
             }
             timelineAdapter.canLoadMore = !state.isPaginatedError && !state.isPaginatedLoading
             val items = mutableListOf<BindableItem<*>>().apply {

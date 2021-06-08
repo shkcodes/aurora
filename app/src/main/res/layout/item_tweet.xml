@@ -35,6 +35,19 @@
             android:layout_height="match_parent" />
     </androidx.cardview.widget.CardView>
 
+    <include
+        android:id="@+id/linkPreview"
+        layout="@layout/layout_link_preview"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/link_preview_height"
+        android:layout_marginStart="@dimen/primary_tweet_safe_area"
+        android:layout_marginTop="@dimen/space"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quoteTweetCard"
+        tools:visibility="visible" />
+
 
     <ImageView
         android:id="@+id/retweetIndicator"

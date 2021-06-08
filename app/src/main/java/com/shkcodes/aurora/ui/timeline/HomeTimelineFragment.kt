@@ -4,6 +4,7 @@ import android.animation.AnimatorInflater
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import coil.ImageLoader
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
@@ -40,6 +41,7 @@ class HomeTimelineFragment : BaseFragment<State, Intent>() {
     lateinit var imageLoader: ImageLoader
     private val timelineAdapter = PagedAdapter(::loadNextPage)
     private val handler = HomeTweetListHandler(this)
+    private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
 
     override val viewModel by viewModels<HomeTimelineViewModel>()
 
@@ -83,7 +85,7 @@ class HomeTimelineFragment : BaseFragment<State, Intent>() {
         val tweetItems = state.tweets.map { tweetItem ->
             val annotatedContent =
                 tweetItem.annotatedContent(requireContext()) { handler.onAnnotationClick(it) }
-            TweetAdapterItem(annotatedContent, tweetItem, imageLoader, handler)
+            TweetAdapterItem(annotatedContent, tweetItem, urlMetadataHandler, imageLoader, handler)
         }
         timelineAdapter.canLoadMore = !state.isPaginatedError
         val items = mutableListOf<BindableItem<*>>().apply {

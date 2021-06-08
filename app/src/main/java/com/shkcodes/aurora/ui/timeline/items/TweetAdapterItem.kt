@@ -9,6 +9,7 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.databinding.ItemTweetBinding
 import com.shkcodes.aurora.databinding.LayoutTweetSkeletonBinding
 import com.shkcodes.aurora.ui.timeline.TweetListHandler
+import com.shkcodes.aurora.ui.timeline.UrlMetadataHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import com.shkcodes.aurora.util.AnnotatedContent
 import com.shkcodes.aurora.util.handleClickableSpans
@@ -20,6 +21,7 @@ import com.xwray.groupie.viewbinding.BindableItem
 class TweetAdapterItem(
     private val annotatedContent: AnnotatedContent,
     private val tweetItem: TweetItem,
+    private val urlMetadataHandler: UrlMetadataHandler,
     private val imageLoader: ImageLoader,
     private val handler: TweetListHandler
 ) : BindableItem<ItemTweetBinding>() {
@@ -74,6 +76,19 @@ class TweetAdapterItem(
             retweeter.text =
                 context.getString(R.string.retweet_indicator_placeholder, tweetItem.retweeter)
             quoteTweetCard.isVisible = tweetItem.quoteTweet != null
+            with(linkPreview) {
+                root.isVisible =
+                    tweet.sharedUrls.isNotEmpty() && media.isEmpty() && tweetItem.quoteTweet == null
+                val url = tweet.sharedUrls.firstOrNull()?.url
+                if (url != null) {
+                    root.tag = url
+                    urlMetadataHandler.get(this, url)
+                    root.setOnClickListener {
+                        handler.onAnnotationClick(url)
+                    }
+                }
+            }
+
             renderQuoteTweet(binding.quoteTweet)
         }
     }

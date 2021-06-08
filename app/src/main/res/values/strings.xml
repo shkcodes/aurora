@@ -9,6 +9,7 @@
     <string name="accessibility_user_profile_banner">User Banner Image</string>
     <string name="accessibility_play_icon">Play Icon</string>
     <string name="accessibility_gif_indicator">Gif Indicator</string>
+    <string name="accessibility_link_preview_image">Link Preview Image</string>
 
     <!--errors-->
     <string name="error_no_internet">No internet connection</string>

@@ -18,6 +18,7 @@
     <dimen name="multi_row_media_height">100dp</dimen>
     <dimen name="gif_indicator_size">28dp</dimen>
     <dimen name="play_icon_size">36dp</dimen>
+    <dimen name="link_preview_height">75dp</dimen>
 
     <!--    Profile-->
     <dimen name="profile_banner_height">200dp</dimen>
