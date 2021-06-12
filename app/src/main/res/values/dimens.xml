@@ -21,7 +21,7 @@
     <dimen name="link_preview_height">75dp</dimen>
 
     <!--    Profile-->
-    <dimen name="profile_banner_height">200dp</dimen>
+    <dimen name="profile_banner_height">150dp</dimen>
     <dimen name="profile_image_size">80dp</dimen>
 
 </resources>

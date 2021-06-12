@@ -12,11 +12,9 @@ data class User(
     @Json(name = "screen_name")
     val screenName: String,
     @Json(name = "location")
-    val location: String,
+    val location: String?,
     @Json(name = "description")
     val description: String,
-    @Json(name = "url")
-    val url: String?,
     @Json(name = "verified")
     val verified: Boolean,
     @Json(name = "contributors_enabled")
@@ -54,7 +52,23 @@ data class User(
     @Json(name = "profile_use_background_image")
     val profileUseBackgroundImage: Boolean,
     @Json(name = "statuses_count")
-    val statusesCount: Int
+    val statusesCount: Int,
+    @Json(name = "entities")
+    val entities: UserEntities
 ) {
     val profileImageUrlLarge = profileImageUrl.replace("_normal", "")
+
+    val url = entities.url?.urls?.firstOrNull()?.let { it.displayUrl to it.url }
 }
+
+@JsonClass(generateAdapter = true)
+data class UserEntities(
+    @Json(name = "url")
+    val url: UserUrl?
+)
+
+@JsonClass(generateAdapter = true)
+data class UserUrl(
+    @Json(name = "urls")
+    val urls: List<Url>
+)

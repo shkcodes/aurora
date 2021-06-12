@@ -23,8 +23,10 @@ import com.shkcodes.aurora.ui.timeline.items.PaginatedErrorItem
 import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
 import com.shkcodes.aurora.util.PagedAdapter
 import com.shkcodes.aurora.util.annotatedContent
+import com.shkcodes.aurora.util.annotatedDescription
 import com.shkcodes.aurora.util.applySharedAxisEnterTransition
 import com.shkcodes.aurora.util.applySharedAxisExitTransition
+import com.shkcodes.aurora.util.handleClickableSpans
 import com.shkcodes.aurora.util.openUrl
 import com.shkcodes.aurora.util.viewBinding
 import com.xwray.groupie.viewbinding.BindableItem
@@ -61,17 +63,26 @@ class ProfileFragment : BaseFragment<State, Intent>() {
 
     override fun renderState(state: State) {
         with(binding) {
-            progressBar.isVisible = state.user == null
+            progressBar.isVisible = state.isLoading
             paginatedLoading.isVisible = state.isPaginatedLoading
-            listOf(timeline, profileImage, bannerImage).forEach { it.isVisible = state.user != null }
+            dataStateGroup.isVisible = !state.isLoading
             if (state.user != null) renderDataState(state)
         }
     }
 
     private fun renderDataState(state: State) {
         with(binding) {
-            profileImage.load(state.user!!.profileImageUrlLarge, imageLoader)
-            bannerImage.load(state.user.profileBannerUrl, imageLoader)
+            val user = state.user!!
+            profileImage.load(user.profileImageUrlLarge, imageLoader)
+            bannerImage.load(user.profileBannerUrl, imageLoader)
+            name.text = user.name
+            handle.text = user.screenName
+            description.text = user.annotatedDescription(requireContext()) { handler.onAnnotationClick(it) }
+            description.handleClickableSpans()
+            location.isVisible = user.location != null
+            location.text = user.location
+            link.isVisible = user.url != null
+            link.text = user.url?.first
             val tweetItems = state.tweets.map { tweetItem ->
                 val annotatedContent =
                     tweetItem.annotatedContent(requireContext()) { handler.onAnnotationClick(it) }

@@ -13,6 +13,7 @@
         <item name="colorOnBackground">@color/colorOnBackground</item>
         <item name="colorError">@color/colorError</item>
         <item name="colorOnError">@color/colorOnError</item>
+        <item name="elevationOverlayEnabled">false</item>
         <item name="fontFamily">@font/app_fonts</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
@@ -21,8 +22,15 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/two_dp</item>
     </style>
+
     <style name="circularShape" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="userInfoCard" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeBottomRight">@dimen/keyline_1</item>
+        <item name="cornerSizeBottomLeft">@dimen/keyline_1</item>
     </style>
 </resources>

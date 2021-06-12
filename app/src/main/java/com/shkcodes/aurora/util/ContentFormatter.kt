@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package com.shkcodes.aurora.util
 
 import android.content.Context
@@ -15,6 +17,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.api.response.Url
+import com.shkcodes.aurora.api.response.User
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import org.jsoup.Jsoup
@@ -172,6 +175,10 @@ data class AnnotatedContent(
     val quotedContent: SpannableStringBuilder?,
     val repliedUsers: SpannableStringBuilder
 )
+
+fun User.annotatedDescription(context: Context, handler: (String) -> Unit): SpannableStringBuilder {
+    return context.contentFormatter2(description, handler = handler)
+}
 
 fun TweetItem.annotatedContent(context: Context, handler: (String) -> Unit): AnnotatedContent {
     val primaryContent =

@@ -15,13 +15,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/quoteTweetCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/primary_tweet_safe_area"
         android:layout_marginTop="@dimen/space"
-        android:backgroundTint="@color/colorSurface"
         app:cardCornerRadius="@dimen/two_dp"
         app:contentPadding="@dimen/space"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +32,7 @@
             layout="@layout/layout_tweet_skeleton"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <include
         android:id="@+id/linkPreview"
