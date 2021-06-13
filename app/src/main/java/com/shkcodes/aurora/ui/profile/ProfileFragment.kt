@@ -8,12 +8,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import coil.ImageLoader
 import coil.load
+import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentProfileBinding
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.AnimateDataState
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
@@ -41,6 +43,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     private val timelineAdapter = PagedAdapter(::loadNextPage)
     private val handler = ProfileTweetListHandler(this)
     private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
+    private var hasAnimated = false
     private val args by navArgs<ProfileFragmentArgs>()
 
     override val viewModel by viewModels<ProfileViewModel>()
@@ -62,11 +65,8 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     }
 
     override fun renderState(state: State) {
-        with(binding) {
-            progressBar.isVisible = state.isLoading
-            paginatedLoading.isVisible = state.isPaginatedLoading
-            dataStateGroup.isVisible = !state.isLoading
-            if (state.user != null) renderDataState(state)
+        if (state.user != null) {
+            renderDataState(state)
         }
     }
 
@@ -96,6 +96,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
                 }
             }
             timelineAdapter.update(items)
+            if (hasAnimated) root.jumpToState(R.id.profileData)
         }
     }
 
@@ -106,6 +107,10 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             }
             is ScrollToBottom -> {
                 binding.timeline.scrollToPosition(action.lastIndex)
+            }
+            AnimateDataState -> {
+                hasAnimated = true
+                binding.root.transitionToState(R.id.profileData)
             }
         }
     }

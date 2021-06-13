@@ -9,11 +9,12 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
+import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Retry
-import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
+import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.AnimateDataState
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.MediaViewer
@@ -82,6 +83,7 @@ class ProfileViewModel @Inject constructor(
                         tweets = it.second,
                         autoplayVideos = autoplayVideos
                     )
+                onSideEffect(SideEffect.Action(AnimateDataState))
             }, {
                 Timber.e(it)
                 currentState = currentState.copy(

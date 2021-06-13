@@ -13,6 +13,7 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Retry
+import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.AnimateDataState
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.MediaViewer
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
@@ -78,6 +79,11 @@ class ProfileViewModelTest : BaseTest() {
                         autoplayVideos = true
                     )
                 )
+            }
+
+            sut.testSideEffects {
+                sut.handleIntent(Init("@@"))
+                assert(expectItem() == SideEffect.Action(AnimateDataState))
             }
         }
 

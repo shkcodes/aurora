@@ -28,9 +28,4 @@
         <item name="cornerSize">50%</item>
     </style>
 
-    <style name="userInfoCard" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeBottomRight">@dimen/keyline_1</item>
-        <item name="cornerSizeBottomLeft">@dimen/keyline_1</item>
-    </style>
 </resources>
