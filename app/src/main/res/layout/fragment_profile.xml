@@ -25,7 +25,7 @@
         android:layout_height="0dp"
         android:background="@drawable/bg_profile_user_info"
         android:elevation="@dimen/space_small"
-        app:layout_constraintBottom_toBottomOf="@id/link"
+        app:layout_constraintBottom_toBottomOf="@id/backgroundPadding"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bannerImage" />
@@ -35,9 +35,9 @@
         style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/space"
         android:elevation="@dimen/space"
         android:gravity="center"
-        android:layout_marginHorizontal="@dimen/space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bannerImage"
@@ -47,9 +47,9 @@
         android:id="@+id/handle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space"
         android:elevation="@dimen/space"
         android:gravity="center"
-        android:layout_marginHorizontal="@dimen/space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/name"
@@ -62,6 +62,7 @@
         android:layout_height="wrap_content"
         android:elevation="@dimen/space"
         android:gravity="center"
+        app:fontFamily="@font/montserrat_semibold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/handle"
@@ -78,6 +79,7 @@
         android:gravity="center_vertical"
         android:textAllCaps="false"
         android:textColor="?attr/colorPrimary"
+        app:fontFamily="@font/montserrat_semibold"
         app:drawableStartCompat="@drawable/ic_location"
         app:drawableTint="?attr/colorPrimary"
         app:layout_constraintEnd_toStartOf="@+id/link"
@@ -96,9 +98,9 @@
         android:drawablePadding="@dimen/two_dp"
         android:elevation="@dimen/space"
         android:gravity="center_vertical"
-        android:paddingBottom="@dimen/space"
         android:textAllCaps="false"
         android:textColor="?attr/colorPrimary"
+        app:fontFamily="@font/montserrat_semibold"
         app:drawableStartCompat="@drawable/ic_link"
         app:drawableTint="?attr/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
@@ -106,6 +108,14 @@
         app:layout_constraintStart_toEndOf="@+id/location"
         app:layout_constraintTop_toBottomOf="@id/description"
         tools:text="localhost" />
+
+    <View
+        android:id="@+id/backgroundPadding"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/space"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/link" />
 
 
     <com.google.android.material.imageview.ShapeableImageView
