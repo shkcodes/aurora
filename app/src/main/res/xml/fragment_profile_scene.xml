@@ -105,6 +105,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/bannerImage" />
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/profileData">
@@ -190,25 +197,29 @@
 
         <Constraint
             android:id="@id/location"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space"
             android:layout_marginTop="@dimen/space"
-            app:layout_constraintEnd_toStartOf="@+id/link"
-            app:layout_constraintHorizontal_bias="0.5"
+            android:layout_marginEnd="@dimen/space_small"
+            app:layout_constraintEnd_toStartOf="@id/guideline"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/description"
+            app:layout_constraintWidth_default="wrap"
             app:visibilityMode="ignore" />
 
         <Constraint
             android:id="@id/link"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_small"
             android:layout_marginTop="@dimen/space"
+            android:layout_marginEnd="@dimen/space"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/location"
+            app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintTop_toBottomOf="@id/description"
+            app:layout_constraintWidth_default="wrap"
             app:visibilityMode="ignore" />
 
         <Constraint
@@ -227,6 +238,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bannerImage" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
     </ConstraintSet>
 

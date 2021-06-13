@@ -76,12 +76,14 @@
         android:layout_marginTop="@dimen/space_small"
         android:drawablePadding="@dimen/two_dp"
         android:elevation="@dimen/space"
+        android:ellipsize="end"
         android:gravity="center_vertical"
+        android:maxLines="1"
         android:textAllCaps="false"
         android:textColor="?attr/colorPrimary"
-        app:fontFamily="@font/montserrat_semibold"
         app:drawableStartCompat="@drawable/ic_location"
         app:drawableTint="?attr/colorPrimary"
+        app:fontFamily="@font/montserrat_semibold"
         app:layout_constraintEnd_toStartOf="@+id/link"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
@@ -97,17 +99,26 @@
         android:layout_marginTop="@dimen/space_small"
         android:drawablePadding="@dimen/two_dp"
         android:elevation="@dimen/space"
+        android:ellipsize="end"
         android:gravity="center_vertical"
+        android:maxLines="1"
         android:textAllCaps="false"
         android:textColor="?attr/colorPrimary"
-        app:fontFamily="@font/montserrat_semibold"
         app:drawableStartCompat="@drawable/ic_link"
         app:drawableTint="?attr/colorPrimary"
+        app:fontFamily="@font/montserrat_semibold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/location"
         app:layout_constraintTop_toBottomOf="@id/description"
         tools:text="localhost" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"
+        android:layout_height="wrap_content"/>
 
     <View
         android:id="@+id/backgroundPadding"
