@@ -156,7 +156,7 @@ private fun annotationForType(
     )
 }
 
-private class TweetClickableSpan(
+class ColoredClickableSpan(
     private val color: Int,
     private val handler: () -> Unit
 ) : ClickableSpan() {
@@ -175,6 +175,16 @@ data class AnnotatedContent(
     val quotedContent: SpannableStringBuilder?,
     val repliedUsers: SpannableStringBuilder
 )
+
+fun User.annotatedLink(context: Context, handler: (String) -> Unit): SpannableStringBuilder? {
+    return url?.let {
+        val span = ColoredClickableSpan(context.getColor(R.color.colorPrimary)) { handler(it.second) }
+        SpannableStringBuilder().apply {
+            append(it.first)
+            setSpan(span, 0, it.first.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+    }
+}
 
 fun User.annotatedDescription(context: Context, handler: (String) -> Unit): SpannableStringBuilder {
     return context.contentFormatter2(description, handler = handler)
@@ -257,7 +267,7 @@ private fun Context.contentFormatter2(
             }
         }
         if (isValidSpan) {
-            val clickableSpan = TweetClickableSpan(getColor(R.color.colorPrimary)) {
+            val clickableSpan = ColoredClickableSpan(getColor(R.color.colorPrimary)) {
                 handler(clickableContent)
             }
             output.withSpan(clickableSpan) { append(displayableContent) }

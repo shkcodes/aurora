@@ -26,6 +26,7 @@ import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
 import com.shkcodes.aurora.util.PagedAdapter
 import com.shkcodes.aurora.util.annotatedContent
 import com.shkcodes.aurora.util.annotatedDescription
+import com.shkcodes.aurora.util.annotatedLink
 import com.shkcodes.aurora.util.applySharedAxisEnterTransition
 import com.shkcodes.aurora.util.applySharedAxisExitTransition
 import com.shkcodes.aurora.util.handleClickableSpans
@@ -82,7 +83,8 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             location.isVisible = user.location != null
             location.text = user.location
             link.isVisible = user.url != null
-            link.text = user.url?.first
+            link.text = user.annotatedLink(requireContext()) { handler.onAnnotationClick(it) }
+            link.handleClickableSpans()
             val tweetItems = state.tweets.map { tweetItem ->
                 val annotatedContent =
                     tweetItem.annotatedContent(requireContext()) { handler.onAnnotationClick(it) }
