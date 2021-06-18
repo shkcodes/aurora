@@ -44,7 +44,6 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     private val timelineAdapter = PagedAdapter(::loadNextPage)
     private val handler = ProfileTweetListHandler(this)
     private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
-    private var hasAnimated = false
     private val args by navArgs<ProfileFragmentArgs>()
 
     override val viewModel by viewModels<ProfileViewModel>()
@@ -55,6 +54,16 @@ class ProfileFragment : BaseFragment<State, Intent>() {
         super.onCreate(savedInstanceState)
         applySharedAxisEnterTransition()
     }
+
+    var currentState = -1
+    var currentProgress = -1F
+
+    override fun onPause() {
+        currentState = binding.root.currentState
+        currentProgress = binding.root.progress
+        super.onPause()
+    }
+
 
     override fun setupView() {
         binding.timeline.adapter = timelineAdapter
@@ -68,6 +77,12 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     override fun renderState(state: State) {
         if (state.user != null) {
             renderDataState(state)
+        }
+        if (currentState != -1) {
+            binding.root.transitionToState(currentState)
+        }
+        if (currentProgress != -1F) {
+            binding.root.progress = currentProgress
         }
     }
 
@@ -98,7 +113,6 @@ class ProfileFragment : BaseFragment<State, Intent>() {
                 }
             }
             timelineAdapter.update(items)
-            if (hasAnimated) root.jumpToState(R.id.profileData)
         }
     }
 
@@ -111,7 +125,6 @@ class ProfileFragment : BaseFragment<State, Intent>() {
                 binding.timeline.scrollToPosition(action.lastIndex)
             }
             AnimateDataState -> {
-                hasAnimated = true
                 binding.root.transitionToState(R.id.profileData)
             }
         }

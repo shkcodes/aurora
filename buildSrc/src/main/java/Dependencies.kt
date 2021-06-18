@@ -30,7 +30,7 @@ object Versions {
     const val coil = "1.2.1"
     const val swipeRefresh = "1.1.0"
     const val viewPager = "1.0.0"
-    const val constraintLayout = "2.1.0-beta02"
+    const val constraintLayout = "2.1.0-beta01"
 
     const val detekt = "1.16.0"
 

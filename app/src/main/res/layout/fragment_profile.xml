@@ -116,9 +116,9 @@
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintGuide_percent="0.5" />
 
     <View
         android:id="@+id/backgroundPadding"
@@ -136,6 +136,8 @@
         android:layout_marginBottom="-24dp"
         android:contentDescription="@string/accessibility_user_profile_image"
         android:elevation="@dimen/keyline_1"
+        android:transformPivotX="40dp"
+        android:transformPivotY="40dp"
         app:layout_constraintBottom_toBottomOf="@id/bannerImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
