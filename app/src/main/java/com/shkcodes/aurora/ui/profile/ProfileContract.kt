@@ -28,7 +28,6 @@ interface ProfileContract {
     }
 
     sealed class ProfileSideEffect {
-        object AnimateDataState : ProfileSideEffect()
         data class OpenUrl(val url: String) : ProfileSideEffect()
         data class ScrollToBottom(val lastIndex: Int) : ProfileSideEffect()
     }

@@ -6,6 +6,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.transition.TransitionInflater
+import androidx.transition.TransitionManager
 import coil.ImageLoader
 import coil.load
 import com.shkcodes.aurora.R
@@ -15,7 +17,6 @@ import com.shkcodes.aurora.databinding.FragmentProfileBinding
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
-import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.AnimateDataState
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
@@ -55,16 +56,6 @@ class ProfileFragment : BaseFragment<State, Intent>() {
         applySharedAxisEnterTransition()
     }
 
-    var currentState = -1
-    var currentProgress = -1F
-
-    override fun onPause() {
-        currentState = binding.root.currentState
-        currentProgress = binding.root.progress
-        super.onPause()
-    }
-
-
     override fun setupView() {
         binding.timeline.adapter = timelineAdapter
         with(binding.root) {
@@ -75,14 +66,12 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     }
 
     override fun renderState(state: State) {
-        if (state.user != null) {
-            renderDataState(state)
-        }
-        if (currentState != -1) {
-            binding.root.transitionToState(currentState)
-        }
-        if (currentProgress != -1F) {
-            binding.root.progress = currentProgress
+        with(binding) {
+            setupDataStateAnimation()
+            progressBar.isVisible = state.isLoading
+            paginatedLoading.isVisible = state.isPaginatedLoading
+            dataStateGroup.isVisible = !state.isLoading
+            if (state.user != null) renderDataState(state)
         }
     }
 
@@ -116,6 +105,14 @@ class ProfileFragment : BaseFragment<State, Intent>() {
         }
     }
 
+    private fun setupDataStateAnimation() {
+        TransitionManager.beginDelayedTransition(
+            binding.root, TransitionInflater.from(requireContext()).inflateTransition(
+                R.transition.profile_data_state_enter
+            )
+        )
+    }
+
     override fun handleAction(sideEffect: SideEffect.Action<*>) {
         when (val action = sideEffect.action) {
             is OpenUrl -> {
@@ -123,9 +120,6 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             }
             is ScrollToBottom -> {
                 binding.timeline.scrollToPosition(action.lastIndex)
-            }
-            AnimateDataState -> {
-                binding.root.transitionToState(R.id.profileData)
             }
         }
     }

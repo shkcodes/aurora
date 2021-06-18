@@ -1,133 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:transitionGroup="true"
-    app:layoutDescription="@xml/fragment_profile_scene">
+    android:transitionGroup="true">
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/dataStateGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="bannerImage,profileImage,userInfoCard,timeline" />
 
     <ImageView
         android:id="@+id/bannerImage"
         android:layout_width="0dp"
         android:layout_height="@dimen/profile_banner_height"
         android:contentDescription="@string/accessibility_user_profile_banner"
-        android:elevation="@dimen/keyline_1"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/backgrounds/scenic" />
 
-    <View
-        android:id="@+id/userInfoBackground"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/userInfoCard"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/bg_profile_user_info"
-        android:elevation="@dimen/space_small"
-        app:layout_constraintBottom_toBottomOf="@id/backgroundPadding"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bannerImage" />
-
-    <TextView
-        android:id="@+id/name"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="@dimen/space"
-        android:elevation="@dimen/space"
-        android:gravity="center"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bannerImage"
-        tools:text="Shashank Mishra" />
+        app:shapeAppearanceOverlay="@style/userInfoCard">
 
-    <TextView
-        android:id="@+id/handle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/space"
-        android:elevation="@dimen/space"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name"
-        tools:text="SHKM9" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/space">
 
-    <TextView
-        android:id="@+id/description"
-        style="@style/TextAppearance.MaterialComponents.Caption"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:elevation="@dimen/space"
-        android:gravity="center"
-        app:fontFamily="@font/montserrat_semibold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/handle"
-        tools:text="Android @Fueled" />
+            <TextView
+                android:id="@+id/name"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/keyline_1"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Shashank Mishra" />
 
-    <TextView
-        android:id="@+id/location"
-        style="@style/TextAppearance.MaterialComponents.Overline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_small"
-        android:drawablePadding="@dimen/two_dp"
-        android:elevation="@dimen/space"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:maxLines="1"
-        android:textAllCaps="false"
-        android:textColor="?attr/colorPrimary"
-        app:drawableStartCompat="@drawable/ic_location"
-        app:drawableTint="?attr/colorPrimary"
-        app:fontFamily="@font/montserrat_semibold"
-        app:layout_constraintEnd_toStartOf="@+id/link"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/description"
-        tools:text="Right, Here" />
+            <TextView
+                android:id="@+id/handle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/name"
+                tools:text="SHKM9" />
 
-    <TextView
-        android:id="@+id/link"
-        style="@style/TextAppearance.MaterialComponents.Overline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_small"
-        android:drawablePadding="@dimen/two_dp"
-        android:elevation="@dimen/space"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:maxLines="1"
-        android:textAllCaps="false"
-        android:textColor="?attr/colorPrimary"
-        app:drawableStartCompat="@drawable/ic_link"
-        app:drawableTint="?attr/colorPrimary"
-        app:fontFamily="@font/montserrat_semibold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/location"
-        app:layout_constraintTop_toBottomOf="@id/description"
-        tools:text="localhost" />
+            <TextView
+                android:id="@+id/description"
+                style="@style/TextAppearance.MaterialComponents.Caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/space_small"
+                android:gravity="center"
+                app:fontFamily="@font/montserrat_semibold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/handle"
+                tools:text="Android @Fueled" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+            <TextView
+                android:id="@+id/location"
+                style="@style/TextAppearance.MaterialComponents.Overline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space"
+                android:drawablePadding="@dimen/two_dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textAllCaps="false"
+                android:textColor="?attr/colorPrimary"
+                app:drawableStartCompat="@drawable/ic_location"
+                app:drawableTint="?attr/colorPrimary"
+                app:fontFamily="@font/montserrat_semibold"
+                app:layout_constraintEnd_toStartOf="@id/guideline"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/description"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="Right, Here" />
 
-    <View
-        android:id="@+id/backgroundPadding"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/space"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/link" />
+            <TextView
+                android:id="@+id/link"
+                style="@style/TextAppearance.MaterialComponents.Overline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space"
+                android:drawablePadding="@dimen/two_dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textAllCaps="false"
+                android:textColor="?attr/colorPrimary"
+                app:drawableStartCompat="@drawable/ic_link"
+                app:drawableTint="?attr/colorPrimary"
+                app:fontFamily="@font/montserrat_semibold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideline"
+                app:layout_constraintTop_toBottomOf="@id/description"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="localhost" />
 
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profileImage"
@@ -135,9 +132,7 @@
         android:layout_height="@dimen/profile_image_size"
         android:layout_marginBottom="-24dp"
         android:contentDescription="@string/accessibility_user_profile_image"
-        android:elevation="@dimen/keyline_1"
-        android:transformPivotX="40dp"
-        android:transformPivotY="40dp"
+        android:elevation="@dimen/space"
         app:layout_constraintBottom_toBottomOf="@id/bannerImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -153,7 +148,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userInfoBackground"
+        app:layout_constraintTop_toBottomOf="@id/userInfoCard"
         tools:listitem="@layout/item_tweet" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -175,4 +170,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -100,7 +100,6 @@ dependencies {
     implementation Dependencies.coil
     implementation Dependencies.swipeRefresh
     implementation Dependencies.viewPager
-    implementation Dependencies.constraintLayout
 
     detektPlugins Dependencies.detektFormatter
 
