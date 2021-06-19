@@ -1,7 +1,5 @@
 package com.shkcodes.aurora.base
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,9 +21,6 @@ abstract class BaseViewModel<S, I>(private val initialState: S) : ViewModel() {
             field = value
             viewStateFlow.tryEmit(value)
         }
-
-    @Composable
-    fun composableState() = getState().collectAsState(initial = currentState).value
 
     fun getState(): SharedFlow<S> = viewStateFlow
 

@@ -5,8 +5,8 @@ import androidx.fragment.app.viewModels
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentSplashBinding
-import com.shkcodes.aurora.ui.Screen2.Home
-import com.shkcodes.aurora.ui.Screen2.Login
+import com.shkcodes.aurora.ui.Screen.Home
+import com.shkcodes.aurora.ui.Screen.Login
 import com.shkcodes.aurora.ui.splash.SplashContract.Intent
 import com.shkcodes.aurora.ui.splash.SplashContract.State
 import com.shkcodes.aurora.util.viewBinding

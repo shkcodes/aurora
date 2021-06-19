@@ -5,7 +5,7 @@ import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.AuthService
-import com.shkcodes.aurora.ui.Screen2
+import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.RequestAccessToken
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.Retry
 import com.shkcodes.aurora.ui.auth.AuthContract.State
@@ -67,7 +67,7 @@ class AuthViewModelTest : BaseTest() {
         }
 
         sut.testSideEffects {
-            assert(SideEffect.DisplayScreen(Screen2.Home) == expectItem())
+            assert(SideEffect.DisplayScreen(Screen.Home) == expectItem())
         }
     }
 

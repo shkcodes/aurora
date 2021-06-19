@@ -2,7 +2,7 @@ package com.shkcodes.aurora.login
 
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.SideEffect
-import com.shkcodes.aurora.ui.Screen2
+import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.login.LoginContract.Intent.ShowAuthScreen
 import com.shkcodes.aurora.ui.login.LoginViewModel
 import kotlinx.coroutines.test.runBlockingTest
@@ -20,7 +20,7 @@ class LoginViewModelTest : BaseTest() {
         sut.handleIntent(ShowAuthScreen)
 
         sut.testSideEffects {
-            assert(SideEffect.DisplayScreen(Screen2.Auth) == expectItem())
+            assert(SideEffect.DisplayScreen(Screen.Auth) == expectItem())
         }
     }
 }

@@ -3,7 +3,7 @@ object Versions {
     const val minSdkVersion = 23
     const val targetSdkVersion = 30
 
-    const val gradle = "7.0.0-alpha15"
+    const val gradle = "4.2.1"
     const val kotlin = "1.4.32"
 
     const val coreKtx = "1.3.2"
@@ -13,16 +13,10 @@ object Versions {
     const val material = "1.4.0-beta01"
     const val lifecycle = "2.4.0-alpha01"
 
-    const val compose = "1.0.0-beta05"
-    const val composeActivity = "1.3.0-alpha07"
-    const val composeViewModel = "1.0.0-alpha03"
-    const val composeNavigation = "1.0.0-alpha09"
-
     const val viewModel = "2.3.0"
 
     const val hilt = "2.35"
     const val hiltJetpack = "1.0.0-alpha03"
-    const val hiltComposeNavigation = "1.0.0-alpha01"
 
     const val coroutines = "1.4.3"
 
@@ -42,8 +36,6 @@ object Versions {
     const val okhttp = "4.9.0"
     const val moshi = "1.12.0"
 
-    const val accompanist = "0.8.1"
-
     const val desugarLib = "1.0.9"
     const val room = "2.3.0"
 
@@ -62,20 +54,6 @@ object Dependencies {
     const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
 
-    const val composeUi = "androidx.compose.ui:ui:${Versions.compose}"
-    const val composeTooling = "androidx.compose.ui:ui-tooling:${Versions.compose}"
-    const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.compose}"
-    const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
-    const val composeIconsCore = "androidx.compose.material:material-icons-core:${Versions.compose}"
-    const val composeIconsExtended =
-        "androidx.compose.material:material-icons-extended:${Versions.compose}"
-    const val composeActivity =
-        "androidx.activity:activity-compose:${Versions.composeActivity}"
-    const val composeViewModel =
-        "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.composeViewModel}"
-    const val composeNavigation =
-        "androidx.navigation:navigation-compose:${Versions.composeNavigation}"
-
     const val navigation = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
     const val navigationSafeArgs =
@@ -91,8 +69,6 @@ object Dependencies {
     const val hiltCompiler = "com.google.dagger:hilt-compiler:${Versions.hilt}"
     const val hiltCompilerJetpack = "androidx.hilt:hilt-compiler:${Versions.hiltJetpack}"
     const val hiltViewModel = "androidx.hilt:hilt-lifecycle-viewmodel:${Versions.hiltJetpack}"
-    const val hiltComposeNavigation =
-        "androidx.hilt:hilt-navigation-compose:${Versions.hiltComposeNavigation}"
 
     const val coroutinesCore =
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
@@ -117,11 +93,6 @@ object Dependencies {
     const val moshiCompiler = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.moshi}"
     const val scalarsConverter = "com.squareup.retrofit2:converter-scalars:${Versions.retrofit}"
     const val moshiConverter = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
-
-    const val coilCompose = "com.google.accompanist:accompanist-coil:${Versions.accompanist}"
-    const val swipeRefreshCompose =
-        "com.google.accompanist:accompanist-swiperefresh:${Versions.accompanist}"
-    const val viewPagerCompose = "com.google.accompanist:accompanist-pager:${Versions.accompanist}"
 
     const val desugarLib = "com.android.tools:desugar_jdk_libs:${Versions.desugarLib}"
 

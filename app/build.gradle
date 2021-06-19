@@ -45,11 +45,7 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures {
-        compose true
         viewBinding true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.compose
     }
     buildTypes.each { type ->
         type.buildConfigField 'String', 'CONSUMER_KEY', "\"${System.getenv('TWITTER_CONSUMER_KEY')}\""
@@ -68,15 +64,6 @@ dependencies {
     implementation Dependencies.coreKtx
     implementation Dependencies.appCompat
 
-    implementation Dependencies.composeUi
-    implementation Dependencies.composeTooling
-    implementation Dependencies.composeFoundation
-    implementation Dependencies.composeMaterial
-    implementation Dependencies.composeIconsCore
-    implementation Dependencies.composeIconsExtended
-    implementation Dependencies.composeActivity
-    implementation Dependencies.composeViewModel
-    implementation Dependencies.composeNavigation
     implementation Dependencies.navigation
     implementation Dependencies.navigationUi
     implementation Dependencies.material
@@ -87,7 +74,6 @@ dependencies {
 
     implementation Dependencies.hilt
     implementation Dependencies.hiltViewModel
-    implementation Dependencies.hiltComposeNavigation
     kapt Dependencies.hiltCompiler
     kapt Dependencies.hiltCompilerJetpack
 
@@ -110,10 +96,6 @@ dependencies {
     implementation Dependencies.moshiConverter
     implementation Dependencies.scalarsConverter
     kapt Dependencies.moshiCompiler
-
-    implementation Dependencies.coilCompose
-    implementation Dependencies.swipeRefreshCompose
-    implementation Dependencies.viewPagerCompose
 
     coreLibraryDesugaring Dependencies.desugarLib
 

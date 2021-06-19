@@ -4,7 +4,7 @@ import androidx.fragment.app.viewModels
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentLoginBinding
-import com.shkcodes.aurora.ui.Screen2
+import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.login.LoginContract.Intent
 import com.shkcodes.aurora.ui.login.LoginContract.Intent.ShowAuthScreen
 import com.shkcodes.aurora.ui.login.LoginContract.State
@@ -26,7 +26,7 @@ class LoginFragment : BaseFragment<State, Intent>() {
 
     override fun handleNavigation(sideEffect: SideEffect.DisplayScreen<*>) {
         when (sideEffect.screen) {
-            Screen2.Auth -> {
+            Screen.Auth -> {
                 navigate(LoginFragmentDirections.moveToAuth())
             }
         }

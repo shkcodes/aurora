@@ -5,7 +5,7 @@ import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.AuthService
 import com.shkcodes.aurora.service.UserService
-import com.shkcodes.aurora.ui.Screen2
+import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.splash.SplashContract.Constants.SPLASH_TIMEOUT
 import com.shkcodes.aurora.ui.splash.SplashContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,9 +25,9 @@ class SplashViewModel @Inject constructor(
             userService.flushTweetsCache()
             delay(SPLASH_TIMEOUT)
             val destination = if (authService.isLoggedIn) {
-                Screen2.Home
+                Screen.Home
             } else {
-                Screen2.Login
+                Screen.Login
             }
             onSideEffect(SideEffect.DisplayScreen(destination))
         }

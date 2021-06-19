@@ -4,7 +4,7 @@ import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.AuthService
 import com.shkcodes.aurora.service.UserService
-import com.shkcodes.aurora.ui.Screen2
+import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.splash.SplashContract.Constants.SPLASH_TIMEOUT
 import com.shkcodes.aurora.ui.splash.SplashViewModel
 import io.mockk.every
@@ -26,7 +26,7 @@ class SplashViewModelTest : BaseTest() {
         every { authService.isLoggedIn } returns false
         viewModel().testSideEffects {
             advanceTimeBy(SPLASH_TIMEOUT)
-            assert(SideEffect.DisplayScreen(Screen2.Login) == expectItem())
+            assert(SideEffect.DisplayScreen(Screen.Login) == expectItem())
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -36,7 +36,7 @@ class SplashViewModelTest : BaseTest() {
         every { authService.isLoggedIn } returns true
         viewModel().testSideEffects {
             advanceTimeBy(SPLASH_TIMEOUT)
-            assert(SideEffect.DisplayScreen(Screen2.Home) == expectItem())
+            assert(SideEffect.DisplayScreen(Screen.Home) == expectItem())
             cancelAndIgnoreRemainingEvents()
         }
     }

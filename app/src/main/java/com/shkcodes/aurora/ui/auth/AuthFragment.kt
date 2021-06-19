@@ -5,7 +5,7 @@ import androidx.fragment.app.viewModels
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentAuthBinding
-import com.shkcodes.aurora.ui.Screen2.Home
+import com.shkcodes.aurora.ui.Screen.Home
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.RequestAccessToken
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.Retry

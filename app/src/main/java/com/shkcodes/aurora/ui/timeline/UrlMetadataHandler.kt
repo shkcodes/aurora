@@ -7,7 +7,6 @@ import coil.ImageLoader
 import coil.clear
 import coil.load
 import com.shkcodes.aurora.databinding.LayoutLinkPreviewBinding
-import com.shkcodes.aurora.ui.tweetlist.MetaData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
@@ -15,9 +14,13 @@ import org.jsoup.nodes.Document
 import timber.log.Timber
 import java.net.URL
 
+data class UrlMetaData(
+    val title: String = "",
+    val imageUrl: String = ""
+)
 class UrlMetadataHandler(private val scope: LifecycleCoroutineScope, private val imageLoader: ImageLoader) {
 
-    private val urlsMetaData = mutableMapOf<String, MetaData>()
+    private val urlsMetaData = mutableMapOf<String, UrlMetaData>()
 
     fun get(binding: LayoutLinkPreviewBinding, url: String) {
         if (urlsMetaData[url] == null) {
@@ -35,7 +38,7 @@ class UrlMetadataHandler(private val scope: LifecycleCoroutineScope, private val
         }
     }
 
-    private fun showData(binding: LayoutLinkPreviewBinding, metaData: MetaData, url: String) {
+    private fun showData(binding: LayoutLinkPreviewBinding, metaData: UrlMetaData, url: String) {
         with(binding) {
             root.doOnAttach {
                 if (binding.root.tag == url) {
@@ -53,15 +56,15 @@ class UrlMetadataHandler(private val scope: LifecycleCoroutineScope, private val
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private fun getMetadata(url: String): MetaData {
+    private fun getMetadata(url: String): UrlMetaData {
         return try {
             val document = Jsoup.connect(url.fixScheme()).get()
             val title = getMetaTagContent(document, "meta[property=og:title]") ?: document.title()
             val imageUrl = getMetaTagContent(document, "meta[property=og:image]")?.fixScheme()
-            MetaData(title, imageUrl.orEmpty())
+            UrlMetaData(title, imageUrl.orEmpty())
         } catch (e: Exception) {
             Timber.e(e)
-            MetaData(URL(url).host)
+            UrlMetaData(URL(url).host)
         }
     }
 
