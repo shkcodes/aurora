@@ -42,7 +42,6 @@ import com.xwray.groupie.viewbinding.BindableItem
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.abs
-import kotlin.math.max
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<State, Intent>() {
@@ -71,8 +70,6 @@ class ProfileFragment : BaseFragment<State, Intent>() {
         }
         dispatchIntent(Init(args.userHandle))
         with(binding.profileAppBar) {
-            val maxProfileScrollOffset = resources.getDimension(R.dimen.profile_image_max_scroll_offset)
-
             addOnOffsetChangedListener(OnOffsetChangedListener { _, verticalOffset ->
                 with(binding) {
                     val offset = verticalOffset / totalScrollRange.toFloat()
@@ -84,8 +81,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
                     link.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
                     location.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
                     bannerImage.translationY = scrollOffset * BANNER_SCROLL_OFFSET
-                    profileImage.translationY =
-                        max(maxProfileScrollOffset, scrollOffset * USER_INFO_BACKGROUND_SCROLL_OFFSET)
+                    profileImage.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
                     profileImage.scaleX = maxOf(PROFILE_IMAGE_SCALE_LIMIT, 1 - abs(offset))
                     profileImage.scaleY = maxOf(PROFILE_IMAGE_SCALE_LIMIT, 1 - abs(offset))
                 }

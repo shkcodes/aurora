@@ -10,7 +10,7 @@ object Versions {
     const val appCompat = "1.2.0"
 
     const val navigation = "2.3.5"
-    const val material = "1.4.0-beta01"
+    const val material = "1.4.0-rc01"
     const val lifecycle = "2.4.0-alpha01"
 
     const val viewModel = "2.3.0"
