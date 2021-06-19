@@ -36,4 +36,11 @@ interface ProfileContract {
         data class MediaViewer(val index: Int, val tweetId: Long) : Screen()
         data class UserProfile(val userHandle: String) : Screen()
     }
+
+    object Constants {
+        const val USER_INFO_BACKGROUND_SCROLL_OFFSET = 0.2F
+        const val USER_INFO_SCROLL_OFFSET = 0.3F
+        const val BANNER_SCROLL_OFFSET = 0.0001F
+        const val PROFILE_IMAGE_SCALE_LIMIT = 0.8F
+    }
 }

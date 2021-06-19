@@ -10,10 +10,15 @@ import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
 import coil.ImageLoader
 import coil.load
+import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentProfileBinding
+import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.BANNER_SCROLL_OFFSET
+import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.PROFILE_IMAGE_SCALE_LIMIT
+import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.USER_INFO_BACKGROUND_SCROLL_OFFSET
+import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.USER_INFO_SCROLL_OFFSET
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
@@ -36,6 +41,8 @@ import com.shkcodes.aurora.util.viewBinding
 import com.xwray.groupie.viewbinding.BindableItem
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.abs
+import kotlin.math.max
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<State, Intent>() {
@@ -63,6 +70,27 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             doOnPreDraw { startPostponedEnterTransition() }
         }
         dispatchIntent(Init(args.userHandle))
+        with(binding.profileAppBar) {
+            val maxProfileScrollOffset = resources.getDimension(R.dimen.profile_image_max_scroll_offset)
+
+            addOnOffsetChangedListener(OnOffsetChangedListener { _, verticalOffset ->
+                with(binding) {
+                    val offset = verticalOffset / totalScrollRange.toFloat()
+                    val scrollOffset = offset * height
+                    userInfoCard.translationY = scrollOffset * USER_INFO_BACKGROUND_SCROLL_OFFSET
+                    name.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                    description.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                    handle.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                    link.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                    location.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                    bannerImage.translationY = scrollOffset * BANNER_SCROLL_OFFSET
+                    profileImage.translationY =
+                        max(maxProfileScrollOffset, scrollOffset * USER_INFO_BACKGROUND_SCROLL_OFFSET)
+                    profileImage.scaleX = maxOf(PROFILE_IMAGE_SCALE_LIMIT, 1 - abs(offset))
+                    profileImage.scaleY = maxOf(PROFILE_IMAGE_SCALE_LIMIT, 1 - abs(offset))
+                }
+            })
+        }
     }
 
     override fun renderState(state: State) {

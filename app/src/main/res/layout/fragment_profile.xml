@@ -19,13 +19,15 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/colorBackground">
+                android:background="?android:attr/colorBackground"
+                app:layout_collapseMode="parallax">
 
                 <ImageView
                     android:id="@+id/bannerImage"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/profile_banner_height"
                     android:contentDescription="@string/accessibility_user_profile_banner"
+                    android:elevation="@dimen/space"
                     android:scaleType="centerCrop"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

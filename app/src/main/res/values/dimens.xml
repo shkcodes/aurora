@@ -24,5 +24,6 @@
     <dimen name="profile_banner_height">150dp</dimen>
     <dimen name="profile_image_size">80dp</dimen>
     <dimen name="profile_image_offset">-24dp</dimen>
+    <dimen name="profile_image_max_scroll_offset">-16dp</dimen>
 
 </resources>
