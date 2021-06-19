@@ -30,6 +30,7 @@ object Versions {
     const val coil = "1.2.1"
     const val swipeRefresh = "1.1.0"
     const val viewPager = "1.0.0"
+    const val constraintLayout = "2.1.0-beta01"
 
     const val detekt = "1.16.0"
 
@@ -104,6 +105,7 @@ object Dependencies {
     const val coil = "io.coil-kt:coil:${Versions.coil}"
     const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefresh}"
     const val viewPager = "androidx.viewpager2:viewpager2:${Versions.viewPager}"
+    const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
 
     const val detektGradlePlugin =
         "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detekt}"
