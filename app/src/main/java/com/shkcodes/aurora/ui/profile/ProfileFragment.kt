@@ -70,7 +70,8 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             setupDataStateAnimation()
             progressBar.isVisible = state.isLoading
             paginatedLoading.isVisible = state.isPaginatedLoading
-            dataStateGroup.isVisible = !state.isLoading
+            profileAppBar.isVisible = !state.isLoading
+            timeline.isVisible = !state.isLoading
             if (state.user != null) renderDataState(state)
         }
     }
