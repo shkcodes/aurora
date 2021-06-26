@@ -10,7 +10,7 @@
     </slide>
     <slide android:slideEdge="bottom">
         <targets>
-            <target android:targetId="@id/timeline" />
+            <target android:targetId="@id/profilePager" />
         </targets>
     </slide>
 </transitionSet>

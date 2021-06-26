@@ -1,9 +1,9 @@
 package com.shkcodes.aurora.util
 
-import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.GroupieViewHolder
 
-class PagedAdapter(val loadMoreData: () -> Unit) : GroupAdapter<GroupieViewHolder>() {
+class PagedAdapter(val loadMoreData: () -> Unit) : GroupieAdapter() {
     companion object {
         private const val PAGINATION_TRIGGER_THRESHOLD = 3
     }

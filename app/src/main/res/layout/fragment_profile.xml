@@ -98,11 +98,11 @@
                             app:drawableStartCompat="@drawable/ic_location"
                             app:drawableTint="?attr/colorPrimary"
                             app:fontFamily="@font/montserrat_semibold"
+                            app:layout_constrainedWidth="true"
                             app:layout_constraintEnd_toStartOf="@id/guideline"
                             app:layout_constraintHorizontal_chainStyle="spread"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/description"
-                            app:layout_constrainedWidth="true"
                             tools:text="Right, Here" />
 
                         <TextView
@@ -120,10 +120,10 @@
                             app:drawableStartCompat="@drawable/ic_link"
                             app:drawableTint="?attr/colorPrimary"
                             app:fontFamily="@font/montserrat_semibold"
+                            app:layout_constrainedWidth="true"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@id/guideline"
                             app:layout_constraintTop_toBottomOf="@id/description"
-                            app:layout_constrainedWidth="true"
                             tools:text="localhost" />
 
                         <androidx.constraintlayout.widget.Guideline
@@ -159,44 +159,15 @@
             android:layout_gravity="bottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/userInfoCard">
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/ic_tweet" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/ic_media" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/ic_favorite" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/ic_profile" />
-
-        </com.google.android.material.tabs.TabLayout>
+            app:layout_constraintTop_toBottomOf="@id/userInfoCard" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/timeline"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/profilePager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userInfoCard"
-        tools:listitem="@layout/item_tweet" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBar"
