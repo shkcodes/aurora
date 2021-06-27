@@ -45,7 +45,7 @@ class PagerTweetListItem(
             val items = mutableListOf<AdapterItem<*>>().apply {
                 addAll(tweetItems)
                 if (isPaginatedError) {
-                    add(PaginatedErrorItem { handler.loadNextPage() })
+                    add(PaginatedErrorItem { handler.loadNextPage(true) })
                 }
             }
             viewHolder.adapter.replaceItems(items)
@@ -53,6 +53,9 @@ class PagerTweetListItem(
             if (state != null) {
                 list.layoutManager?.onRestoreInstanceState(state)
                 handler.saveState(null)
+            }
+            if (handler.scrollToBottom) {
+                viewHolder.binding.list.smoothScrollToPosition(items.size - 1)
             }
         }
     }

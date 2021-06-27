@@ -30,6 +30,7 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.State
 import com.shkcodes.aurora.ui.profile.items.PagerTweetListItem
 import com.shkcodes.aurora.ui.timeline.UrlMetadataHandler
+import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import com.shkcodes.aurora.util.EmptyAdapterItem
 import com.shkcodes.aurora.util.annotatedDescription
 import com.shkcodes.aurora.util.annotatedLink
@@ -118,7 +119,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             link.text = user.annotatedLink(requireContext()) { handler.onAnnotationClick(it) }
             link.handleClickableSpans()
             val items = listOf(
-                tweetListItem(state),
+                tweetListItem(state.tweets, state.isPaginatedError),
                 EmptyAdapterItem("Item 2"),
                 EmptyAdapterItem("Item 3"),
                 EmptyAdapterItem("Item 4")
@@ -135,13 +136,13 @@ class ProfileFragment : BaseFragment<State, Intent>() {
         )
     }
 
-    private fun tweetListItem(state: State): PagerTweetListItem {
+    private fun tweetListItem(tweets: TweetItems, isPaginatedError: Boolean): PagerTweetListItem {
         return PagerTweetListItem(
-            state.tweets,
+            tweets,
             handler,
             urlMetadataHandler,
             imageLoader,
-            state.isPaginatedError
+            isPaginatedError
         )
     }
 
@@ -151,7 +152,14 @@ class ProfileFragment : BaseFragment<State, Intent>() {
                 requireContext().openUrl(action.url)
             }
             is ScrollToBottom -> {
-//                pagerAdapter.scrollTimelineToBottom()
+                val items = listOf(
+                    tweetListItem(action.tweets, true),
+                    EmptyAdapterItem("Item 2"),
+                    EmptyAdapterItem("Item 3"),
+                    EmptyAdapterItem("Item 4")
+                )
+                handler.scrollToBottom = true
+                pagerAdapter.replaceItems(items)
             }
         }
     }

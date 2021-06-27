@@ -33,22 +33,7 @@ class TweetAdapterItem(
     private val media = tweetItem.tweetMedia
     private val quoteTweetMedia = tweetItem.quoteTweetMedia
 
-    override fun onCreateViewHolder(view: View): TweetItemViewHolder {
-        val binding = ItemTweetBinding.bind(view)
-        val context = binding.root.context
-        val primaryTweetUser = context.getString(R.string.user_handle_placeholder, tweet.userHandle).trim()
-        val quoteTweetUser =
-            context.getString(R.string.user_handle_placeholder, quoteTweet?.userHandle).trim()
-        with(binding.primaryTweet) {
-            userInfo.setOnClickListener { handler.onProfileClick(primaryTweetUser) }
-            profilePic.setOnClickListener { handler.onProfileClick(primaryTweetUser) }
-        }
-        with(binding.quoteTweet) {
-            userInfo.setOnClickListener { handler.onProfileClick(quoteTweetUser) }
-            profilePic.setOnClickListener { handler.onProfileClick(quoteTweetUser) }
-        }
-        return TweetItemViewHolder(binding)
-    }
+    override fun onCreateViewHolder(view: View) = TweetItemViewHolder(ItemTweetBinding.bind(view))
 
     override val layoutId = R.layout.item_tweet
 
@@ -92,6 +77,7 @@ class TweetAdapterItem(
                 }
                 renderQuoteTweet(quoteTweet)
             }
+            setupClickHandling(this)
         }
     }
 
@@ -111,6 +97,21 @@ class TweetAdapterItem(
                 handler.saveState(layoutManager?.onSaveInstanceState())
                 handler.onMediaClick(media[index], index, imageView, root.parent as View)
             })
+        }
+    }
+
+    private fun setupClickHandling(binding: ItemTweetBinding) {
+        val context = binding.root.context
+        val primaryTweetUser = context.getString(R.string.user_handle_placeholder, tweet.userHandle).trim()
+        val quoteTweetUser =
+            context.getString(R.string.user_handle_placeholder, quoteTweet?.userHandle).trim()
+        with(binding.primaryTweet) {
+            userInfo.setOnClickListener { handler.onProfileClick(primaryTweetUser) }
+            profilePic.setOnClickListener { handler.onProfileClick(primaryTweetUser) }
+        }
+        with(binding.quoteTweet) {
+            userInfo.setOnClickListener { handler.onProfileClick(quoteTweetUser) }
+            profilePic.setOnClickListener { handler.onProfileClick(quoteTweetUser) }
         }
     }
 

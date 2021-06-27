@@ -41,7 +41,14 @@ class ProfileTweetListHandler(private val fragment: ProfileFragment) : TweetList
 
     override fun getState(index: Int): Parcelable? = states[index]
 
-    fun loadNextPage() {
-        fragment.dispatchIntent(LoadNextPage)
+    fun loadNextPage(force: Boolean = false) {
+        fragment.dispatchIntent(LoadNextPage(force))
     }
+
+    var scrollToBottom = false
+        get() {
+            val currentValue = field
+            field = false
+            return currentValue
+        }
 }

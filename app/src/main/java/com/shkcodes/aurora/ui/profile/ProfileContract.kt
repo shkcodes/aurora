@@ -21,16 +21,16 @@ interface ProfileContract {
     )
 
     sealed class Intent {
-        object LoadNextPage : Intent()
         data class Init(val userHandle: String) : Intent()
         data class Retry(val userHandle: String) : Intent()
         data class MediaClick(val index: Int, val tweetId: Long) : Intent()
         data class AnnotatedContentClick(val text: String) : Intent()
+        data class LoadNextPage(val force: Boolean = false) : Intent()
     }
 
     sealed class ProfileSideEffect {
         data class OpenUrl(val url: String) : ProfileSideEffect()
-        data class ScrollToBottom(val lastIndex: Int) : ProfileSideEffect()
+        data class ScrollToBottom(val tweets: TweetItems) : ProfileSideEffect()
     }
 
     sealed class Screen {

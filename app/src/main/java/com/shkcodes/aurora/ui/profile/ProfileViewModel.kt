@@ -48,11 +48,9 @@ class ProfileViewModel @Inject constructor(
                 fetchData(intent.userHandle)
             }
 
-            LoadNextPage -> {
-                val afterId = currentState.tweets.last().tweetId
-                if (!currentState.isPaginatedLoading) {
-                    currentState = currentState.copy(isPaginatedLoading = true, isPaginatedError = false)
-                    fetchTweets(afterId)
+            is LoadNextPage -> {
+                if ((!currentState.isPaginatedLoading && !currentState.isPaginatedError) || intent.force) {
+                    fetchNextPage()
                 }
             }
 
@@ -93,7 +91,9 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun fetchTweets(afterId: Long) {
+    private fun fetchNextPage() {
+        val afterId = currentState.tweets.last().tweetId
+        currentState = currentState.copy(isPaginatedLoading = true, isPaginatedError = false)
         viewModelScope.launch {
             userService.fetchUserTweets(currentState.user!!.screenName, afterId)
                 .evaluate({
@@ -104,7 +104,7 @@ class ProfileViewModel @Inject constructor(
                 }, {
                     Timber.e(it)
                     currentState = currentState.copy(isPaginatedLoading = false, isPaginatedError = true)
-                    onSideEffect(SideEffect.Action(ScrollToBottom(currentState.tweets.size)))
+                    onSideEffect(SideEffect.Action(ScrollToBottom(currentState.tweets)))
                 })
         }
     }

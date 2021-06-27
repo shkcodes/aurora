@@ -147,7 +147,7 @@ class ProfileViewModelTest : BaseTest() {
             assert(expectItem() == State(true))
             assert(expectItem() == State(false, user, listOf(tweetItem), autoplayVideos = true))
 
-            sut.handleIntent(LoadNextPage)
+            sut.handleIntent(LoadNextPage(false))
 
             assert(
                 expectItem() == State(
@@ -181,7 +181,7 @@ class ProfileViewModelTest : BaseTest() {
             assert(expectItem() == State(true))
             assert(expectItem() == State(false, user, listOf(tweetItem), autoplayVideos = true))
 
-            sut.handleIntent(LoadNextPage)
+            sut.handleIntent(LoadNextPage(true))
 
             assert(
                 expectItem() == State(
