@@ -59,16 +59,20 @@ data class User(
     val profileImageUrlLarge = profileImageUrl.replace("_normal", "")
 
     val url = entities.url?.urls?.firstOrNull()?.let { it.displayUrl to it.url }
+
+    val descriptionUrls = entities.description?.urls.orEmpty()
 }
 
 @JsonClass(generateAdapter = true)
 data class UserEntities(
     @Json(name = "url")
-    val url: UserUrl?
+    val url: UserUrls?,
+    @Json(name = "description")
+    val description: UserUrls?
 )
 
 @JsonClass(generateAdapter = true)
-data class UserUrl(
+data class UserUrls(
     @Json(name = "urls")
     val urls: List<Url>
 )

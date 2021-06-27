@@ -51,7 +51,7 @@ fun User.annotatedLink(context: Context, handler: (String) -> Unit): SpannableSt
 }
 
 fun User.annotatedDescription(context: Context, handler: (String) -> Unit): SpannableStringBuilder {
-    return context.contentFormatter(description, handler = handler)
+    return context.contentFormatter(description, descriptionUrls, handler = handler)
 }
 
 fun TweetItem.annotatedContent(context: Context, handler: (String) -> Unit): AnnotatedContent {
