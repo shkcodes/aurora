@@ -1,19 +1,23 @@
 package com.shkcodes.aurora.ui.timeline.items
 
 import android.view.View
+import com.fueled.reclaim.AdapterItem
+import com.fueled.reclaim.BaseViewHolder
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.databinding.ItemPaginatedErrorBinding
-import com.xwray.groupie.viewbinding.BindableItem
 
-class PaginatedErrorItem(private val retryAction: () -> Unit) : BindableItem<ItemPaginatedErrorBinding>() {
+class PaginatedErrorItem(
+    private val retryAction: () -> Unit
+) : AdapterItem<PaginatedErrorViewHolder>() {
 
-    override fun initializeViewBinding(view: View): ItemPaginatedErrorBinding {
-        return ItemPaginatedErrorBinding.bind(view)
-    }
+    override fun onCreateViewHolder(view: View) =
+        PaginatedErrorViewHolder(ItemPaginatedErrorBinding.bind(view))
 
-    override fun getLayout() = R.layout.item_paginated_error
+    override val layoutId = R.layout.item_paginated_error
 
-    override fun bind(binding: ItemPaginatedErrorBinding, position: Int) {
-        binding.retry.setOnClickListener { retryAction() }
+    override fun updateItemViews(viewHolder: PaginatedErrorViewHolder) {
+        viewHolder.binding.retry.setOnClickListener { retryAction() }
     }
 }
+
+class PaginatedErrorViewHolder(val binding: ItemPaginatedErrorBinding) : BaseViewHolder(binding.root)

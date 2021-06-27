@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.ImageLoader
+import com.fueled.reclaim.AdapterItem
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
@@ -30,7 +31,6 @@ import com.shkcodes.aurora.util.observeScrolling
 import com.shkcodes.aurora.util.openUrl
 import com.shkcodes.aurora.util.reenterTransitionListener
 import com.shkcodes.aurora.util.viewBinding
-import com.xwray.groupie.viewbinding.BindableItem
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -88,13 +88,13 @@ class HomeTimelineFragment : BaseFragment<State, Intent>() {
             TweetAdapterItem(annotatedContent, tweetItem, urlMetadataHandler, imageLoader, handler)
         }
         timelineAdapter.canLoadMore = !state.isPaginatedError
-        val items = mutableListOf<BindableItem<*>>().apply {
+        val items = mutableListOf<AdapterItem<*>>().apply {
             addAll(tweetItems)
             if (state.isPaginatedError) {
                 add(PaginatedErrorItem(::loadNextPage))
             }
         }
-        timelineAdapter.update(items)
+        timelineAdapter.replaceItems(items)
     }
 
     override fun handleAction(sideEffect: SideEffect.Action<*>) {

@@ -10,6 +10,7 @@ import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
 import coil.ImageLoader
 import coil.load
+import com.fueled.reclaim.ItemsViewAdapter
 import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.shkcodes.aurora.R
@@ -38,7 +39,6 @@ import com.shkcodes.aurora.util.getDrawableCompat
 import com.shkcodes.aurora.util.handleClickableSpans
 import com.shkcodes.aurora.util.openUrl
 import com.shkcodes.aurora.util.viewBinding
-import com.xwray.groupie.GroupieAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.abs
@@ -48,7 +48,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
 
     @Inject
     lateinit var imageLoader: ImageLoader
-    private val pagerAdapter = GroupieAdapter()
+    private val pagerAdapter = ItemsViewAdapter()
     private val handler = ProfileTweetListHandler(this)
     private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
     private val args by navArgs<ProfileFragmentArgs>()
@@ -123,7 +123,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
                 EmptyAdapterItem("Item 3"),
                 EmptyAdapterItem("Item 4")
             )
-            pagerAdapter.update(items)
+            pagerAdapter.replaceItems(items)
         }
     }
 

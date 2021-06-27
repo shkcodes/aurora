@@ -3,26 +3,31 @@ package com.shkcodes.aurora.ui.media
 import android.view.View
 import coil.ImageLoader
 import coil.load
+import com.fueled.reclaim.AdapterItem
+import com.fueled.reclaim.BaseViewHolder
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.databinding.ItemImageBinding
-import com.xwray.groupie.viewbinding.BindableItem
 
 class ImageAdapterItem(
     private val media: MediaEntity,
     private val imageLoader: ImageLoader
-) : BindableItem<ItemImageBinding>() {
+) : AdapterItem<ImageItemViewHolder>() {
 
-    override fun initializeViewBinding(view: View): ItemImageBinding {
-        return ItemImageBinding.bind(view)
-    }
+    override fun onCreateViewHolder(view: View) = ImageItemViewHolder(ItemImageBinding.bind(view))
 
-    override fun getLayout() = R.layout.item_image
+    override val layoutId = R.layout.item_image
 
-    override fun bind(binding: ItemImageBinding, position: Int) {
-        with(binding.image) {
+    override fun updateItemViews(viewHolder: ImageItemViewHolder) {
+        with(viewHolder.binding.image) {
             load(media.url, imageLoader) { allowHardware(false) }
             transitionName = "${media.id}"
         }
     }
+
+    override fun isTheSame(newItem: AdapterItem<*>): Boolean {
+        return newItem is ImageAdapterItem && newItem.media == media
+    }
 }
+
+class ImageItemViewHolder(val binding: ItemImageBinding) : BaseViewHolder(binding.root)

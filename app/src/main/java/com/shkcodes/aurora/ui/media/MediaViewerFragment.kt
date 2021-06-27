@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
 import coil.ImageLoader
+import com.fueled.reclaim.ItemsViewAdapter
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -24,8 +25,6 @@ import com.shkcodes.aurora.util.AnimationConstants
 import com.shkcodes.aurora.util.observePageChanges
 import com.shkcodes.aurora.util.onDestroy
 import com.shkcodes.aurora.util.viewBinding
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.GroupieViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -34,7 +33,7 @@ class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener 
 
     @Inject
     lateinit var imageLoader: ImageLoader
-    private val pagerAdapter = GroupAdapter<GroupieViewHolder>()
+    private val pagerAdapter = ItemsViewAdapter()
     private val args by navArgs<MediaViewerFragmentArgs>()
 
     override val viewModel by viewModels<MediaViewerViewModel>()
@@ -88,7 +87,7 @@ class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener 
     private fun showImagesPager(state: State) {
         with(state) {
             val items = media.map { ImageAdapterItem(it, imageLoader) }
-            pagerAdapter.update(items)
+            pagerAdapter.replaceItems(items)
             binding.pageIndicator.isVisible = true
             with(binding.pager) {
                 isVisible = true

@@ -80,8 +80,7 @@ dependencies {
     implementation Dependencies.coroutinesCore
     implementation Dependencies.coroutinesAndroid
 
-    implementation Dependencies.groupie
-    implementation Dependencies.groupieViewBinding
+    implementation Dependencies.reclaim
 
     implementation Dependencies.coil
     implementation Dependencies.swipeRefresh

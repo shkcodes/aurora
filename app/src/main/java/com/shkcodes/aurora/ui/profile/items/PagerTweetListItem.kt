@@ -2,6 +2,8 @@ package com.shkcodes.aurora.ui.profile.items
 
 import android.view.View
 import coil.ImageLoader
+import com.fueled.reclaim.AdapterItem
+import com.fueled.reclaim.BaseViewHolder
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.databinding.ItemTweetListBinding
 import com.shkcodes.aurora.ui.profile.ProfileTweetListHandler
@@ -11,9 +13,6 @@ import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import com.shkcodes.aurora.util.PagedAdapter
 import com.shkcodes.aurora.util.annotatedContent
-import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.Item
-import com.xwray.groupie.viewbinding.BindableItem
 
 class PagerTweetListItem(
     private val tweets: TweetItems,
@@ -21,13 +20,14 @@ class PagerTweetListItem(
     private val urlMetadataHandler: UrlMetadataHandler,
     private val imageLoader: ImageLoader,
     private val isPaginatedError: Boolean
-) : Item<PagerListViewHolder>() {
+) : AdapterItem<PagerListViewHolder>() {
 
-    override fun createViewHolder(view: View) = PagerListViewHolder(view) { handler.loadNextPage() }
+    override fun onCreateViewHolder(view: View) =
+        PagerListViewHolder(ItemTweetListBinding.bind(view)) { handler.loadNextPage() }
 
-    override fun getLayout() = R.layout.item_tweet_list
+    override val layoutId = R.layout.item_tweet_list
 
-    override fun bind(viewHolder: PagerListViewHolder, position: Int) {
+    override fun updateItemViews(viewHolder: PagerListViewHolder) {
         with(viewHolder.binding) {
             val context = root.context
             val tweetItems = tweets.map { tweetItem ->
@@ -42,14 +42,14 @@ class PagerTweetListItem(
                     list.layoutManager
                 )
             }
-            val items = mutableListOf<BindableItem<*>>().apply {
+            val items = mutableListOf<AdapterItem<*>>().apply {
                 addAll(tweetItems)
                 if (isPaginatedError) {
                     add(PaginatedErrorItem { handler.loadNextPage() })
                 }
             }
-            viewHolder.adapter.update(items)
-            val state = handler.getState(position)
+            viewHolder.adapter.replaceItems(items)
+            val state = handler.getState(viewHolder.adapterPosition)
             if (state != null) {
                 list.layoutManager?.onRestoreInstanceState(state)
                 handler.saveState(null)
@@ -57,22 +57,13 @@ class PagerTweetListItem(
         }
     }
 
-    override fun onViewDetachedFromWindow(viewHolder: PagerListViewHolder) {
-        super.onViewDetachedFromWindow(viewHolder)
-        handler.saveState(viewHolder.binding.list.layoutManager?.onSaveInstanceState())
-    }
-
-    override fun isSameAs(other: Item<*>): Boolean {
-        return other is PagerTweetListItem && other.tweets == tweets && other.isPaginatedError == isPaginatedError
-    }
-
-    override fun hasSameContentAs(other: Item<*>): Boolean {
-        return isSameAs(other)
+    override fun isTheSame(newItem: AdapterItem<*>): Boolean {
+        return newItem is PagerTweetListItem && newItem.tweets == tweets && newItem.isPaginatedError == isPaginatedError
     }
 }
 
-class PagerListViewHolder(view: View, paginationAction: () -> Unit) : GroupieViewHolder(view) {
-    val binding = ItemTweetListBinding.bind(view)
+class PagerListViewHolder(val binding: ItemTweetListBinding, paginationAction: () -> Unit) :
+    BaseViewHolder(binding.root) {
     val adapter = PagedAdapter(paginationAction)
 
     init {

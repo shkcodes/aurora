@@ -1,30 +1,26 @@
 package com.shkcodes.aurora.util
 
 import android.view.View
+import com.fueled.reclaim.AdapterItem
+import com.fueled.reclaim.BaseViewHolder
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.databinding.ItemEmptyBinding
-import com.xwray.groupie.Item
-import com.xwray.groupie.viewbinding.BindableItem
 
 class EmptyAdapterItem(
     private val content: String
-) : BindableItem<ItemEmptyBinding>() {
+) : AdapterItem<EmptyItemViewHolder>() {
 
-    override fun initializeViewBinding(view: View): ItemEmptyBinding {
-        return ItemEmptyBinding.bind(view)
+    override fun onCreateViewHolder(view: View) = EmptyItemViewHolder(ItemEmptyBinding.bind(view))
+
+    override val layoutId = R.layout.item_empty
+
+    override fun updateItemViews(viewHolder: EmptyItemViewHolder) {
+        viewHolder.binding.text.text = content
     }
 
-    override fun getLayout() = R.layout.item_empty
-
-    override fun bind(binding: ItemEmptyBinding, position: Int) {
-        binding.text.text = content
-    }
-
-    override fun isSameAs(other: Item<*>): Boolean {
-        return other is EmptyAdapterItem && other.content == content
-    }
-
-    override fun hasSameContentAs(other: Item<*>): Boolean {
-        return isSameAs(other)
+    override fun isTheSame(newItem: AdapterItem<*>): Boolean {
+        return newItem is EmptyAdapterItem && newItem.content == content
     }
 }
+
+class EmptyItemViewHolder(val binding: ItemEmptyBinding) : BaseViewHolder(binding.root)

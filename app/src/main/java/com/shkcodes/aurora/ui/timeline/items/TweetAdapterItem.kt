@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import coil.ImageLoader
 import coil.load
 import coil.transform.CircleCropTransformation
+import com.fueled.reclaim.AdapterItem
+import com.fueled.reclaim.BaseViewHolder
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.databinding.ItemTweetBinding
 import com.shkcodes.aurora.databinding.LayoutTweetSkeletonBinding
@@ -16,8 +18,6 @@ import com.shkcodes.aurora.util.AnnotatedContent
 import com.shkcodes.aurora.util.handleClickableSpans
 import com.shkcodes.aurora.util.setSize
 import com.shkcodes.aurora.util.toPrettyTime
-import com.xwray.groupie.Item
-import com.xwray.groupie.viewbinding.BindableItem
 
 class TweetAdapterItem(
     private val annotatedContent: AnnotatedContent,
@@ -26,14 +26,14 @@ class TweetAdapterItem(
     private val imageLoader: ImageLoader,
     private val handler: TweetListHandler,
     private val layoutManager: LayoutManager? = null
-) : BindableItem<ItemTweetBinding>() {
+) : AdapterItem<TweetItemViewHolder>() {
 
     private val tweet = tweetItem.tweet
     private val quoteTweet = tweetItem.quoteTweet
     private val media = tweetItem.tweetMedia
     private val quoteTweetMedia = tweetItem.quoteTweetMedia
 
-    override fun initializeViewBinding(view: View): ItemTweetBinding {
+    override fun onCreateViewHolder(view: View): TweetItemViewHolder {
         val binding = ItemTweetBinding.bind(view)
         val context = binding.root.context
         val primaryTweetUser = context.getString(R.string.user_handle_placeholder, tweet.userHandle).trim()
@@ -47,13 +47,13 @@ class TweetAdapterItem(
             userInfo.setOnClickListener { handler.onProfileClick(quoteTweetUser) }
             profilePic.setOnClickListener { handler.onProfileClick(quoteTweetUser) }
         }
-        return binding
+        return TweetItemViewHolder(binding)
     }
 
-    override fun getLayout() = R.layout.item_tweet
+    override val layoutId = R.layout.item_tweet
 
-    override fun bind(binding: ItemTweetBinding, position: Int) {
-        with(binding) {
+    override fun updateItemViews(viewHolder: TweetItemViewHolder) {
+        with(viewHolder.binding) {
             val context = root.context
             with(primaryTweet) {
                 content.text = annotatedContent.primaryContent
@@ -90,9 +90,8 @@ class TweetAdapterItem(
                         handler.onAnnotationClick(url)
                     }
                 }
+                renderQuoteTweet(quoteTweet)
             }
-
-            renderQuoteTweet(binding.quoteTweet)
         }
     }
 
@@ -115,11 +114,13 @@ class TweetAdapterItem(
         }
     }
 
-    override fun isSameAs(other: Item<*>): Boolean {
-        return other is TweetAdapterItem && other.tweetItem.tweetId == tweetItem.tweetId
+    override fun isTheSame(newItem: AdapterItem<*>): Boolean {
+        return newItem is TweetAdapterItem && newItem.tweetItem.tweetId == tweetItem.tweetId
     }
 
-    override fun hasSameContentAs(other: Item<*>): Boolean {
-        return (other as TweetAdapterItem).tweetItem == tweetItem
+    override fun isContentsTheSame(newItem: AdapterItem<*>): Boolean {
+        return (newItem as TweetAdapterItem).tweetItem == tweetItem
     }
 }
+
+class TweetItemViewHolder(val binding: ItemTweetBinding) : BaseViewHolder(binding.root)

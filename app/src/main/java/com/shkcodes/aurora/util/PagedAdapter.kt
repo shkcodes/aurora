@@ -1,25 +1,21 @@
 package com.shkcodes.aurora.util
 
-import com.xwray.groupie.GroupieAdapter
-import com.xwray.groupie.GroupieViewHolder
+import com.fueled.reclaim.BaseViewHolder
+import com.fueled.reclaim.ItemsViewAdapter
 
-class PagedAdapter(val loadMoreData: () -> Unit) : GroupieAdapter() {
+class PagedAdapter(val loadMoreData: () -> Unit) : ItemsViewAdapter() {
     companion object {
         private const val PAGINATION_TRIGGER_THRESHOLD = 3
     }
 
     var canLoadMore: Boolean = true
 
-    override fun onBindViewHolder(holder: GroupieViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         checkForPagination(position)
     }
 
-    override fun onBindViewHolder(
-        holder: GroupieViewHolder,
-        position: Int,
-        payloads: MutableList<Any>
-    ) {
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int, payloads: List<Any>) {
         super.onBindViewHolder(holder, position, payloads)
         checkForPagination(position)
     }

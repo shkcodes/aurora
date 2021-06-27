@@ -20,7 +20,7 @@ object Versions {
 
     const val coroutines = "1.4.3"
 
-    const val groupie = "2.9.0"
+    const val reclaim = "2.1.1"
     const val coil = "1.2.1"
     const val swipeRefresh = "1.1.0"
     const val viewPager = "1.0.0"
@@ -75,9 +75,7 @@ object Dependencies {
     const val coroutinesAndroid =
         "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
 
-    const val groupie = "com.github.lisawray.groupie:groupie:${Versions.groupie}"
-    const val groupieViewBinding =
-        "com.github.lisawray.groupie:groupie-viewbinding:${Versions.groupie}"
+    const val reclaim = "com.github.fueled:reclaim:${Versions.reclaim}"
     const val coil = "io.coil-kt:coil:${Versions.coil}"
     const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefresh}"
     const val viewPager = "androidx.viewpager2:viewpager2:${Versions.viewPager}"
