@@ -18,17 +18,30 @@ import java.time.ZonedDateTime
 abstract class TweetsDao {
 
     @Transaction
-    @Query("SELECT * FROM tweets" +
-            " where (isTimelineTweet = :isTimelineTweet) AND (createdAt > :createdAt) ORDER BY createdAt DESC")
+    @Query(
+        "SELECT * FROM tweets" +
+            " where (isTimelineTweet = :isTimelineTweet) AND (createdAt > :createdAt) ORDER BY createdAt DESC"
+    )
     abstract suspend fun getCachedTimeline(
         createdAt: ZonedDateTime,
         isTimelineTweet: Boolean = true
     ): TweetItems
 
+    @Transaction
+    @Query(
+        "SELECT * FROM tweets" +
+            " where (isUserTweet = :isUserTweet) AND (userHandle = :userHandle) ORDER BY createdAt DESC"
+    )
+    abstract suspend fun getUserTweets(userHandle: String, isUserTweet: Boolean = true): TweetItems
+
     @Query("SELECT * FROM tweets where id = :tweetId")
     abstract suspend fun getTweet(tweetId: Long): TweetEntity
 
-    suspend fun cacheTimeline(tweets: Tweets) {
+    suspend fun cacheTimeline(
+        tweets: Tweets,
+        timelineTweets: Boolean = false,
+        userTweets: Boolean = false
+    ) {
         val quoteTweets = tweets.mapNotNull { it.quoteTweet }
         val retweets = tweets.mapNotNull { it.retweet }
         val media = tweets.mapNotNull { it.toMediaEntity() }.flatten()
@@ -36,9 +49,10 @@ abstract class TweetsDao {
         val retweetsMedia = retweets.mapNotNull { it.toMediaEntity() }.flatten()
         val retweetQuoteTweets = retweets.mapNotNull { it.quoteTweet }
         saveTweets(
-            tweets.toCachedTweets(true) +
-                    quoteTweets.toCachedTweets() +
-                    retweets.toCachedTweets() + retweetQuoteTweets.toCachedTweets()
+            tweets.toCachedTweets(timelineTweets, userTweets) +
+                quoteTweets.toCachedTweets(isUserTweet = userTweets) +
+                retweets.toCachedTweets(isUserTweet = userTweets) +
+                retweetQuoteTweets.toCachedTweets(isUserTweet = userTweets)
         )
         saveMedia(media + quoteTweetsMedia + retweetsMedia)
     }

@@ -5,11 +5,13 @@ import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
+import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import java.time.ZonedDateTime
 
 class FakeTweetsDao : TweetsDao() {
 
     private val savedTweets = mutableListOf<TweetEntity>()
+    private val userTweets = mutableListOf<TweetEntity>()
     private val savedMedia = mutableListOf<MediaEntity>()
 
     override suspend fun getTweet(tweetId: Long): TweetEntity {
@@ -31,5 +33,9 @@ class FakeTweetsDao : TweetsDao() {
 
     override suspend fun getTweetMedia(tweetId: Long): List<MediaEntity> {
         return savedMedia
+    }
+
+    override suspend fun getUserTweets(userHandle: String, isUserTweet: Boolean): TweetItems {
+        return userTweets.map { TweetItem(it) }
     }
 }
