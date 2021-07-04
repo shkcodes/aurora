@@ -95,7 +95,7 @@ class TweetAdapterItem(
             content.handleClickableSpans()
             tweetMedia.show(quoteTweetMedia, imageLoader, { imageView, index ->
                 handler.saveState(layoutManager?.onSaveInstanceState())
-                handler.onMediaClick(media[index], index, imageView, root.parent as View)
+                handler.onMediaClick(quoteTweetMedia[index], index, imageView, root.parent as View)
             })
         }
     }
