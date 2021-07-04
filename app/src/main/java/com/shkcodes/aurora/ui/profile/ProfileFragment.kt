@@ -28,6 +28,7 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.State
+import com.shkcodes.aurora.ui.profile.items.PagerMediaGridItem
 import com.shkcodes.aurora.ui.profile.items.PagerTweetListItem
 import com.shkcodes.aurora.ui.timeline.UrlMetadataHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
@@ -51,6 +52,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     lateinit var imageLoader: ImageLoader
     private val pagerAdapter = ItemsViewAdapter()
     private val handler = ProfileTweetListHandler(this)
+    private val mediaGridHandler = ProfileMediaGridHandler(this)
     private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
     private val args by navArgs<ProfileFragmentArgs>()
 
@@ -120,7 +122,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             link.handleClickableSpans()
             val items = listOf(
                 tweetListItem(state.tweets, state.isPaginatedError),
-                EmptyAdapterItem("Item 2"),
+                PagerMediaGridItem(state.media, imageLoader, mediaGridHandler),
                 EmptyAdapterItem("Item 3"),
                 EmptyAdapterItem("Item 4")
             )
@@ -152,9 +154,10 @@ class ProfileFragment : BaseFragment<State, Intent>() {
                 requireContext().openUrl(action.url)
             }
             is ScrollToBottom -> {
+                val state = action.state
                 val items = listOf(
-                    tweetListItem(action.tweets, true),
-                    EmptyAdapterItem("Item 2"),
+                    tweetListItem(state.tweets, true),
+                    PagerMediaGridItem(state.media, imageLoader, mediaGridHandler),
                     EmptyAdapterItem("Item 3"),
                     EmptyAdapterItem("Item 4")
                 )

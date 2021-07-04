@@ -3,6 +3,7 @@ package com.shkcodes.aurora.ui.profile
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.api.response.User
 import com.shkcodes.aurora.base.BaseViewModel
+import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
 
 interface ProfileContract {
@@ -13,6 +14,7 @@ interface ProfileContract {
         val isLoading: Boolean = true,
         val user: User? = null,
         val tweets: TweetItems = emptyList(),
+        val media: List<MediaEntity> = emptyList(),
         val isPaginatedLoading: Boolean = false,
         val isPaginatedError: Boolean = false,
         val isTerminalError: Boolean = false,
@@ -30,7 +32,7 @@ interface ProfileContract {
 
     sealed class ProfileSideEffect {
         data class OpenUrl(val url: String) : ProfileSideEffect()
-        data class ScrollToBottom(val tweets: TweetItems) : ProfileSideEffect()
+        data class ScrollToBottom(val state: State) : ProfileSideEffect()
     }
 
     sealed class Screen {

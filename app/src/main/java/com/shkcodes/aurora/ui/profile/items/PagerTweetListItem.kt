@@ -20,14 +20,14 @@ class PagerTweetListItem(
     private val urlMetadataHandler: UrlMetadataHandler,
     private val imageLoader: ImageLoader,
     private val isPaginatedError: Boolean
-) : AdapterItem<PagerListViewHolder>() {
+) : AdapterItem<PagerTweetListViewHolder>() {
 
     override fun onCreateViewHolder(view: View) =
-        PagerListViewHolder(ItemTweetListBinding.bind(view)) { handler.loadNextPage() }
+        PagerTweetListViewHolder(ItemTweetListBinding.bind(view)) { handler.loadNextPage() }
 
     override val layoutId = R.layout.item_tweet_list
 
-    override fun updateItemViews(viewHolder: PagerListViewHolder) {
+    override fun updateItemViews(viewHolder: PagerTweetListViewHolder) {
         with(viewHolder.binding) {
             val context = root.context
             val tweetItems = tweets.map { tweetItem ->
@@ -65,7 +65,7 @@ class PagerTweetListItem(
     }
 }
 
-class PagerListViewHolder(val binding: ItemTweetListBinding, paginationAction: () -> Unit) :
+class PagerTweetListViewHolder(val binding: ItemTweetListBinding, paginationAction: () -> Unit) :
     BaseViewHolder(binding.root) {
     val adapter = PagedAdapter(paginationAction)
 

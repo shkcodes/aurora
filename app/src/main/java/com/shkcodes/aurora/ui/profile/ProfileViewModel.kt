@@ -72,13 +72,15 @@ class ProfileViewModel @Inject constructor(
             zip(
                 userService.fetchUserProfile(userHandle),
                 userService.fetchUserTweets(userHandle)
-            ).evaluate({
+            ).evaluate({ data ->
+                val media = data.second.map { it.tweetMedia }.flatten()
                 currentState =
                     currentState.copy(
                         isLoading = false,
-                        user = it.first,
-                        tweets = it.second,
-                        autoplayVideos = autoplayVideos
+                        user = data.first,
+                        tweets = data.second,
+                        autoplayVideos = autoplayVideos,
+                        media = media
                     )
             }, {
                 Timber.e(it)
@@ -104,7 +106,7 @@ class ProfileViewModel @Inject constructor(
                 }, {
                     Timber.e(it)
                     currentState = currentState.copy(isPaginatedLoading = false, isPaginatedError = true)
-                    onSideEffect(SideEffect.Action(ScrollToBottom(currentState.tweets)))
+                    onSideEffect(SideEffect.Action(ScrollToBottom(currentState)))
                 })
         }
     }
