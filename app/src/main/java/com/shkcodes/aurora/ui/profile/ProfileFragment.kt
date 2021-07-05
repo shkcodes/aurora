@@ -52,7 +52,6 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     lateinit var imageLoader: ImageLoader
     private val pagerAdapter = ItemsViewAdapter()
     private val handler = ProfileTweetListHandler(this)
-    private val mediaGridHandler = ProfileMediaGridHandler(this)
     private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
     private val args by navArgs<ProfileFragmentArgs>()
 
@@ -122,7 +121,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             link.handleClickableSpans()
             val items = listOf(
                 tweetListItem(state.tweets, state.isPaginatedError),
-                PagerMediaGridItem(state.media, imageLoader, mediaGridHandler),
+                PagerMediaGridItem(state.media, imageLoader, handler),
                 EmptyAdapterItem("Item 3"),
                 EmptyAdapterItem("Item 4")
             )
@@ -157,7 +156,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
                 val state = action.state
                 val items = listOf(
                     tweetListItem(state.tweets, true),
-                    PagerMediaGridItem(state.media, imageLoader, mediaGridHandler),
+                    PagerMediaGridItem(state.media, imageLoader, handler),
                     EmptyAdapterItem("Item 3"),
                     EmptyAdapterItem("Item 4")
                 )

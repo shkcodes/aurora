@@ -98,9 +98,11 @@ class ProfileViewModel @Inject constructor(
         currentState = currentState.copy(isPaginatedLoading = true, isPaginatedError = false)
         viewModelScope.launch {
             userService.fetchUserTweets(currentState.user!!.screenName, afterId)
-                .evaluate({
+                .evaluate({ tweets ->
+                    val media = tweets.map { it.tweetMedia }.flatten()
                     currentState = currentState.copy(
-                        tweets = currentState.tweets + it.drop(1),
+                        tweets = tweets,
+                        media = media,
                         isPaginatedLoading = false
                     )
                 }, {
