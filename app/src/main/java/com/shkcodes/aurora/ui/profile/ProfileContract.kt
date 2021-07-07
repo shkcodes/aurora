@@ -36,12 +36,6 @@ interface ProfileContract {
         data class ScrollToBottom(val state: State) : ProfileSideEffect()
     }
 
-    sealed class Screen {
-        data class MediaViewer(val index: Int, val tweetId: Long) : Screen()
-        data class UserProfile(val userHandle: String) : Screen()
-        data class UserMediaViewer(val index: Int, val userHandle: String) : Screen()
-    }
-
     object Constants {
         const val USER_INFO_BACKGROUND_SCROLL_OFFSET = 0.2F
         const val USER_INFO_SCROLL_OFFSET = 0.3F

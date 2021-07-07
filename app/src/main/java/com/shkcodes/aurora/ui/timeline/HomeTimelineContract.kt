@@ -33,9 +33,4 @@ class HomeTimelineContract {
         data class OpenUrl(val url: String) : TimelineSideEffect()
         data class ScrollToBottom(val lastIndex: Int) : TimelineSideEffect()
     }
-
-    sealed class Screen {
-        data class MediaViewer(val index: Int, val tweetId: Long) : Screen()
-        data class UserProfile(val userHandle: String) : Screen()
-    }
 }

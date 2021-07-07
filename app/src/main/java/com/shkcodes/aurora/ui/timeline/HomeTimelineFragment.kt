@@ -11,12 +11,12 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentHomeTimelineBinding
+import com.shkcodes.aurora.ui.Screen.UserProfile
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MarkItemsAsSeen
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.ScrollIndexChange
-import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.ScrollToBottom

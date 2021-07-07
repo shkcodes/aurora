@@ -8,14 +8,14 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
+import com.shkcodes.aurora.ui.Screen.MediaViewer
+import com.shkcodes.aurora.ui.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Retry
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
-import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.MediaViewer
-import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.State
 import com.shkcodes.aurora.ui.profile.ProfileViewModel
 import com.shkcodes.aurora.ui.tweetlist.TweetItem

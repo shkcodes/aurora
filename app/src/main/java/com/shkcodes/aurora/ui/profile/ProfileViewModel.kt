@@ -8,6 +8,9 @@ import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
+import com.shkcodes.aurora.ui.Screen.MediaViewer
+import com.shkcodes.aurora.ui.Screen.UserMediaViewer
+import com.shkcodes.aurora.ui.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
@@ -17,9 +20,6 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Retry
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.UserMediaClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
-import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.MediaViewer
-import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserMediaViewer
-import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

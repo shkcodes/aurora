@@ -10,6 +10,8 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
+import com.shkcodes.aurora.ui.Screen.MediaViewer
+import com.shkcodes.aurora.ui.Screen.UserProfile
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MarkItemsAsSeen
@@ -17,8 +19,6 @@ import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Refresh
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.Retry
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.ScrollIndexChange
-import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.MediaViewer
-import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.State
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.TimelineSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.timeline.HomeTimelineViewModel

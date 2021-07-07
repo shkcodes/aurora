@@ -16,6 +16,8 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentProfileBinding
+import com.shkcodes.aurora.ui.Screen.UserMediaViewer
+import com.shkcodes.aurora.ui.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.BANNER_SCROLL_OFFSET
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.PROFILE_IMAGE_SCALE_LIMIT
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.USER_INFO_BACKGROUND_SCROLL_OFFSET
@@ -25,8 +27,6 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
-import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserMediaViewer
-import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.State
 import com.shkcodes.aurora.ui.profile.items.PagerMediaGridItem
 import com.shkcodes.aurora.ui.profile.items.PagerTweetListItem
