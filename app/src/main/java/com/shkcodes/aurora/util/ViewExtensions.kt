@@ -9,6 +9,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
 
 fun View.setSize(@DimenRes dimen: Int) {
     layoutParams.height = context.pixelSize(dimen)
@@ -41,4 +43,11 @@ fun ViewPager2.observePageChanges(lifecycle: Lifecycle, onPageChange: (Int) -> U
     }
     lifecycle.onDestroy { unregisterOnPageChangeCallback(callback) }
     registerOnPageChangeCallback(callback)
+}
+
+fun AppBarLayout.observeOffsetChanges(lifecycle: Lifecycle, onOffsetChange: (Int) -> Unit) {
+    val listener = OnOffsetChangedListener { _, offset -> onOffsetChange(offset) }
+
+    lifecycle.onDestroy { removeOnOffsetChangedListener(listener) }
+    addOnOffsetChangedListener(listener)
 }

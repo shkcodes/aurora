@@ -11,7 +11,6 @@ import androidx.transition.TransitionManager
 import coil.ImageLoader
 import coil.load
 import com.fueled.reclaim.ItemsViewAdapter
-import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
@@ -26,6 +25,7 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
+import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserMediaViewer
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.State
 import com.shkcodes.aurora.ui.profile.items.PagerMediaGridItem
@@ -39,6 +39,7 @@ import com.shkcodes.aurora.util.applySharedAxisEnterTransition
 import com.shkcodes.aurora.util.applySharedAxisExitTransition
 import com.shkcodes.aurora.util.getDrawableCompat
 import com.shkcodes.aurora.util.handleClickableSpans
+import com.shkcodes.aurora.util.observeOffsetChanges
 import com.shkcodes.aurora.util.openUrl
 import com.shkcodes.aurora.util.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,23 +72,21 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             doOnPreDraw { startPostponedEnterTransition() }
         }
         dispatchIntent(Init(args.userHandle))
-        with(binding.profileAppBar) {
-            addOnOffsetChangedListener(OnOffsetChangedListener { _, verticalOffset ->
-                with(binding) {
-                    val offset = verticalOffset / totalScrollRange.toFloat()
-                    val scrollOffset = offset * height
-                    userInfoCard.translationY = scrollOffset * USER_INFO_BACKGROUND_SCROLL_OFFSET
-                    name.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
-                    description.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
-                    handle.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
-                    link.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
-                    location.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
-                    bannerImage.translationY = scrollOffset * BANNER_SCROLL_OFFSET
-                    profileImage.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
-                    profileImage.scaleX = maxOf(PROFILE_IMAGE_SCALE_LIMIT, 1 - abs(offset))
-                    profileImage.scaleY = maxOf(PROFILE_IMAGE_SCALE_LIMIT, 1 - abs(offset))
-                }
-            })
+        binding.profileAppBar.observeOffsetChanges(viewLifecycleOwner.lifecycle) { verticalOffset ->
+            with(binding) {
+                val offset = verticalOffset / profileAppBar.totalScrollRange.toFloat()
+                val scrollOffset = offset * profileAppBar.height
+                userInfoCard.translationY = scrollOffset * USER_INFO_BACKGROUND_SCROLL_OFFSET
+                name.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                description.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                handle.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                link.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                location.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                bannerImage.translationY = scrollOffset * BANNER_SCROLL_OFFSET
+                profileImage.translationY = scrollOffset * USER_INFO_SCROLL_OFFSET
+                profileImage.scaleX = maxOf(PROFILE_IMAGE_SCALE_LIMIT, 1 - abs(offset))
+                profileImage.scaleY = maxOf(PROFILE_IMAGE_SCALE_LIMIT, 1 - abs(offset))
+            }
         }
         TabLayoutMediator(binding.tabs, binding.profilePager) { tab, position ->
             tab.icon = requireContext().getDrawableCompat(tabIcons[position])
@@ -171,6 +170,9 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             is UserProfile -> {
                 applySharedAxisExitTransition()
                 navigate(ProfileFragmentDirections.moveToProfile(screen.userHandle))
+            }
+            is UserMediaViewer -> {
+                navigate(ProfileFragmentDirections.moveToProfileMediaViewer(screen.userHandle, screen.index))
             }
         }
     }

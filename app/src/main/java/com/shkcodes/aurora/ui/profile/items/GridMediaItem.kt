@@ -11,7 +11,8 @@ import com.shkcodes.aurora.databinding.ItemGridMediaBinding
 
 class GridMediaItem(
     private val media: MediaEntity,
-    private val imageLoader: ImageLoader
+    private val imageLoader: ImageLoader,
+    private val clickAction: () -> Unit
 ) : AdapterItem<GridMediaViewHolder>() {
 
     override val layoutId = R.layout.item_grid_media
@@ -21,6 +22,7 @@ class GridMediaItem(
     override fun updateItemViews(viewHolder: GridMediaViewHolder) {
         with(viewHolder.binding.image) {
             load(media.thumbnail, imageLoader) { allowHardware(false) }
+            setOnClickListener { clickAction() }
         }
     }
 

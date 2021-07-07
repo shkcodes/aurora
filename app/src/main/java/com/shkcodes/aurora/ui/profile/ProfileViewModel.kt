@@ -14,9 +14,11 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Retry
+import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.UserMediaClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.MediaViewer
+import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserMediaViewer
 import com.shkcodes.aurora.ui.profile.ProfileContract.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,6 +65,17 @@ class ProfileViewModel @Inject constructor(
                     'h' -> onSideEffect(SideEffect.Action(OpenUrl(intent.text)))
                     '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.text.substring(1))))
                 }
+            }
+
+            is UserMediaClick -> {
+                onSideEffect(
+                    SideEffect.DisplayScreen(
+                        UserMediaViewer(
+                            intent.index,
+                            currentState.user!!.screenName
+                        )
+                    )
+                )
             }
         }
     }

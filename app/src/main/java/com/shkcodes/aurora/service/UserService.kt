@@ -54,6 +54,10 @@ class UserService @Inject constructor(
         return tweetsDao.getTweetMedia(tweetId)
     }
 
+    suspend fun getCachedTweetsForUser(userHandle: String): TweetItems {
+        return tweetsDao.getUserTweets(userHandle)
+    }
+
     suspend fun fetchUserProfile(userHandle: String): Result<User> {
         return execute { userApi.getUserProfile(userHandle) }
     }

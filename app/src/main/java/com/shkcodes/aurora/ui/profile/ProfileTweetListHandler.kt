@@ -8,6 +8,7 @@ import com.google.android.material.transition.MaterialSharedAxis
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.UserMediaClick
 import com.shkcodes.aurora.ui.timeline.TweetListHandler
 import com.shkcodes.aurora.util.applySharedAxisExitTransition
 
@@ -43,6 +44,10 @@ class ProfileTweetListHandler(private val fragment: ProfileFragment) : TweetList
 
     fun loadNextPage(force: Boolean = false) {
         fragment.dispatchIntent(LoadNextPage(force))
+    }
+
+    fun showUserMedia(index: Int) {
+        fragment.dispatchIntent(UserMediaClick(index))
     }
 
     var scrollToBottom = false

@@ -26,6 +26,7 @@ interface ProfileContract {
         data class Init(val userHandle: String) : Intent()
         data class Retry(val userHandle: String) : Intent()
         data class MediaClick(val index: Int, val tweetId: Long) : Intent()
+        data class UserMediaClick(val index: Int) : Intent()
         data class AnnotatedContentClick(val text: String) : Intent()
         data class LoadNextPage(val force: Boolean = false) : Intent()
     }
@@ -38,6 +39,7 @@ interface ProfileContract {
     sealed class Screen {
         data class MediaViewer(val index: Int, val tweetId: Long) : Screen()
         data class UserProfile(val userHandle: String) : Screen()
+        data class UserMediaViewer(val index: Int, val userHandle: String) : Screen()
     }
 
     object Constants {

@@ -24,10 +24,20 @@ class PagerMediaGridItem(
     override val layoutId = R.layout.item_media_grid
 
     override fun updateItemViews(viewHolder: PagerMediaGridViewHolder) {
-        val mediaItems = media.map {
-            GridMediaItem(it, imageLoader)
+        with(viewHolder.binding) {
+            val mediaItems = media.mapIndexed { index, item ->
+                GridMediaItem(item, imageLoader) {
+                    handler.saveState(grid.layoutManager?.onSaveInstanceState())
+                    handler.showUserMedia(index)
+                }
+            }
+            viewHolder.gridAdapter.replaceItems(mediaItems)
+            val state = handler.getState(viewHolder.adapterPosition)
+            if (state != null) {
+                grid.layoutManager?.onRestoreInstanceState(state)
+                handler.saveState(null)
+            }
         }
-        viewHolder.gridAdapter.replaceItems(mediaItems)
     }
 
     override fun isTheSame(newItem: AdapterItem<*>): Boolean {

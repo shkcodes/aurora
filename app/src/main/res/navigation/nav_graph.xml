@@ -80,4 +80,24 @@
     <action
         android:id="@+id/move_to_profile"
         app:destination="@id/profile" />
+
+
+    <fragment
+        android:id="@+id/profile_media"
+        android:name="com.shkcodes.aurora.ui.profile.media.ProfileMediaViewerFragment"
+        tools:layout="@layout/fragment_media_viewer">
+
+        <argument
+            android:name="userHandle"
+            app:argType="string" />
+
+        <argument
+            android:name="index"
+            app:argType="integer" />
+    </fragment>
+
+    <action
+        android:id="@+id/move_to_profile_media_viewer"
+        app:destination="@id/profile_media" />
+
 </navigation>
