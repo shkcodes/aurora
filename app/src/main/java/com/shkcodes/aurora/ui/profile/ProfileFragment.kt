@@ -16,7 +16,6 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentProfileBinding
-import com.shkcodes.aurora.ui.Screen.UserMediaViewer
 import com.shkcodes.aurora.ui.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.BANNER_SCROLL_OFFSET
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.PROFILE_IMAGE_SCALE_LIMIT
@@ -51,10 +50,10 @@ class ProfileFragment : BaseFragment<State, Intent>() {
 
     @Inject
     lateinit var imageLoader: ImageLoader
-    private val pagerAdapter = ItemsViewAdapter()
-    private val handler = ProfileTweetListHandler(this)
-    private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
     private val args by navArgs<ProfileFragmentArgs>()
+    private val pagerAdapter = ItemsViewAdapter()
+    private val handler = ProfileTweetListHandler(this, args.userHandle)
+    private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
 
     override val viewModel by viewModels<ProfileViewModel>()
 
@@ -170,9 +169,6 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             is UserProfile -> {
                 applySharedAxisExitTransition()
                 navigate(ProfileFragmentDirections.moveToProfile(screen.userHandle))
-            }
-            is UserMediaViewer -> {
-                navigate(ProfileFragmentDirections.moveToProfileMediaViewer(screen.userHandle, screen.index))
             }
         }
     }

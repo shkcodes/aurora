@@ -1,7 +1,9 @@
 package com.shkcodes.aurora.ui.profile.media
 
+import android.os.Bundle
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import androidx.transition.TransitionInflater
 import coil.ImageLoader
 import com.fueled.reclaim.ItemsViewAdapter
 import com.shkcodes.aurora.base.BaseFragment
@@ -11,6 +13,7 @@ import com.shkcodes.aurora.ui.profile.media.ProfileMediaViewerContract.Intent
 import com.shkcodes.aurora.ui.profile.media.ProfileMediaViewerContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.media.ProfileMediaViewerContract.Intent.PageChange
 import com.shkcodes.aurora.ui.profile.media.ProfileMediaViewerContract.State
+import com.shkcodes.aurora.util.AnimationConstants
 import com.shkcodes.aurora.util.observePageChanges
 import com.shkcodes.aurora.util.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +29,19 @@ class ProfileMediaViewerFragment : BaseFragment<State, Intent>() {
 
     override val viewModel by viewModels<ProfileMediaViewerViewModel>()
     override val binding by viewBinding(FragmentProfileMediaViewerBinding::inflate)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        postponeEnterTransition()
+        sharedElementEnterTransition =
+            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move).apply {
+                duration = AnimationConstants.DEFAULT_DURATION
+            }
+        sharedElementReturnTransition =
+            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move).apply {
+                duration = AnimationConstants.DEFAULT_DURATION
+            }
+    }
 
     override fun setupView() {
         dispatchIntent(Init(args.userHandle, args.index))
@@ -48,6 +64,7 @@ class ProfileMediaViewerFragment : BaseFragment<State, Intent>() {
     }
 
     private fun updatePageIndicator(currentIndex: Int) {
+        startPostponedEnterTransition()
         dispatchIntent(PageChange(currentIndex))
     }
 }

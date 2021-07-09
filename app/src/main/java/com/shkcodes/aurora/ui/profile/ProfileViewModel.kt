@@ -9,7 +9,6 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.PreferenceService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.Screen.MediaViewer
-import com.shkcodes.aurora.ui.Screen.UserMediaViewer
 import com.shkcodes.aurora.ui.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
@@ -17,7 +16,6 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Init
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.MediaClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Retry
-import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.UserMediaClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.ViewModel
@@ -65,17 +63,6 @@ class ProfileViewModel @Inject constructor(
                     'h' -> onSideEffect(SideEffect.Action(OpenUrl(intent.text)))
                     '@' -> onSideEffect(SideEffect.DisplayScreen(UserProfile(intent.text.substring(1))))
                 }
-            }
-
-            is UserMediaClick -> {
-                onSideEffect(
-                    SideEffect.DisplayScreen(
-                        UserMediaViewer(
-                            intent.index,
-                            currentState.user!!.screenName
-                        )
-                    )
-                )
             }
         }
     }

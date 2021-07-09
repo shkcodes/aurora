@@ -1,6 +1,7 @@
 package com.shkcodes.aurora.ui.profile.items
 
 import android.view.View
+import android.widget.ImageView
 import coil.ImageLoader
 import coil.load
 import com.fueled.reclaim.AdapterItem
@@ -12,7 +13,7 @@ import com.shkcodes.aurora.databinding.ItemGridMediaBinding
 class GridMediaItem(
     private val media: MediaEntity,
     private val imageLoader: ImageLoader,
-    private val clickAction: () -> Unit
+    private val clickAction: (ImageView) -> Unit
 ) : AdapterItem<GridMediaViewHolder>() {
 
     override val layoutId = R.layout.item_grid_media
@@ -22,7 +23,8 @@ class GridMediaItem(
     override fun updateItemViews(viewHolder: GridMediaViewHolder) {
         with(viewHolder.binding.image) {
             load(media.thumbnail, imageLoader) { allowHardware(false) }
-            setOnClickListener { clickAction() }
+            transitionName = "${media.id}"
+            setOnClickListener { clickAction(this) }
         }
     }
 

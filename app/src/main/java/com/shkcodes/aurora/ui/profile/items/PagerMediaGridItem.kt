@@ -28,7 +28,7 @@ class PagerMediaGridItem(
             val mediaItems = media.mapIndexed { index, item ->
                 GridMediaItem(item, imageLoader) {
                     handler.saveState(grid.layoutManager?.onSaveInstanceState())
-                    handler.showUserMedia(index)
+                    handler.showUserMedia(item.id, index, it, root)
                 }
             }
             viewHolder.gridAdapter.replaceItems(mediaItems)

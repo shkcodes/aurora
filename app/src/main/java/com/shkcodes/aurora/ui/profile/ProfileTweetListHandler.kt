@@ -8,11 +8,13 @@ import com.google.android.material.transition.MaterialSharedAxis
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
-import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.UserMediaClick
 import com.shkcodes.aurora.ui.timeline.TweetListHandler
 import com.shkcodes.aurora.util.applySharedAxisExitTransition
 
-class ProfileTweetListHandler(private val fragment: ProfileFragment) : TweetListHandler {
+class ProfileTweetListHandler(
+    private val fragment: ProfileFragment,
+    private val userHandle: String
+) : TweetListHandler {
 
     private val states = mutableMapOf<Int, Parcelable?>()
 
@@ -46,8 +48,15 @@ class ProfileTweetListHandler(private val fragment: ProfileFragment) : TweetList
         fragment.dispatchIntent(LoadNextPage(force))
     }
 
-    fun showUserMedia(index: Int) {
-        fragment.dispatchIntent(UserMediaClick(index))
+    fun showUserMedia(mediaId: Long, index: Int, imageView: ImageView, root: View) {
+        with(fragment) {
+            val extras = FragmentNavigatorExtras(
+                imageView to "$mediaId"
+            )
+            val isAboveCenter = root.y + root.height / 2 < binding.profilePager.height / 2
+            applySharedAxisExitTransition()
+            navigate(ProfileFragmentDirections.moveToProfileMediaViewer(userHandle, index), extras)
+        }
     }
 
     var scrollToBottom = false
