@@ -46,7 +46,7 @@ class ProfileMediaViewerFragment : BaseFragment<State, Intent>() {
     override fun setupView() {
         dispatchIntent(Init(args.userHandle, args.index))
         binding.pager.adapter = pagerAdapter
-        binding.pager.observePageChanges(viewLifecycleOwner.lifecycle, ::updatePageIndicator)
+        binding.pager.observePageChanges(viewLifecycleOwner.lifecycle, ::onPageChange)
     }
 
     override fun renderState(state: State) {
@@ -63,7 +63,7 @@ class ProfileMediaViewerFragment : BaseFragment<State, Intent>() {
         }
     }
 
-    private fun updatePageIndicator(currentIndex: Int) {
+    private fun onPageChange(currentIndex: Int) {
         startPostponedEnterTransition()
         dispatchIntent(PageChange(currentIndex))
     }

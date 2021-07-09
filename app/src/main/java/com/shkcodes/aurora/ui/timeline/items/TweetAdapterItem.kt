@@ -53,7 +53,7 @@ class TweetAdapterItem(
                 time.text = tweet.createdAt.toPrettyTime()
                 tweetMedia.show(media, imageLoader, { imageView, index ->
                     handler.saveState(layoutManager?.onSaveInstanceState())
-                    handler.onMediaClick(media[index], index, imageView, root.parent as View)
+                    handler.onMediaClick(media[index], index, imageView)
                 })
                 repliedUsers.isVisible = tweet.repliedToUsers.isNotEmpty()
                 repliedUsers.text = annotatedContent.repliedUsers
@@ -95,7 +95,7 @@ class TweetAdapterItem(
             content.handleClickableSpans()
             tweetMedia.show(quoteTweetMedia, imageLoader, { imageView, index ->
                 handler.saveState(layoutManager?.onSaveInstanceState())
-                handler.onMediaClick(quoteTweetMedia[index], index, imageView, root.parent as View)
+                handler.onMediaClick(quoteTweetMedia[index], index, imageView)
             })
         }
     }

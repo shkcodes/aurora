@@ -1,10 +1,8 @@
 package com.shkcodes.aurora.ui.profile
 
 import android.os.Parcelable
-import android.view.View
 import android.widget.ImageView
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import com.google.android.material.transition.MaterialSharedAxis
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
@@ -22,13 +20,12 @@ class ProfileTweetListHandler(
         fragment.dispatchIntent(AnnotatedContentClick(text))
     }
 
-    override fun onMediaClick(media: MediaEntity, index: Int, imageView: ImageView, root: View) {
+    override fun onMediaClick(media: MediaEntity, index: Int, imageView: ImageView) {
         with(fragment) {
             val extras = FragmentNavigatorExtras(
                 imageView to "${media.id}"
             )
-            val isAboveCenter = root.y + root.height / 2 < binding.profilePager.height / 2
-            applySharedAxisExitTransition(MaterialSharedAxis.Y, !isAboveCenter)
+            applySharedAxisExitTransition()
             navigate(ProfileFragmentDirections.moveToMediaViewer(media.tweetId, index), extras)
         }
     }
@@ -48,12 +45,11 @@ class ProfileTweetListHandler(
         fragment.dispatchIntent(LoadNextPage(force))
     }
 
-    fun showUserMedia(mediaId: Long, index: Int, imageView: ImageView, root: View) {
+    fun showUserMedia(mediaId: Long, index: Int, imageView: ImageView) {
         with(fragment) {
             val extras = FragmentNavigatorExtras(
                 imageView to "$mediaId"
             )
-            val isAboveCenter = root.y + root.height / 2 < binding.profilePager.height / 2
             applySharedAxisExitTransition()
             navigate(ProfileFragmentDirections.moveToProfileMediaViewer(userHandle, index), extras)
         }
