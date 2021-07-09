@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import coil.ImageLoader
 import coil.load
+import com.google.android.material.imageview.ShapeableImageView
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.MediaType
@@ -27,6 +28,18 @@ class TweetMedia @JvmOverloads constructor(
         val view = inflate(context, R.layout.tweet_media, this)
         binding = TweetMediaBinding.bind(view)
         orientation = VERTICAL
+    }
+
+    fun getImageView(position: Int): ShapeableImageView? {
+        with(binding) {
+            return when (position) {
+                0 -> image1
+                1 -> image2
+                2 -> image3
+                3 -> image4
+                else -> null
+            }
+        }
     }
 
     @Suppress("MagicNumber")

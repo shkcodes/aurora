@@ -1,11 +1,15 @@
 package com.shkcodes.aurora.ui.profile
 
 import android.os.Bundle
+import android.view.View
+import androidx.core.app.SharedElementCallback
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
 import coil.ImageLoader
@@ -16,6 +20,7 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentProfileBinding
+import com.shkcodes.aurora.service.SharedElementTransitionHelper
 import com.shkcodes.aurora.ui.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.BANNER_SCROLL_OFFSET
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.PROFILE_IMAGE_SCALE_LIMIT
@@ -28,7 +33,9 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.State
 import com.shkcodes.aurora.ui.profile.items.PagerMediaGridItem
+import com.shkcodes.aurora.ui.profile.items.PagerMediaGridViewHolder
 import com.shkcodes.aurora.ui.profile.items.PagerTweetListItem
+import com.shkcodes.aurora.ui.profile.items.PagerTweetListViewHolder
 import com.shkcodes.aurora.ui.timeline.UrlMetadataHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import com.shkcodes.aurora.util.EmptyAdapterItem
@@ -50,10 +57,30 @@ class ProfileFragment : BaseFragment<State, Intent>() {
 
     @Inject
     lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var transitionHelper: SharedElementTransitionHelper
     private val args by navArgs<ProfileFragmentArgs>()
     private val pagerAdapter = ItemsViewAdapter()
     private val handler = ProfileTweetListHandler(this, args.userHandle)
     private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
+    private val sharedElementCallback = object : SharedElementCallback() {
+        override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
+            val recyclerView = binding.profilePager[0] as RecyclerView
+            val imageView = if (binding.profilePager.currentItem == 0) {
+                val tweetList = (recyclerView.findViewHolderForAdapterPosition(0) as PagerTweetListViewHolder)
+                    .binding.list
+                transitionHelper.getTweetImageView(tweetList)
+            } else {
+                val mediaGrid =
+                    (recyclerView.findViewHolderForAdapterPosition(1) as PagerMediaGridViewHolder).binding.grid
+                transitionHelper.getGridImageView(mediaGrid)
+            }
+            imageView?.let {
+                sharedElements[names[0]] = it
+            }
+        }
+    }
 
     override val viewModel by viewModels<ProfileViewModel>()
 
@@ -90,6 +117,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
         TabLayoutMediator(binding.tabs, binding.profilePager) { tab, position ->
             tab.icon = requireContext().getDrawableCompat(tabIcons[position])
         }.attach()
+        setExitSharedElementCallback(sharedElementCallback)
     }
 
     override fun renderState(state: State) {
@@ -141,7 +169,8 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             handler,
             urlMetadataHandler,
             imageLoader,
-            isPaginatedError
+            isPaginatedError,
+            transitionHelper
         )
     }
 

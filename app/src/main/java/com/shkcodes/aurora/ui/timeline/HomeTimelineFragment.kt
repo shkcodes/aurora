@@ -1,6 +1,8 @@
 package com.shkcodes.aurora.ui.timeline
 
 import android.animation.AnimatorInflater
+import android.view.View
+import androidx.core.app.SharedElementCallback
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -11,6 +13,7 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentHomeTimelineBinding
+import com.shkcodes.aurora.service.SharedElementTransitionHelper
 import com.shkcodes.aurora.ui.Screen.UserProfile
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent
 import com.shkcodes.aurora.ui.timeline.HomeTimelineContract.Intent.LoadNextPage
@@ -36,12 +39,21 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeTimelineFragment : BaseFragment<State, Intent>() {
-
     @Inject
     lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var transitionHelper: SharedElementTransitionHelper
     private val timelineAdapter = PagedAdapter(::loadNextPage)
     private val handler = HomeTweetListHandler(this)
     private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
+    private val sharedElementCallback = object : SharedElementCallback() {
+        override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
+            transitionHelper.getTweetImageView(binding.timeline)?.let {
+                sharedElements[names[0]] = it
+            }
+        }
+    }
 
     override val viewModel by viewModels<HomeTimelineViewModel>()
 
@@ -66,6 +78,7 @@ class HomeTimelineFragment : BaseFragment<State, Intent>() {
         reenterTransitionListener(onEnd = {
             applySharedAxisExitTransition()
         })
+        setExitSharedElementCallback(sharedElementCallback)
     }
 
     override fun renderState(state: State) {
@@ -85,7 +98,7 @@ class HomeTimelineFragment : BaseFragment<State, Intent>() {
         val tweetItems = state.tweets.map { tweetItem ->
             val annotatedContent =
                 tweetItem.annotatedContent(requireContext()) { handler.onAnnotationClick(it) }
-            TweetAdapterItem(annotatedContent, tweetItem, urlMetadataHandler, imageLoader, handler)
+            TweetAdapterItem(annotatedContent, tweetItem, urlMetadataHandler, imageLoader, handler, transitionHelper)
         }
         timelineAdapter.canLoadMore = !state.isPaginatedError
         val items = mutableListOf<AdapterItem<*>>().apply {

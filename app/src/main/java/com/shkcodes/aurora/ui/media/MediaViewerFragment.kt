@@ -2,6 +2,8 @@ package com.shkcodes.aurora.ui.media
 
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import androidx.core.app.SharedElementCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -18,6 +20,7 @@ import com.shkcodes.aurora.R
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.databinding.FragmentMediaViewerBinding
+import com.shkcodes.aurora.service.SharedElementTransitionHelper
 import com.shkcodes.aurora.ui.media.MediaViewerContract.Intent
 import com.shkcodes.aurora.ui.media.MediaViewerContract.Intent.Init
 import com.shkcodes.aurora.ui.media.MediaViewerContract.State
@@ -27,14 +30,25 @@ import com.shkcodes.aurora.util.onDestroy
 import com.shkcodes.aurora.util.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.collections.set
 
 @AndroidEntryPoint
 class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener {
 
     @Inject
     lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var transitionHelper: SharedElementTransitionHelper
     private val pagerAdapter = ItemsViewAdapter()
     private val args by navArgs<MediaViewerFragmentArgs>()
+    private val sharedElementCallback = object : SharedElementCallback() {
+        override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
+            transitionHelper.getPagerImageView(binding.pager)?.let {
+                sharedElements[names[0]] = it
+            }
+        }
+    }
 
     override val viewModel by viewModels<MediaViewerViewModel>()
 
@@ -99,9 +113,11 @@ class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener 
     }
 
     private fun updatePageIndicator(currentIndex: Int) {
+        transitionHelper.mediaIndex = currentIndex
         binding.pageIndicator.text =
             getString(R.string.media_page_indicator, currentIndex + 1, pagerAdapter.itemCount)
         startPostponedEnterTransition()
+        setEnterSharedElementCallback(sharedElementCallback)
     }
 
     override fun onPlaybackStateChanged(state: Int) {

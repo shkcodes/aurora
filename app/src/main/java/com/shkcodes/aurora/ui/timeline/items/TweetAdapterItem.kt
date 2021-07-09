@@ -11,6 +11,7 @@ import com.fueled.reclaim.BaseViewHolder
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.databinding.ItemTweetBinding
 import com.shkcodes.aurora.databinding.LayoutTweetSkeletonBinding
+import com.shkcodes.aurora.service.SharedElementTransitionHelper
 import com.shkcodes.aurora.ui.timeline.TweetListHandler
 import com.shkcodes.aurora.ui.timeline.UrlMetadataHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
@@ -25,6 +26,7 @@ class TweetAdapterItem(
     private val urlMetadataHandler: UrlMetadataHandler,
     private val imageLoader: ImageLoader,
     private val handler: TweetListHandler,
+    private val animationHelper: SharedElementTransitionHelper,
     private val layoutManager: LayoutManager? = null
 ) : AdapterItem<TweetItemViewHolder>() {
 
@@ -53,6 +55,8 @@ class TweetAdapterItem(
                 time.text = tweet.createdAt.toPrettyTime()
                 tweetMedia.show(media, imageLoader, { imageView, index ->
                     handler.saveState(layoutManager?.onSaveInstanceState())
+                    animationHelper.tweetIndex = positionInAdapter
+                    animationHelper.mediaIndex = index
                     handler.onMediaClick(media[index], index, imageView)
                 })
                 repliedUsers.isVisible = tweet.repliedToUsers.isNotEmpty()

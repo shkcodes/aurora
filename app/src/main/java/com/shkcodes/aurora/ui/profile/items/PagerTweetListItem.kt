@@ -6,6 +6,7 @@ import com.fueled.reclaim.AdapterItem
 import com.fueled.reclaim.BaseViewHolder
 import com.shkcodes.aurora.R
 import com.shkcodes.aurora.databinding.ItemTweetListBinding
+import com.shkcodes.aurora.service.SharedElementTransitionHelper
 import com.shkcodes.aurora.ui.profile.ProfileTweetListHandler
 import com.shkcodes.aurora.ui.timeline.UrlMetadataHandler
 import com.shkcodes.aurora.ui.timeline.items.PaginatedErrorItem
@@ -19,7 +20,8 @@ class PagerTweetListItem(
     private val handler: ProfileTweetListHandler,
     private val urlMetadataHandler: UrlMetadataHandler,
     private val imageLoader: ImageLoader,
-    private val isPaginatedError: Boolean
+    private val isPaginatedError: Boolean,
+    private val transitionHelper: SharedElementTransitionHelper
 ) : AdapterItem<PagerTweetListViewHolder>() {
 
     override fun onCreateViewHolder(view: View) =
@@ -39,6 +41,7 @@ class PagerTweetListItem(
                     urlMetadataHandler,
                     imageLoader,
                     handler,
+                    transitionHelper,
                     list.layoutManager
                 )
             }
