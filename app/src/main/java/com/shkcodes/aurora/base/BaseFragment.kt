@@ -34,7 +34,7 @@ abstract class BaseFragment<S, I> : Fragment(), ViewModelOwner<S, I> {
         setupView()
     }
 
-    fun navigate(navDirections: NavDirections, extras: Navigator.Extras? = null) {
+    open fun navigate(navDirections: NavDirections, extras: Navigator.Extras? = null) {
         if (extras == null) {
             findNavController().navigate(navDirections)
         } else {

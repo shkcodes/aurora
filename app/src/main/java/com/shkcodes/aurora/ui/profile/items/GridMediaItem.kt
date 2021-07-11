@@ -23,7 +23,7 @@ class GridMediaItem(
     override fun updateItemViews(viewHolder: GridMediaViewHolder) {
         with(viewHolder.binding.image) {
             load(media.thumbnail, imageLoader) { allowHardware(false) }
-            transitionName = "${media.id}"
+            transitionName = "${media.id}_grid"
             setOnClickListener { clickAction(this) }
         }
     }

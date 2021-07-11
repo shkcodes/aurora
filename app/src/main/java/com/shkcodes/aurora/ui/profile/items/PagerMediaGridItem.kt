@@ -2,6 +2,7 @@ package com.shkcodes.aurora.ui.profile.items
 
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.fueled.reclaim.AdapterItem
 import com.fueled.reclaim.BaseViewHolder
@@ -11,6 +12,8 @@ import com.shkcodes.aurora.databinding.ItemMediaGridBinding
 import com.shkcodes.aurora.ui.profile.ProfileTweetListHandler
 import com.shkcodes.aurora.util.GridSpacingItemDecoration
 import com.shkcodes.aurora.util.PagedAdapter
+
+private const val PROFILE_PAGER_INDEX = 1
 
 class PagerMediaGridItem(
     private val media: List<MediaEntity>,
@@ -27,7 +30,7 @@ class PagerMediaGridItem(
         with(viewHolder.binding) {
             val mediaItems = media.mapIndexed { index, item ->
                 GridMediaItem(item, imageLoader) {
-                    handler.saveState(grid.layoutManager?.onSaveInstanceState())
+                    handler.saveState(PROFILE_PAGER_INDEX, grid.layoutManager?.onSaveInstanceState())
                     handler.showUserMedia(item.id, index, it)
                 }
             }
@@ -35,7 +38,7 @@ class PagerMediaGridItem(
             val state = handler.getState(viewHolder.adapterPosition)
             if (state != null) {
                 grid.layoutManager?.onRestoreInstanceState(state)
-                handler.saveState(null)
+                handler.saveState(PROFILE_PAGER_INDEX, null)
             }
         }
     }
@@ -61,3 +64,6 @@ class PagerMediaGridViewHolder(
         }
     }
 }
+
+val RecyclerView.pagerMediaGridHolder: PagerMediaGridViewHolder
+    get() = findViewHolderForAdapterPosition(1) as PagerMediaGridViewHolder

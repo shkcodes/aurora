@@ -5,6 +5,7 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.DimenRes
+import androidx.core.view.get
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,3 +52,6 @@ fun AppBarLayout.observeOffsetChanges(lifecycle: Lifecycle, onOffsetChange: (Int
     lifecycle.onDestroy { removeOnOffsetChangedListener(listener) }
     addOnOffsetChangedListener(listener)
 }
+
+val ViewPager2.recyclerView: RecyclerView
+    get() = this[0] as RecyclerView

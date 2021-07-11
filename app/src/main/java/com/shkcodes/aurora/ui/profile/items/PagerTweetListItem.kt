@@ -1,6 +1,7 @@
 package com.shkcodes.aurora.ui.profile.items
 
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.fueled.reclaim.AdapterItem
 import com.fueled.reclaim.BaseViewHolder
@@ -14,6 +15,8 @@ import com.shkcodes.aurora.ui.timeline.items.TweetAdapterItem
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import com.shkcodes.aurora.util.PagedAdapter
 import com.shkcodes.aurora.util.annotatedContent
+
+private const val PROFILE_PAGER_INDEX = 0
 
 class PagerTweetListItem(
     private val tweets: TweetItems,
@@ -41,8 +44,7 @@ class PagerTweetListItem(
                     urlMetadataHandler,
                     imageLoader,
                     handler,
-                    transitionHelper,
-                    list.layoutManager
+                    transitionHelper
                 )
             }
             val items = mutableListOf<AdapterItem<*>>().apply {
@@ -55,7 +57,7 @@ class PagerTweetListItem(
             val state = handler.getState(viewHolder.adapterPosition)
             if (state != null) {
                 list.layoutManager?.onRestoreInstanceState(state)
-                handler.saveState(null)
+                handler.saveState(PROFILE_PAGER_INDEX, null)
             }
             if (handler.scrollToBottom) {
                 viewHolder.binding.list.smoothScrollToPosition(items.size - 1)
@@ -76,3 +78,6 @@ class PagerTweetListViewHolder(val binding: ItemTweetListBinding, paginationActi
         binding.list.adapter = adapter
     }
 }
+
+val RecyclerView.pagerTweetListHolder: PagerTweetListViewHolder
+    get() = findViewHolderForAdapterPosition(0) as PagerTweetListViewHolder

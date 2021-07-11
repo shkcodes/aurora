@@ -2,7 +2,6 @@ package com.shkcodes.aurora.ui.timeline.items
 
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import coil.ImageLoader
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -26,8 +25,7 @@ class TweetAdapterItem(
     private val urlMetadataHandler: UrlMetadataHandler,
     private val imageLoader: ImageLoader,
     private val handler: TweetListHandler,
-    private val animationHelper: SharedElementTransitionHelper,
-    private val layoutManager: LayoutManager? = null
+    private val animationHelper: SharedElementTransitionHelper
 ) : AdapterItem<TweetItemViewHolder>() {
 
     private val tweet = tweetItem.tweet
@@ -54,7 +52,6 @@ class TweetAdapterItem(
                     context.getString(R.string.user_handle_placeholder, tweet.userHandle)
                 time.text = tweet.createdAt.toPrettyTime()
                 tweetMedia.show(media, imageLoader, { imageView, index ->
-                    handler.saveState(layoutManager?.onSaveInstanceState())
                     animationHelper.tweetIndex = positionInAdapter
                     animationHelper.mediaIndex = index
                     handler.onMediaClick(media[index], index, imageView)
@@ -98,7 +95,6 @@ class TweetAdapterItem(
             content.text = annotatedContent.quotedContent
             content.handleClickableSpans()
             tweetMedia.show(quoteTweetMedia, imageLoader, { imageView, index ->
-                handler.saveState(layoutManager?.onSaveInstanceState())
                 handler.onMediaClick(quoteTweetMedia[index], index, imageView)
             })
         }

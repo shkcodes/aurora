@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.shkcodes.aurora.widget
 
 import android.content.Context
@@ -42,7 +44,6 @@ class TweetMedia @JvmOverloads constructor(
         }
     }
 
-    @Suppress("MagicNumber")
     fun show(
         media: List<MediaEntity>,
         imageLoader: ImageLoader,

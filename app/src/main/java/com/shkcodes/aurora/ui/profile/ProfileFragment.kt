@@ -1,15 +1,16 @@
 package com.shkcodes.aurora.ui.profile
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.core.app.SharedElementCallback
 import androidx.core.view.doOnPreDraw
-import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
+import androidx.navigation.Navigator
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
 import coil.ImageLoader
@@ -23,6 +24,7 @@ import com.shkcodes.aurora.databinding.FragmentProfileBinding
 import com.shkcodes.aurora.service.SharedElementTransitionHelper
 import com.shkcodes.aurora.ui.Screen.UserProfile
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.BANNER_SCROLL_OFFSET
+import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.PAGER_OFFSCREEN_PAGES
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.PROFILE_IMAGE_SCALE_LIMIT
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.USER_INFO_BACKGROUND_SCROLL_OFFSET
 import com.shkcodes.aurora.ui.profile.ProfileContract.Constants.USER_INFO_SCROLL_OFFSET
@@ -33,9 +35,9 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.State
 import com.shkcodes.aurora.ui.profile.items.PagerMediaGridItem
-import com.shkcodes.aurora.ui.profile.items.PagerMediaGridViewHolder
 import com.shkcodes.aurora.ui.profile.items.PagerTweetListItem
-import com.shkcodes.aurora.ui.profile.items.PagerTweetListViewHolder
+import com.shkcodes.aurora.ui.profile.items.pagerMediaGridHolder
+import com.shkcodes.aurora.ui.profile.items.pagerTweetListHolder
 import com.shkcodes.aurora.ui.timeline.UrlMetadataHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import com.shkcodes.aurora.util.EmptyAdapterItem
@@ -47,6 +49,7 @@ import com.shkcodes.aurora.util.getDrawableCompat
 import com.shkcodes.aurora.util.handleClickableSpans
 import com.shkcodes.aurora.util.observeOffsetChanges
 import com.shkcodes.aurora.util.openUrl
+import com.shkcodes.aurora.util.recyclerView
 import com.shkcodes.aurora.util.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -66,18 +69,17 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
     private val sharedElementCallback = object : SharedElementCallback() {
         override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
-            val recyclerView = binding.profilePager[0] as RecyclerView
-            val imageView = if (binding.profilePager.currentItem == 0) {
-                val tweetList = (recyclerView.findViewHolderForAdapterPosition(0) as PagerTweetListViewHolder)
-                    .binding.list
-                transitionHelper.getTweetImageView(tweetList)
-            } else {
-                val mediaGrid =
-                    (recyclerView.findViewHolderForAdapterPosition(1) as PagerMediaGridViewHolder).binding.grid
-                transitionHelper.getGridImageView(mediaGrid)
-            }
-            imageView?.let {
-                sharedElements[names[0]] = it
+            with(binding.profilePager) {
+                val imageView = if (currentItem == 0) {
+                    val tweetList = recyclerView.pagerTweetListHolder.binding.list
+                    transitionHelper.getTweetImageView(tweetList)
+                } else {
+                    val mediaGrid = recyclerView.pagerMediaGridHolder.binding.grid
+                    transitionHelper.getGridImageView(mediaGrid)
+                }
+                imageView?.let {
+                    sharedElements[names[0]] = it
+                }
             }
         }
     }
@@ -91,8 +93,10 @@ class ProfileFragment : BaseFragment<State, Intent>() {
         applySharedAxisEnterTransition()
     }
 
+    @SuppressLint("WrongConstant")
     override fun setupView() {
         binding.profilePager.adapter = pagerAdapter
+        binding.profilePager.offscreenPageLimit = PAGER_OFFSCREEN_PAGES
         with(binding.root) {
             postponeEnterTransition()
             doOnPreDraw { startPostponedEnterTransition() }
@@ -191,6 +195,11 @@ class ProfileFragment : BaseFragment<State, Intent>() {
                 pagerAdapter.replaceItems(items)
             }
         }
+    }
+
+    override fun navigate(navDirections: NavDirections, extras: Navigator.Extras?) {
+        handler.savePagerStates(binding.profilePager)
+        super.navigate(navDirections, extras)
     }
 
     override fun handleNavigation(sideEffect: SideEffect.DisplayScreen<*>) {

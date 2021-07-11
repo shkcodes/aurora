@@ -40,6 +40,7 @@ interface ProfileContract {
         const val USER_INFO_SCROLL_OFFSET = 0.3F
         const val BANNER_SCROLL_OFFSET = 0.0001F
         const val PROFILE_IMAGE_SCALE_LIMIT = 0.8F
+        const val PAGER_OFFSCREEN_PAGES = 3
         val tabIcons =
             listOf(R.drawable.ic_tweet, R.drawable.ic_media, R.drawable.ic_favorite, R.drawable.ic_profile)
     }

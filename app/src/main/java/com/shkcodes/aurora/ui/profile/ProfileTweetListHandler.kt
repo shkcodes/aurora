@@ -3,11 +3,15 @@ package com.shkcodes.aurora.ui.profile
 import android.os.Parcelable
 import android.widget.ImageView
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.viewpager2.widget.ViewPager2
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.AnnotatedContentClick
 import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.LoadNextPage
+import com.shkcodes.aurora.ui.profile.items.pagerMediaGridHolder
+import com.shkcodes.aurora.ui.profile.items.pagerTweetListHolder
 import com.shkcodes.aurora.ui.timeline.TweetListHandler
 import com.shkcodes.aurora.util.applySharedAxisExitTransition
+import com.shkcodes.aurora.util.recyclerView
 
 class ProfileTweetListHandler(
     private val fragment: ProfileFragment,
@@ -34,12 +38,11 @@ class ProfileTweetListHandler(
         fragment.dispatchIntent(AnnotatedContentClick(userHandle))
     }
 
-    override fun saveState(state: Parcelable?) {
-        val index = fragment.binding.profilePager.currentItem
+    fun saveState(index: Int, state: Parcelable?) {
         states[index] = state
     }
 
-    override fun getState(index: Int): Parcelable? = states[index]
+    fun getState(index: Int): Parcelable? = states[index]
 
     fun loadNextPage(force: Boolean = false) {
         fragment.dispatchIntent(LoadNextPage(force))
@@ -52,6 +55,13 @@ class ProfileTweetListHandler(
             )
             applySharedAxisExitTransition()
             navigate(ProfileFragmentDirections.moveToProfileMediaViewer(userHandle, index), extras)
+        }
+    }
+
+    fun savePagerStates(pager: ViewPager2) {
+        with(pager.recyclerView) {
+            saveState(0, pagerTweetListHolder.binding.list.layoutManager?.onSaveInstanceState())
+            saveState(1, pagerMediaGridHolder.binding.grid.layoutManager?.onSaveInstanceState())
         }
     }
 

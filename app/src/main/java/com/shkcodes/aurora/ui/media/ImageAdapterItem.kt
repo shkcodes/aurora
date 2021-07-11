@@ -11,7 +11,8 @@ import com.shkcodes.aurora.databinding.ItemImageBinding
 
 class ImageAdapterItem(
     private val media: MediaEntity,
-    private val imageLoader: ImageLoader
+    private val imageLoader: ImageLoader,
+    private val isGridItem: Boolean = false
 ) : AdapterItem<ImageItemViewHolder>() {
 
     override fun onCreateViewHolder(view: View) = ImageItemViewHolder(ItemImageBinding.bind(view))
@@ -19,9 +20,10 @@ class ImageAdapterItem(
     override val layoutId = R.layout.item_image
 
     override fun updateItemViews(viewHolder: ImageItemViewHolder) {
+        val postFix = if (isGridItem) "_grid" else ""
         with(viewHolder.binding.image) {
             load(media.url, imageLoader) { allowHardware(false) }
-            transitionName = "${media.id}"
+            transitionName = "${media.id}$postFix"
         }
     }
 

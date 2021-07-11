@@ -1,12 +1,12 @@
 package com.shkcodes.aurora.service
 
 import android.widget.ImageView
-import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.shkcodes.aurora.ui.media.ImageItemViewHolder
 import com.shkcodes.aurora.ui.profile.items.GridMediaViewHolder
 import com.shkcodes.aurora.ui.timeline.items.TweetItemViewHolder
+import com.shkcodes.aurora.util.recyclerView
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,7 +21,7 @@ class SharedElementTransitionHelper @Inject constructor() {
     }
 
     fun getPagerImageView(pager: ViewPager2): ImageView? {
-        return ((pager[0] as RecyclerView)
+        return (pager.recyclerView
             .findViewHolderForAdapterPosition(mediaIndex) as ImageItemViewHolder?)?.binding?.image
     }
 

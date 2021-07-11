@@ -28,13 +28,14 @@ class ProfileMediaViewerFragment : BaseFragment<State, Intent>() {
 
     @Inject
     lateinit var imageLoader: ImageLoader
+
     @Inject
     lateinit var transitionHelper: SharedElementTransitionHelper
     private val args by navArgs<ProfileMediaViewerFragmentArgs>()
     private val pagerAdapter = ItemsViewAdapter()
     private val sharedElementCallback = object : SharedElementCallback() {
         override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
-           transitionHelper.getPagerImageView(binding.pager)?.let {
+            transitionHelper.getPagerImageView(binding.pager)?.let {
                 sharedElements[names[0]] = it
             }
         }
@@ -65,7 +66,7 @@ class ProfileMediaViewerFragment : BaseFragment<State, Intent>() {
     override fun renderState(state: State) {
         with(state) {
             if (pagerAdapter.itemCount == 0) {
-                val items = media.map { ImageAdapterItem(it.image, imageLoader) }
+                val items = media.map { ImageAdapterItem(it.image, imageLoader, true) }
                 pagerAdapter.replaceItems(items)
                 binding.pager.setCurrentItem(currentIndex, false)
             }
