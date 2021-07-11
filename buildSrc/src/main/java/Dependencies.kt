@@ -21,7 +21,7 @@ object Versions {
     const val coroutines = "1.4.3"
 
     const val reclaim = "2.1.1"
-    const val coil = "1.2.1"
+    const val coil = "1.3.0"
     const val swipeRefresh = "1.1.0"
     const val viewPager = "1.0.0"
     const val constraintLayout = "2.1.0-beta01"

@@ -100,7 +100,12 @@ class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener 
 
     private fun showImagesPager(state: State) {
         with(state) {
-            val items = media.map { ImageAdapterItem(it, imageLoader) }
+            val items = media.map {
+                ImageAdapterItem(it, imageLoader, {
+                    startPostponedEnterTransition()
+                    setEnterSharedElementCallback(sharedElementCallback)
+                })
+            }
             pagerAdapter.replaceItems(items)
             binding.pageIndicator.isVisible = true
             with(binding.pager) {
@@ -116,8 +121,6 @@ class MediaViewerFragment : BaseFragment<State, Intent>(), Player.EventListener 
         transitionHelper.mediaIndex = currentIndex
         binding.pageIndicator.text =
             getString(R.string.media_page_indicator, currentIndex + 1, pagerAdapter.itemCount)
-        startPostponedEnterTransition()
-        setEnterSharedElementCallback(sharedElementCallback)
     }
 
     override fun onPlaybackStateChanged(state: Int) {

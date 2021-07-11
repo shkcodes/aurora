@@ -12,6 +12,7 @@ import com.shkcodes.aurora.databinding.ItemImageBinding
 class ImageAdapterItem(
     private val media: MediaEntity,
     private val imageLoader: ImageLoader,
+    private val onImageLoaded: () -> Unit = {},
     private val isGridItem: Boolean = false
 ) : AdapterItem<ImageItemViewHolder>() {
 
@@ -22,7 +23,11 @@ class ImageAdapterItem(
     override fun updateItemViews(viewHolder: ImageItemViewHolder) {
         val postFix = if (isGridItem) "_grid" else ""
         with(viewHolder.binding.image) {
-            load(media.url, imageLoader) { allowHardware(false) }
+            load(media.thumbnail, imageLoader) {
+                listener(onSuccess = { _, _ -> onImageLoaded() },
+                    onError = { _, _ -> onImageLoaded() })
+                allowHardware(false)
+            }
             transitionName = "${media.id}$postFix"
         }
     }

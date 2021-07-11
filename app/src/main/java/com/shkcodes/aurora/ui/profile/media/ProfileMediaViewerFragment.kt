@@ -66,7 +66,12 @@ class ProfileMediaViewerFragment : BaseFragment<State, Intent>() {
     override fun renderState(state: State) {
         with(state) {
             if (pagerAdapter.itemCount == 0) {
-                val items = media.map { ImageAdapterItem(it.image, imageLoader, true) }
+                val items = media.map {
+                    ImageAdapterItem(it.image, imageLoader, {
+                        startPostponedEnterTransition()
+                        setEnterSharedElementCallback(sharedElementCallback)
+                    }, true)
+                }
                 pagerAdapter.replaceItems(items)
                 binding.pager.setCurrentItem(currentIndex, false)
             }
@@ -78,9 +83,7 @@ class ProfileMediaViewerFragment : BaseFragment<State, Intent>() {
     }
 
     private fun onPageChange(currentIndex: Int) {
-        startPostponedEnterTransition()
         dispatchIntent(PageChange(currentIndex))
         transitionHelper.mediaIndex = currentIndex
-        setEnterSharedElementCallback(sharedElementCallback)
     }
 }
