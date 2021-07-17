@@ -79,5 +79,6 @@ class PagerTweetListViewHolder(val binding: ItemTweetListBinding, paginationActi
     }
 }
 
-val RecyclerView.pagerTweetListHolder: PagerTweetListViewHolder
-    get() = findViewHolderForAdapterPosition(0) as PagerTweetListViewHolder
+fun RecyclerView.pagerTweetListHolder(index: Int): PagerTweetListViewHolder {
+    return findViewHolderForAdapterPosition(index) as PagerTweetListViewHolder
+}

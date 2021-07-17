@@ -14,6 +14,7 @@ interface ProfileContract {
         val isLoading: Boolean = true,
         val user: User? = null,
         val tweets: TweetItems = emptyList(),
+        val favorites: TweetItems = emptyList(),
         val media: List<MediaEntity> = emptyList(),
         val isPaginatedLoading: Boolean = false,
         val isPaginatedError: Boolean = false,
@@ -41,7 +42,6 @@ interface ProfileContract {
         const val BANNER_SCROLL_OFFSET = 0.0001F
         const val PROFILE_IMAGE_SCALE_LIMIT = 0.8F
         const val PAGER_OFFSCREEN_PAGES = 3
-        val tabIcons =
-            listOf(R.drawable.ic_tweet, R.drawable.ic_media, R.drawable.ic_favorite, R.drawable.ic_profile)
+        val tabIcons = listOf(R.drawable.ic_tweet, R.drawable.ic_media, R.drawable.ic_favorite)
     }
 }

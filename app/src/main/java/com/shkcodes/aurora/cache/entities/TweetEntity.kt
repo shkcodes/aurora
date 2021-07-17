@@ -31,10 +31,11 @@ data class TweetEntity(
     val retweetId: Long?,
     val retweetQuoteId: Long?,
     val hashtags: List<String>,
-    val repliedToUsers: List<String>
+    val repliedToUsers: List<String>,
+    val likedBy: String?
 )
 
-fun Tweet.toTweetEntity(tweetType: TweetType): TweetEntity = TweetEntity(
+fun Tweet.toTweetEntity(tweetType: TweetType, likedBy: String?): TweetEntity = TweetEntity(
     id = id,
     content = displayableContent,
     createdAt = createdAt,
@@ -57,14 +58,15 @@ fun Tweet.toTweetEntity(tweetType: TweetType): TweetEntity = TweetEntity(
     retweetId = retweet?.id,
     retweetQuoteId = retweet?.quoteTweet?.id,
     hashtags = hashTags,
-    repliedToUsers = repliedToUsers
+    repliedToUsers = repliedToUsers,
+    likedBy = likedBy
 )
 
-fun Tweets.toCachedTweets(tweetType: TweetType) =
-    map { it.toTweetEntity(tweetType) }
+fun Tweets.toCachedTweets(tweetType: TweetType, likedBy: String? = null) =
+    map { it.toTweetEntity(tweetType, likedBy) }
 
 typealias CachedTweets = List<TweetEntity>
 
 enum class TweetType {
-    TIMELINE, USER, NONE
+    TIMELINE, USER, FAVORITES, NONE
 }

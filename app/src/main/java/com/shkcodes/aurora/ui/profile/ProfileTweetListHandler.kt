@@ -60,8 +60,9 @@ class ProfileTweetListHandler(
 
     fun savePagerStates(pager: ViewPager2) {
         with(pager.recyclerView) {
-            saveState(0, pagerTweetListHolder.binding.list.layoutManager?.onSaveInstanceState())
+            saveState(0, pagerTweetListHolder(0).binding.list.layoutManager?.onSaveInstanceState())
             saveState(1, pagerMediaGridHolder.binding.grid.layoutManager?.onSaveInstanceState())
+            saveState(2, pagerTweetListHolder(2).binding.list.layoutManager?.onSaveInstanceState())
         }
     }
 

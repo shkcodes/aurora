@@ -71,7 +71,8 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             zip(
                 userService.fetchUserProfile(userHandle),
-                userService.fetchUserTweets(userHandle)
+                userService.fetchUserTweets(userHandle),
+                userService.fetchUserFavorites(userHandle)
             ).evaluate({ data ->
                 val media = data.second.map { it.tweetMedia }.flatten()
                 currentState =
@@ -79,6 +80,7 @@ class ProfileViewModel @Inject constructor(
                         isLoading = false,
                         user = data.first,
                         tweets = data.second,
+                        favorites = data.third,
                         autoplayVideos = autoplayVideos,
                         media = media
                     )

@@ -45,6 +45,17 @@ suspend fun <T1, T2> CoroutineScope.zip(
     return Pair(call1.await(), call2.await())
 }
 
+suspend fun <T1, T2, T3> CoroutineScope.zip(
+    a: Result<T1>,
+    b: Result<T2>,
+    c: Result<T3>
+): Triple<Result<T1>, Result<T2>, Result<T3>> {
+    val call1 = async { a }
+    val call2 = async { b }
+    val call3 = async { c }
+    return Triple(call1.await(), call2.await(), call3.await())
+}
+
 fun <T1, T2> Pair<Result<T1>, Result<T2>>.evaluate(
     onSuccess: (Pair<T1, T2>) -> Unit,
     onFailure: (exception: Throwable) -> Unit
@@ -58,6 +69,26 @@ fun <T1, T2> Pair<Result<T1>, Result<T2>>.evaluate(
         }
         else -> {
             onSuccess(Pair(first.value, second.value))
+        }
+    }
+}
+
+fun <T1, T2, T3> Triple<Result<T1>, Result<T2>, Result<T3>>.evaluate(
+    onSuccess: (Triple<T1, T2, T3>) -> Unit,
+    onFailure: (exception: Throwable) -> Unit
+) {
+    when {
+        first.isFailure -> {
+            onFailure(first.exception)
+        }
+        second.isFailure -> {
+            onFailure(second.exception)
+        }
+        third.isFailure -> {
+            onFailure(third.exception)
+        }
+        else -> {
+            onSuccess(Triple(first.value, second.value, third.value))
         }
     }
 }

@@ -40,7 +40,6 @@ import com.shkcodes.aurora.ui.profile.items.pagerMediaGridHolder
 import com.shkcodes.aurora.ui.profile.items.pagerTweetListHolder
 import com.shkcodes.aurora.ui.timeline.UrlMetadataHandler
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
-import com.shkcodes.aurora.util.EmptyAdapterItem
 import com.shkcodes.aurora.util.annotatedDescription
 import com.shkcodes.aurora.util.annotatedLink
 import com.shkcodes.aurora.util.applySharedAxisEnterTransition
@@ -70,12 +69,19 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     private val sharedElementCallback = object : SharedElementCallback() {
         override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
             with(binding.profilePager) {
-                val imageView = if (currentItem == 0) {
-                    val tweetList = recyclerView.pagerTweetListHolder.binding.list
-                    transitionHelper.getTweetImageView(tweetList)
-                } else {
-                    val mediaGrid = recyclerView.pagerMediaGridHolder.binding.grid
-                    transitionHelper.getGridImageView(mediaGrid)
+                val imageView = when (currentItem) {
+                    0 -> {
+                        val tweetList = recyclerView.pagerTweetListHolder(0).binding.list
+                        transitionHelper.getTweetImageView(tweetList)
+                    }
+                    2 -> {
+                        val tweetList = recyclerView.pagerTweetListHolder(2).binding.list
+                        transitionHelper.getTweetImageView(tweetList)
+                    }
+                    else -> {
+                        val mediaGrid = recyclerView.pagerMediaGridHolder.binding.grid
+                        transitionHelper.getGridImageView(mediaGrid)
+                    }
                 }
                 imageView?.let {
                     sharedElements[names[0]] = it
@@ -152,8 +158,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             val items = listOf(
                 tweetListItem(state.tweets, state.isPaginatedError),
                 PagerMediaGridItem(state.media, imageLoader, handler),
-                EmptyAdapterItem("Item 3"),
-                EmptyAdapterItem("Item 4")
+                tweetListItem(state.favorites, state.isPaginatedError)
             )
             pagerAdapter.replaceItems(items)
         }
@@ -186,10 +191,9 @@ class ProfileFragment : BaseFragment<State, Intent>() {
             is ScrollToBottom -> {
                 val state = action.state
                 val items = listOf(
-                    tweetListItem(state.tweets, true),
+                    tweetListItem(state.tweets, state.isPaginatedError),
                     PagerMediaGridItem(state.media, imageLoader, handler),
-                    EmptyAdapterItem("Item 3"),
-                    EmptyAdapterItem("Item 4")
+                    tweetListItem(state.favorites, state.isPaginatedError)
                 )
                 handler.scrollToBottom = true
                 pagerAdapter.replaceItems(items)

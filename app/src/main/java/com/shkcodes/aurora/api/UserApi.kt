@@ -24,6 +24,15 @@ interface UserApi {
         @Query("max_id") afterId: Long? = null,
         @Query("tweet_mode") tweetMode: String = "extended",
         @Query("count") count: Int = 200,
-        @Query("exclude_replies") excludeReplies: Boolean = true
+        @Query("exclude_replies") excludeReplies: Boolean = false
+    ): Tweets
+
+    @GET("1.1/favorites/list.json")
+    suspend fun getFavoriteTweets(
+        @Query("screen_name") userHandle: String,
+        @Query("max_id") afterId: Long? = null,
+        @Query("tweet_mode") tweetMode: String = "extended",
+        @Query("count") count: Int = 200,
+        @Query("exclude_replies") excludeReplies: Boolean = false
     ): Tweets
 }

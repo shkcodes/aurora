@@ -70,4 +70,12 @@ class UserService @Inject constructor(
             tweetsDao.getUserTweets(userHandle)
         }
     }
+
+    suspend fun fetchUserFavorites(userHandle: String, afterId: Long? = null): Result<TweetItems> {
+        return execute {
+            val tweets = userApi.getFavoriteTweets(userHandle, afterId)
+            tweetsDao.cacheTimeline(tweets, TweetType.FAVORITES, userHandle)
+            tweetsDao.getUserFavorites(userHandle)
+        }
+    }
 }

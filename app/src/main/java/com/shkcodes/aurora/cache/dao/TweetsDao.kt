@@ -36,10 +36,20 @@ abstract class TweetsDao {
     )
     abstract suspend fun getUserTweets(userHandle: String, type: TweetType = TweetType.USER): TweetItems
 
+    @Transaction
+    @Query(
+        "SELECT * FROM tweets" +
+            " where (tweetType = :type) AND (likedBy = :userHandle) ORDER BY createdAt DESC"
+    )
+    abstract suspend fun getUserFavorites(
+        userHandle: String,
+        type: TweetType = TweetType.FAVORITES
+    ): TweetItems
+
     @Query("SELECT * FROM tweets where id = :tweetId")
     abstract suspend fun getTweet(tweetId: Long): TweetEntity
 
-    suspend fun cacheTimeline(tweets: Tweets, tweetType: TweetType) {
+    suspend fun cacheTimeline(tweets: Tweets, tweetType: TweetType, likedBy: String? = null) {
         val quoteTweets = tweets.mapNotNull { it.quoteTweet }
         val retweets = tweets.mapNotNull { it.retweet }
         val media = tweets.mapNotNull { it.toMediaEntity() }.flatten()
@@ -47,7 +57,7 @@ abstract class TweetsDao {
         val retweetsMedia = retweets.mapNotNull { it.toMediaEntity() }.flatten()
         val retweetQuoteTweets = retweets.mapNotNull { it.quoteTweet }
         saveTweets(
-            tweets.toCachedTweets(tweetType) +
+            tweets.toCachedTweets(tweetType, likedBy) +
                 quoteTweets.toCachedTweets(NONE) +
                 retweets.toCachedTweets(NONE) +
                 retweetQuoteTweets.toCachedTweets(NONE)
