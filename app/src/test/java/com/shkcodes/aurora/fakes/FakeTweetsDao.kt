@@ -13,6 +13,7 @@ class FakeTweetsDao : TweetsDao() {
 
     private val savedTweets = mutableListOf<TweetEntity>()
     private val userTweets = mutableListOf<TweetEntity>()
+    private val favoriteTweets = mutableListOf<TweetEntity>()
     private val savedMedia = mutableListOf<MediaEntity>()
 
     override suspend fun getTweet(tweetId: Long): TweetEntity {
@@ -38,5 +39,12 @@ class FakeTweetsDao : TweetsDao() {
 
     override suspend fun getUserTweets(userHandle: String, type: TweetType): TweetItems {
         return userTweets.map { TweetItem(it) }
+    }
+
+    override suspend fun getUserFavorites(userHandle: String, type: TweetType): TweetItems {
+        return favoriteTweets.filter { it.likedBy == userHandle }
+            .sortedByDescending { it.createdAt }
+            .map { TweetItem(it) }
+
     }
 }

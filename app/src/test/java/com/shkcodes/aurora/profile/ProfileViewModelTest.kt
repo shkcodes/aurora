@@ -52,6 +52,7 @@ class ProfileViewModelTest : BaseTest() {
                 freshTweetItem
             )
         )
+        coEvery { fetchUserFavorites(any(), any()) } returns Result.Success(listOf(tweetItem))
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -75,6 +76,7 @@ class ProfileViewModelTest : BaseTest() {
                         isLoading = false,
                         user = user,
                         tweets = listOf(tweetItem),
+                        favorites = listOf(tweetItem),
                         autoplayVideos = true
                     )
                 )
@@ -128,6 +130,7 @@ class ProfileViewModelTest : BaseTest() {
                     isLoading = false,
                     user = user,
                     tweets = listOf(tweetItem),
+                    favorites = listOf(tweetItem),
                     autoplayVideos = true
                 )
             )
@@ -145,7 +148,15 @@ class ProfileViewModelTest : BaseTest() {
             sut.handleIntent(Init("@@"))
 
             assert(expectItem() == State(true))
-            assert(expectItem() == State(false, user, listOf(tweetItem), autoplayVideos = true))
+            assert(
+                expectItem() == State(
+                    false,
+                    user,
+                    listOf(tweetItem),
+                    favorites = listOf(tweetItem),
+                    autoplayVideos = true
+                )
+            )
 
             sut.handleIntent(LoadNextPage(false))
 
@@ -154,6 +165,7 @@ class ProfileViewModelTest : BaseTest() {
                     false,
                     user,
                     listOf(tweetItem),
+                    favorites = listOf(tweetItem),
                     isPaginatedLoading = true,
                     autoplayVideos = true
                 )
@@ -163,6 +175,7 @@ class ProfileViewModelTest : BaseTest() {
                     false,
                     user,
                     listOf(tweetItem),
+                    favorites = listOf(tweetItem),
                     isPaginatedLoading = false,
                     isPaginatedError = true,
                     autoplayVideos = true
@@ -179,7 +192,15 @@ class ProfileViewModelTest : BaseTest() {
             sut.handleIntent(Init("@@"))
 
             assert(expectItem() == State(true))
-            assert(expectItem() == State(false, user, listOf(tweetItem), autoplayVideos = true))
+            assert(
+                expectItem() == State(
+                    false,
+                    user,
+                    listOf(tweetItem),
+                    favorites = listOf(tweetItem),
+                    autoplayVideos = true
+                )
+            )
 
             sut.handleIntent(LoadNextPage(true))
 
@@ -188,6 +209,7 @@ class ProfileViewModelTest : BaseTest() {
                     false,
                     user,
                     listOf(tweetItem),
+                    favorites = listOf(tweetItem),
                     isPaginatedLoading = true,
                     autoplayVideos = true
                 )
@@ -197,6 +219,7 @@ class ProfileViewModelTest : BaseTest() {
                     false,
                     user,
                     listOf(tweetItem, freshTweetItem),
+                    favorites = listOf(tweetItem),
                     isPaginatedLoading = false,
                     autoplayVideos = true
                 )
@@ -261,7 +284,15 @@ class ProfileViewModelTest : BaseTest() {
         sut.testStates {
             sut.handleIntent(Init("@@"))
             assert(expectItem() == State())
-            assert(expectItem() == State(false, user, listOf(tweetItem), autoplayVideos = true))
+            assert(
+                expectItem() == State(
+                    false,
+                    user,
+                    listOf(tweetItem),
+                    favorites = listOf(tweetItem),
+                    autoplayVideos = true
+                )
+            )
             sut.handleIntent(Init("@@"))
             expectNoEvents()
         }

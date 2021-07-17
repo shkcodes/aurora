@@ -13,8 +13,6 @@ import com.shkcodes.aurora.ui.profile.ProfileTweetListHandler
 import com.shkcodes.aurora.util.GridSpacingItemDecoration
 import com.shkcodes.aurora.util.PagedAdapter
 
-private const val PROFILE_PAGER_INDEX = 1
-
 class PagerMediaGridItem(
     private val media: List<MediaEntity>,
     private val imageLoader: ImageLoader,
@@ -30,7 +28,7 @@ class PagerMediaGridItem(
         with(viewHolder.binding) {
             val mediaItems = media.mapIndexed { index, item ->
                 GridMediaItem(item, imageLoader) {
-                    handler.saveState(PROFILE_PAGER_INDEX, grid.layoutManager?.onSaveInstanceState())
+                    handler.saveState(positionInAdapter, grid.layoutManager?.onSaveInstanceState())
                     handler.showUserMedia(item.id, index, it)
                 }
             }
@@ -38,7 +36,7 @@ class PagerMediaGridItem(
             val state = handler.getState(viewHolder.adapterPosition)
             if (state != null) {
                 grid.layoutManager?.onRestoreInstanceState(state)
-                handler.saveState(PROFILE_PAGER_INDEX, null)
+                handler.saveState(positionInAdapter, null)
             }
         }
     }

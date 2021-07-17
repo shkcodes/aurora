@@ -19,6 +19,7 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.Intent.Retry
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.OpenUrl
 import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollToBottom
 import com.shkcodes.aurora.ui.profile.ProfileContract.ViewModel
+import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -96,22 +97,26 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun fetchNextPage() {
-        val afterId = currentState.tweets.last().tweetId
+        val lastTweetId = currentState.tweets.last().tweetId
+        val lastFavoriteId = currentState.favorites.lastOrNull()?.tweetId
         currentState = currentState.copy(isPaginatedLoading = true, isPaginatedError = false)
         viewModelScope.launch {
-            userService.fetchUserTweets(currentState.user!!.screenName, afterId)
-                .evaluate({ tweets ->
-                    val media = tweets.map { it.tweetMedia }.flatten()
-                    currentState = currentState.copy(
-                        tweets = tweets,
-                        media = media,
-                        isPaginatedLoading = false
-                    )
-                }, {
-                    Timber.e(it)
-                    currentState = currentState.copy(isPaginatedLoading = false, isPaginatedError = true)
-                    onSideEffect(SideEffect.Action(ScrollToBottom(currentState)))
-                })
+            zip(
+                userService.fetchUserTweets(currentState.user!!.screenName, lastTweetId),
+                userService.fetchUserFavorites(currentState.user!!.screenName, lastFavoriteId),
+            ).evaluate({
+                val media = it.first.map(TweetItem::tweetMedia).flatten()
+                currentState = currentState.copy(
+                    tweets = it.first,
+                    media = media,
+                    favorites = it.second,
+                    isPaginatedLoading = false
+                )
+            }, {
+                Timber.e(it)
+                currentState = currentState.copy(isPaginatedLoading = false, isPaginatedError = true)
+                onSideEffect(SideEffect.Action(ScrollToBottom(currentState)))
+            })
         }
     }
 }

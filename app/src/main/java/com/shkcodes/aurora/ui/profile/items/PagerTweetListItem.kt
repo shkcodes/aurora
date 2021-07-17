@@ -16,8 +16,6 @@ import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import com.shkcodes.aurora.util.PagedAdapter
 import com.shkcodes.aurora.util.annotatedContent
 
-private const val PROFILE_PAGER_INDEX = 0
-
 class PagerTweetListItem(
     private val tweets: TweetItems,
     private val handler: ProfileTweetListHandler,
@@ -57,7 +55,7 @@ class PagerTweetListItem(
             val state = handler.getState(viewHolder.adapterPosition)
             if (state != null) {
                 list.layoutManager?.onRestoreInstanceState(state)
-                handler.saveState(PROFILE_PAGER_INDEX, null)
+                handler.saveState(positionInAdapter, null)
             }
             if (handler.scrollToBottom) {
                 viewHolder.binding.list.smoothScrollToPosition(items.size - 1)
