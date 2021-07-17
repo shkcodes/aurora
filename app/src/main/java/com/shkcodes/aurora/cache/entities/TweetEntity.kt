@@ -12,8 +12,7 @@ data class TweetEntity(
     @PrimaryKey val id: Long,
     val content: String,
     val createdAt: ZonedDateTime,
-    val isTimelineTweet: Boolean,
-    val isUserTweet: Boolean,
+    val tweetType: TweetType,
     val favoriteCount: Int,
     val inReplyToScreenName: String?,
     val inReplyToStatusId: String?,
@@ -35,12 +34,11 @@ data class TweetEntity(
     val repliedToUsers: List<String>
 )
 
-fun Tweet.toTweetEntity(isTimelineTweet: Boolean, isUserTweet: Boolean): TweetEntity = TweetEntity(
+fun Tweet.toTweetEntity(tweetType: TweetType): TweetEntity = TweetEntity(
     id = id,
     content = displayableContent,
     createdAt = createdAt,
-    isTimelineTweet = isTimelineTweet,
-    isUserTweet = isUserTweet,
+    tweetType = tweetType,
     favoriteCount = favoriteCount,
     inReplyToScreenName = inReplyToScreenName,
     inReplyToStatusId = inReplyToStatusId,
@@ -62,7 +60,11 @@ fun Tweet.toTweetEntity(isTimelineTweet: Boolean, isUserTweet: Boolean): TweetEn
     repliedToUsers = repliedToUsers
 )
 
-fun Tweets.toCachedTweets(isTimelineTweet: Boolean = false, isUserTweet: Boolean = false) =
-    map { it.toTweetEntity(isTimelineTweet, isUserTweet) }
+fun Tweets.toCachedTweets(tweetType: TweetType) =
+    map { it.toTweetEntity(tweetType) }
 
 typealias CachedTweets = List<TweetEntity>
+
+enum class TweetType {
+    TIMELINE, USER, NONE
+}

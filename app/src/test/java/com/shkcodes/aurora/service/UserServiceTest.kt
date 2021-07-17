@@ -6,6 +6,7 @@ import com.shkcodes.aurora.api.response.Tweet
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.entities.TweetEntity
+import com.shkcodes.aurora.cache.entities.TweetType
 import com.shkcodes.aurora.cache.entities.toCachedTweets
 import com.shkcodes.aurora.fakes.FakeTweetsDao
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
@@ -47,9 +48,7 @@ class UserServiceTest : BaseTest() {
         every { createdAt } returns localTweetTime
     }
 
-    private fun Tweet.toTweetItems() = listOf(this).toCachedTweets(
-        true
-    ).map { TweetItem(it) }
+    private fun Tweet.toTweetItems() = listOf(this).toCachedTweets(TweetType.TIMELINE).map { TweetItem(it) }
 
 
     private fun TweetEntity.toTweetItems() = listOf(this).map { TweetItem(it) }
@@ -88,7 +87,7 @@ class UserServiceTest : BaseTest() {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
             sut().fetchTimelineTweets(localTweet, null)
             val result =
-                sut().fetchTimelineTweets(listOf(apiTweet).toCachedTweets(true).first(), null)
+                sut().fetchTimelineTweets(listOf(apiTweet).toCachedTweets(TweetType.TIMELINE).first(), null)
             assert(result == Result.Success(freshApiTweet.toTweetItems()))
             assert(tweetsDao.getCachedTimeline(localTweetTime) == freshApiTweet.toTweetItems())
         }

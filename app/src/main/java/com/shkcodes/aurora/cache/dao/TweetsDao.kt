@@ -9,6 +9,8 @@ import com.shkcodes.aurora.api.response.Tweets
 import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
+import com.shkcodes.aurora.cache.entities.TweetType
+import com.shkcodes.aurora.cache.entities.TweetType.NONE
 import com.shkcodes.aurora.cache.entities.toCachedTweets
 import com.shkcodes.aurora.cache.entities.toMediaEntity
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
@@ -20,28 +22,24 @@ abstract class TweetsDao {
     @Transaction
     @Query(
         "SELECT * FROM tweets" +
-            " where (isTimelineTweet = :isTimelineTweet) AND (createdAt > :createdAt) ORDER BY createdAt DESC"
+            " where (tweetType = :type) AND (createdAt > :createdAt) ORDER BY createdAt DESC"
     )
     abstract suspend fun getCachedTimeline(
         createdAt: ZonedDateTime,
-        isTimelineTweet: Boolean = true
+        type: TweetType = TweetType.TIMELINE
     ): TweetItems
 
     @Transaction
     @Query(
         "SELECT * FROM tweets" +
-            " where (isUserTweet = :isUserTweet) AND (userHandle = :userHandle) ORDER BY createdAt DESC"
+            " where (tweetType = :type) AND (userHandle = :userHandle) ORDER BY createdAt DESC"
     )
-    abstract suspend fun getUserTweets(userHandle: String, isUserTweet: Boolean = true): TweetItems
+    abstract suspend fun getUserTweets(userHandle: String, type: TweetType = TweetType.USER): TweetItems
 
     @Query("SELECT * FROM tweets where id = :tweetId")
     abstract suspend fun getTweet(tweetId: Long): TweetEntity
 
-    suspend fun cacheTimeline(
-        tweets: Tweets,
-        timelineTweets: Boolean = false,
-        userTweets: Boolean = false
-    ) {
+    suspend fun cacheTimeline(tweets: Tweets, tweetType: TweetType) {
         val quoteTweets = tweets.mapNotNull { it.quoteTweet }
         val retweets = tweets.mapNotNull { it.retweet }
         val media = tweets.mapNotNull { it.toMediaEntity() }.flatten()
@@ -49,10 +47,10 @@ abstract class TweetsDao {
         val retweetsMedia = retweets.mapNotNull { it.toMediaEntity() }.flatten()
         val retweetQuoteTweets = retweets.mapNotNull { it.quoteTweet }
         saveTweets(
-            tweets.toCachedTweets(timelineTweets, userTweets) +
-                quoteTweets.toCachedTweets(isUserTweet = userTweets) +
-                retweets.toCachedTweets(isUserTweet = userTweets) +
-                retweetQuoteTweets.toCachedTweets(isUserTweet = userTweets)
+            tweets.toCachedTweets(tweetType) +
+                quoteTweets.toCachedTweets(NONE) +
+                retweets.toCachedTweets(NONE) +
+                retweetQuoteTweets.toCachedTweets(NONE)
         )
         saveMedia(media + quoteTweetsMedia + retweetsMedia)
     }

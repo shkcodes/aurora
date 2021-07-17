@@ -23,7 +23,7 @@ interface UserApi {
         @Query("screen_name") userHandle: String,
         @Query("max_id") afterId: Long? = null,
         @Query("tweet_mode") tweetMode: String = "extended",
-        @Query("count") count: Int = 30,
+        @Query("count") count: Int = 200,
         @Query("exclude_replies") excludeReplies: Boolean = true
     ): Tweets
 }

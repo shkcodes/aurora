@@ -65,7 +65,7 @@ class ProfileFragment : BaseFragment<State, Intent>() {
     lateinit var transitionHelper: SharedElementTransitionHelper
     private val args by navArgs<ProfileFragmentArgs>()
     private val pagerAdapter = ItemsViewAdapter()
-    private val handler = ProfileTweetListHandler(this, args.userHandle)
+    private val handler by lazy { ProfileTweetListHandler(this, args.userHandle) }
     private val urlMetadataHandler by lazy { UrlMetadataHandler(lifecycleScope, imageLoader) }
     private val sharedElementCallback = object : SharedElementCallback() {
         override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {

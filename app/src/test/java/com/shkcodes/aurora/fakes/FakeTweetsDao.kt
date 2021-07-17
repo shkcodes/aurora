@@ -4,6 +4,7 @@ import com.shkcodes.aurora.cache.dao.TweetsDao
 import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
+import com.shkcodes.aurora.cache.entities.TweetType
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import java.time.ZonedDateTime
@@ -22,7 +23,7 @@ class FakeTweetsDao : TweetsDao() {
         savedTweets.addAll(tweets)
     }
 
-    override suspend fun getCachedTimeline(createdAt: ZonedDateTime, isTimelineTweet: Boolean) =
+    override suspend fun getCachedTimeline(createdAt: ZonedDateTime, type: TweetType) =
         savedTweets.map { TweetItem(it) }.filter { it.primaryTweet.createdAt > createdAt }
 
     override suspend fun removeTweets(date: ZonedDateTime) {}
@@ -35,7 +36,7 @@ class FakeTweetsDao : TweetsDao() {
         return savedMedia
     }
 
-    override suspend fun getUserTweets(userHandle: String, isUserTweet: Boolean): TweetItems {
+    override suspend fun getUserTweets(userHandle: String, type: TweetType): TweetItems {
         return userTweets.map { TweetItem(it) }
     }
 }

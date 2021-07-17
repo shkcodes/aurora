@@ -30,7 +30,7 @@ object Versions {
 
     const val junit = "4.13.2"
     const val mockk = "1.11.0"
-    const val turbine = "0.4.1"
+    const val turbine = "0.5.2"
 
     const val retrofit = "2.9.0"
     const val okhttp = "4.9.0"

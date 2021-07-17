@@ -2,6 +2,7 @@ package com.shkcodes.aurora.cache
 
 import androidx.room.TypeConverter
 import com.shkcodes.aurora.api.response.Url
+import com.shkcodes.aurora.cache.entities.TweetType
 import com.shkcodes.aurora.util.fromJsonArray
 import com.shkcodes.aurora.util.toJson
 import com.squareup.moshi.Moshi
@@ -28,4 +29,10 @@ class CacheConverter {
 
     @TypeConverter
     fun toStringList(list: String): List<String> = moshi.fromJsonArray(list)
+
+    @TypeConverter
+    fun fromTweetType(type: TweetType): String = type.name
+
+    @TypeConverter
+    fun toTweetType(name: String): TweetType = enumValueOf(name)
 }

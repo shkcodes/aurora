@@ -8,6 +8,7 @@ import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
+import com.shkcodes.aurora.cache.entities.TweetType
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
 import java.time.Duration
 import java.time.Instant
@@ -39,7 +40,7 @@ class UserService @Inject constructor(
         return execute {
             if (isTimelineStale || afterId != null || newerThan != null) {
                 val freshTweets = userApi.getTimelineTweets(afterId = afterId, sinceId = newerThan?.id)
-                tweetsDao.cacheTimeline(freshTweets, true)
+                tweetsDao.cacheTimeline(freshTweets, TweetType.TIMELINE)
                 if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()
             }
             tweetsDao.getCachedTimeline(newerThan?.createdAt ?: minTime)
@@ -65,7 +66,7 @@ class UserService @Inject constructor(
     suspend fun fetchUserTweets(userHandle: String, afterId: Long? = null): Result<TweetItems> {
         return execute {
             val tweets = userApi.getUserTweets(userHandle, afterId)
-            tweetsDao.cacheTimeline(tweets, userTweets = true)
+            tweetsDao.cacheTimeline(tweets, TweetType.USER)
             tweetsDao.getUserTweets(userHandle)
         }
     }
