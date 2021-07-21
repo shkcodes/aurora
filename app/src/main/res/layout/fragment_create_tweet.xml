@@ -2,8 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="@dimen/space"
+    android:layout_marginVertical="@dimen/keyline_1">
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBar"
@@ -22,20 +23,90 @@
         android:layout_margin="@dimen/keyline_1"
         android:background="@null"
         android:hint="@string/create_tweet_hint"
-        app:layout_constraintBottom_toTopOf="@id/postTweet"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0" />
 
-    <Button
-        android:id="@+id/postTweet"
-        android:layout_width="wrap_content"
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/space"
-        android:text="@string/tweet"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:shapeAppearance="@style/roundedTopCornersShape">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/postTweet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space"
+                android:text="@string/tweet"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageView
+                android:id="@+id/location"
+                android:layout_width="@dimen/attachment_icons_height"
+                android:layout_height="@dimen/attachment_icons_height"
+                android:layout_marginStart="@dimen/keyline_1"
+                android:contentDescription="@string/accessibility_location"
+                android:src="@drawable/ic_location"
+                app:layout_constraintBottom_toBottomOf="@id/postTweet"
+                app:layout_constraintEnd_toStartOf="@+id/media"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/postTweet" />
+
+            <ImageView
+                android:id="@+id/camera"
+                android:layout_width="@dimen/attachment_icons_height"
+                android:layout_height="@dimen/attachment_icons_height"
+                android:contentDescription="@string/accessibility_camera"
+                android:src="@drawable/ic_camera"
+                app:layout_constraintBottom_toBottomOf="@id/postTweet"
+                app:layout_constraintEnd_toStartOf="@+id/gif"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/media"
+                app:layout_constraintTop_toTopOf="@id/postTweet" />
+
+            <ImageView
+                android:id="@+id/media"
+                android:layout_width="@dimen/attachment_icons_height"
+                android:layout_height="@dimen/attachment_icons_height"
+                android:contentDescription="@string/accessibility_media"
+                android:src="@drawable/ic_media"
+                app:layout_constraintBottom_toBottomOf="@id/postTweet"
+                app:layout_constraintEnd_toStartOf="@+id/camera"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/location"
+                app:layout_constraintTop_toTopOf="@id/postTweet" />
+
+            <ImageView
+                android:id="@+id/gif"
+                android:layout_width="@dimen/attachment_icons_height"
+                android:layout_height="@dimen/attachment_icons_height"
+                android:layout_marginEnd="@dimen/space_xlarge"
+                android:contentDescription="@string/accessibility_gif"
+                android:src="@drawable/ic_gif_filled"
+                app:layout_constraintBottom_toBottomOf="@id/postTweet"
+                app:layout_constraintEnd_toStartOf="@+id/postTweet"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/camera"
+                app:layout_constraintTop_toTopOf="@id/postTweet" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

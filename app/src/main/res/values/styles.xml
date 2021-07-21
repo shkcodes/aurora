@@ -23,6 +23,12 @@
         <item name="cornerSize">@dimen/two_dp</item>
     </style>
 
+    <style name="roundedTopCornersShape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">@dimen/space</item>
+        <item name="cornerSizeTopLeft">@dimen/space</item>
+    </style>
+
     <style name="circularShape" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>

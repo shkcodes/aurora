@@ -10,6 +10,10 @@
     <string name="accessibility_play_icon">Play Icon</string>
     <string name="accessibility_gif_indicator">Gif Indicator</string>
     <string name="accessibility_link_preview_image">Link Preview Image</string>
+    <string name="accessibility_location">Location</string>
+    <string name="accessibility_media">Media</string>
+    <string name="accessibility_camera">Camera</string>
+    <string name="accessibility_gif">Gif</string>
 
     <!--errors-->
     <string name="error_no_internet">No internet connection</string>
