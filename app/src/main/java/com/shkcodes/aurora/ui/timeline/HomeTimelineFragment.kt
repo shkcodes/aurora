@@ -84,6 +84,7 @@ class HomeTimelineFragment : BaseFragment<State, Intent>() {
     override fun renderState(state: State) {
         with(binding) {
             swipeRefresh.isRefreshing = state.isLoading
+            paginatedLoading.isVisible = state.isPaginatedLoading
             if (!newTweetsIndicator.isVisible && state.newTweets.isNotEmpty()) {
                 showNewTweetsIndicator()
             } else if (newTweetsIndicator.isVisible && state.newTweets.isEmpty()) {
