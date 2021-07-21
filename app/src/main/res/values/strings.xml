@@ -36,4 +36,6 @@
         <item quantity="other">%1$d new tweets</item>
     </plurals>
     <string name="media_page_indicator">%1$d\u0020\/\u0020\%2$d</string>
+    <string name="create_tweet_hint">Write something nice</string>
+    <string name="tweet">Tweet</string>
 </resources>

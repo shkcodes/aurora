@@ -1,8 +1,11 @@
 package com.shkcodes.aurora.util
 
 import android.graphics.Color
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.DimenRes
 import androidx.core.view.get
@@ -55,3 +58,17 @@ fun AppBarLayout.observeOffsetChanges(lifecycle: Lifecycle, onOffsetChange: (Int
 
 val ViewPager2.recyclerView: RecyclerView
     get() = this[0] as RecyclerView
+
+fun EditText.observeTextChanges(lifecycle: Lifecycle, onTextChange: (String) -> Unit) {
+    val listener = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) = Unit
+
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            onTextChange(s.toString())
+        }
+
+        override fun afterTextChanged(s: Editable) = Unit
+    }
+    lifecycle.onDestroy { removeTextChangedListener(listener) }
+    addTextChangedListener(listener)
+}

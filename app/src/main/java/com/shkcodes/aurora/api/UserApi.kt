@@ -1,8 +1,10 @@
 package com.shkcodes.aurora.api
 
+import com.shkcodes.aurora.api.response.Tweet
 import com.shkcodes.aurora.api.response.Tweets
 import com.shkcodes.aurora.api.response.User
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface UserApi {
@@ -35,4 +37,7 @@ interface UserApi {
         @Query("count") count: Int = 200,
         @Query("exclude_replies") excludeReplies: Boolean = false
     ): Tweets
+
+    @POST("1.1/statuses/update.json")
+    suspend fun postTweet(@Query("status") content: String): Tweet
 }

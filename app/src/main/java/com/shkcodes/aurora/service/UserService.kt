@@ -78,4 +78,11 @@ class UserService @Inject constructor(
             tweetsDao.getUserFavorites(userHandle)
         }
     }
+
+    suspend fun postTweet(content: String): Result<Unit> {
+        return execute {
+            val tweet = userApi.postTweet(content)
+            tweetsDao.cacheTimeline(listOf(tweet), TweetType.USER, tweet.user.screenName)
+        }
+    }
 }
