@@ -19,6 +19,7 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
 import com.shkcodes.aurora.ui.create.CreateTweetContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -44,6 +45,12 @@ class CreateTweetViewModel @Inject constructor(
             is MediaSelected -> {
                 if (intent.attachments.isNotEmpty()) validateMediaSelection(intent)
             }
+
+            is RemoveImage -> {
+                val updatedAttachments =
+                    currentState.mediaAttachments.toMutableList().apply { remove(intent.uri) }
+                currentState = currentState.copy(mediaAttachments = updatedAttachments)
+            }
         }
     }
 
@@ -61,7 +68,7 @@ class CreateTweetViewModel @Inject constructor(
             isSameTypeOfSelection && isValidMedia && (isValidImageSelection || isValidVideoSelection)
 
         if (isValidSelection) {
-            currentState = currentState.copy(mediaAttachments = attachments)
+            currentState = currentState.copy(mediaAttachments = attachments, hasImageAttachments = isImageSelection)
         } else {
             val error = when {
                 !isSameTypeOfSelection -> stringProvider.getString(MULTIPLE_TYPES)

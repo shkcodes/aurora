@@ -10,13 +10,15 @@ interface CreateTweetContract {
     data class State(
         val isLoading: Boolean = false,
         val content: String? = null,
-        val mediaAttachments: List<Uri> = emptyList()
+        val mediaAttachments: List<Uri> = emptyList(),
+        val hasImageAttachments: Boolean = true
     )
 
     sealed class Intent {
         object PostTweet : Intent()
         data class ContentChange(val content: String) : Intent()
         data class MediaSelected(val attachments: List<Uri>, val types: Set<String>) : Intent()
+        data class RemoveImage(val uri: Uri) : Intent()
     }
 
     sealed class CreateTweetSideEffect {

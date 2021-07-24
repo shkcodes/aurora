@@ -15,6 +15,7 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.M
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
 import com.shkcodes.aurora.ui.create.CreateTweetContract.State
 import com.shkcodes.aurora.ui.create.CreateTweetViewModel
 import io.mockk.coEvery
@@ -131,7 +132,23 @@ class CreateTweetViewModelTest : BaseTest() {
             sut.testStates {
                 expectItem()
                 sut.handleIntent(MediaSelected(uris, setOf(ATTACHMENT_TYPE_IMAGE)))
-                assert(expectItem().mediaAttachments.size == 2)
+                val state = expectItem()
+                assert(state.mediaAttachments.size == 2 && state.hasImageAttachments)
+            }
+        }
+
+    @Test
+    fun `updates state successfully on image removal `() =
+        testDispatcher.runBlockingTest {
+            val sut = viewModel()
+            val uris = (0..1).map { mockk<Uri>() }
+            sut.testStates {
+                expectItem()
+                sut.handleIntent(MediaSelected(uris, setOf(ATTACHMENT_TYPE_IMAGE)))
+                val state = expectItem()
+                assert(state.mediaAttachments.size == 2 && state.hasImageAttachments)
+                sut.handleIntent(RemoveImage(uris.first()))
+                assert(expectItem().mediaAttachments.size == 1)
             }
         }
 

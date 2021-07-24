@@ -28,5 +28,6 @@
 
     <!--    Create Tweet-->
     <dimen name="attachment_icons_height">24dp</dimen>
+    <dimen name="attachment_image_height">100dp</dimen>
 
 </resources>

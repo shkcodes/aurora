@@ -14,6 +14,8 @@
     <string name="accessibility_media">Media</string>
     <string name="accessibility_camera">Camera</string>
     <string name="accessibility_gif">Gif</string>
+    <string name="accessibility_image_attachment">Image Attachment</string>
+    <string name="accessibility_remove_image_attachment">Remove Attachment</string>
 
     <!--errors-->
     <string name="error_no_internet">No internet connection</string>
