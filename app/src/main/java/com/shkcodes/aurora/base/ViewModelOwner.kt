@@ -2,7 +2,6 @@ package com.shkcodes.aurora.base
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.flowWithLifecycle
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -23,13 +22,13 @@ interface ViewModelOwner<S, I> {
     }
 
     fun observeViewState() {
-        viewModel.getState().flowWithLifecycle(screenLifecycle)
+        viewModel.getState()
             .onEach(::renderState)
             .launchIn(screenLifecycle.coroutineScope)
     }
 
     fun observeSideEffects() {
-        viewModel.getSideEffects().flowWithLifecycle(screenLifecycle)
+        viewModel.getSideEffects()
             .onEach(::handleSideEffects)
             .launchIn(screenLifecycle.coroutineScope)
     }

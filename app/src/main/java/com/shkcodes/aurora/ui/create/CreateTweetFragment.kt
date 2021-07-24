@@ -1,14 +1,19 @@
 package com.shkcodes.aurora.ui.create
 
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts.GetMultipleContents
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentCreateTweetBinding
 import com.shkcodes.aurora.ui.Screen.Previous
+import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.MediaSelectionError
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
 import com.shkcodes.aurora.ui.create.CreateTweetContract.State
 import com.shkcodes.aurora.util.observeTextChanges
@@ -17,6 +22,15 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class CreateTweetFragment : BaseFragment<State, Intent>() {
+
+    private val mediaSelectionRequest = registerForActivityResult(GetMultipleContents()) { uris: List<Uri> ->
+        val contentResolver = requireContext().contentResolver
+        val selectedTypes = uris.map {
+            val type = contentResolver.getType(it)
+            type?.substring(0, type?.indexOf("/")).orEmpty()
+        }.toSet()
+        viewModel.handleIntent(MediaSelected(uris, selectedTypes))
+    }
 
     override val viewModel by viewModels<CreateTweetViewModel>()
 
@@ -29,6 +43,9 @@ class CreateTweetFragment : BaseFragment<State, Intent>() {
             }
             tweetContent.requestFocus()
             postTweet.setOnClickListener { viewModel.handleIntent(PostTweet) }
+            media.setOnClickListener {
+                mediaSelectionRequest.launch("*/*")
+            }
         }
     }
 
@@ -43,6 +60,18 @@ class CreateTweetFragment : BaseFragment<State, Intent>() {
     override fun handleNavigation(sideEffect: SideEffect.DisplayScreen<*>) {
         when (sideEffect.screen) {
             is Previous -> findNavController().popBackStack()
+        }
+    }
+
+    override fun handleAction(sideEffect: SideEffect.Action<*>) {
+        when (val action = sideEffect.action) {
+            is MediaSelectionError -> {
+                Snackbar.make(
+                    binding.root,
+                    action.message,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
         }
     }
 }
