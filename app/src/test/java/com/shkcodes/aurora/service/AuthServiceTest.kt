@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.service
 
 import com.shkcodes.aurora.api.AuthApi
-import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.cache.PreferenceManager
 import io.mockk.coEvery
@@ -23,13 +22,13 @@ class AuthServiceTest : BaseTest() {
     @Test
     fun `get request token returns correctly`() = testDispatcher.runBlockingTest {
         val result = sut().getRequestToken()
-        assert(result == Result.Success("secret"))
+        assert(result == "secret")
     }
 
     @Test
     fun `get access token returns correctly`() = testDispatcher.runBlockingTest {
-        val result = sut().getAccessToken("", "")
-        assert(result is Result.Success)
+        val result = runCatching { sut().getAccessToken("", "") }
+        assert(result.isSuccess)
     }
 
 }

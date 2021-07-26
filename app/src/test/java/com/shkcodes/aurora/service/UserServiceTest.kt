@@ -1,6 +1,5 @@
 package com.shkcodes.aurora.service
 
-import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.response.Tweet
 import com.shkcodes.aurora.base.BaseTest
@@ -77,7 +76,7 @@ class UserServiceTest : BaseTest() {
         testDispatcher.runBlockingTest {
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(5)
             val result = sut().fetchTimelineTweets(null, null)
-            assert(result == Result.Success(apiTweet.toTweetItems()))
+            assert(result == apiTweet.toTweetItems())
             assert(tweetsDao.getCachedTimeline(Instant.EPOCH.atZone(ZoneOffset.UTC)) == apiTweet.toTweetItems())
         }
 
@@ -88,7 +87,7 @@ class UserServiceTest : BaseTest() {
             sut().fetchTimelineTweets(localTweet, null)
             val result =
                 sut().fetchTimelineTweets(listOf(apiTweet).toCachedTweets(TweetType.TIMELINE).first(), null)
-            assert(result == Result.Success(freshApiTweet.toTweetItems()))
+            assert(result == freshApiTweet.toTweetItems())
             assert(tweetsDao.getCachedTimeline(localTweetTime) == freshApiTweet.toTweetItems())
         }
 
@@ -98,7 +97,7 @@ class UserServiceTest : BaseTest() {
             tweetsDao.saveTweets(listOf(localTweet))
             every { preferenceManager.timelineRefreshTime } returns fakeTime.withMinute(7)
             val result = sut().fetchTimelineTweets(null, null)
-            assert(result == Result.Success(localTweet.toTweetItems()))
+            assert(result == localTweet.toTweetItems())
             assert(tweetsDao.getCachedTimeline(Instant.EPOCH.atZone(ZoneOffset.UTC)) == localTweet.toTweetItems())
         }
 

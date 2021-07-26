@@ -1,6 +1,5 @@
 package com.shkcodes.aurora.profile
 
-import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.api.response.User
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
@@ -44,15 +43,13 @@ class ProfileViewModelTest : BaseTest() {
     }
 
     private val userService: UserService = mockk(relaxUnitFun = true) {
-        coEvery { fetchUserProfile(any()) } returns Result.Success(user)
-        coEvery { fetchUserTweets(any()) } returns Result.Success(listOf(tweetItem))
-        coEvery { fetchUserTweets("@@", 23121993) } returns Result.Success(
-            listOf(
-                tweetItem,
-                freshTweetItem
-            )
+        coEvery { fetchUserProfile(any()) } returns user
+        coEvery { fetchUserTweets(any()) } returns listOf(tweetItem)
+        coEvery { fetchUserTweets("@@", 23121993) } returns listOf(
+            tweetItem,
+            freshTweetItem
         )
-        coEvery { fetchUserFavorites(any(), any()) } returns Result.Success(listOf(tweetItem))
+        coEvery { fetchUserFavorites(any(), any()) } returns listOf(tweetItem)
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -86,7 +83,7 @@ class ProfileViewModelTest : BaseTest() {
     @Test
     fun `updates state successfully on user profile fetch failure`() =
         testDispatcher.runBlockingTest {
-            coEvery { userService.fetchUserProfile(any()) } returns Result.Failure(Exception())
+            coEvery { userService.fetchUserProfile(any()) } throws Exception()
             val sut = viewModel()
             sut.testStates {
                 sut.handleIntent(Init("@@"))
@@ -105,7 +102,7 @@ class ProfileViewModelTest : BaseTest() {
     fun `updates state successfully on retry`() = testDispatcher.runBlockingTest {
         val sut = viewModel()
         sut.testStates {
-            coEvery { userService.fetchUserProfile(any()) } returns Result.Failure(Exception())
+            coEvery { userService.fetchUserProfile(any()) } throws Exception()
             sut.handleIntent(Init("@@"))
             assert(expectItem() == State())
             assert(
@@ -115,7 +112,7 @@ class ProfileViewModelTest : BaseTest() {
                     errorMessage = "error"
                 )
             )
-            coEvery { userService.fetchUserProfile(any()) } returns Result.Success(user)
+            coEvery { userService.fetchUserProfile(any()) } returns user
 
             sut.handleIntent(Retry("@@"))
             assert(
@@ -139,9 +136,7 @@ class ProfileViewModelTest : BaseTest() {
 
     @Test
     fun `state updates correctly in case of paginated failure`() = test {
-        coEvery { userService.fetchUserTweets("@@", 23121993) } returns Result.Failure(
-            Exception()
-        )
+        coEvery { userService.fetchUserTweets("@@", 23121993) } throws Exception()
         val sut = viewModel()
 
         sut.testStates {

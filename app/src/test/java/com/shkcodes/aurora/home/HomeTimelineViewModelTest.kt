@@ -1,6 +1,5 @@
 package com.shkcodes.aurora.home
 
-import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.Event
@@ -52,13 +51,13 @@ class HomeTimelineViewModelTest : BaseTest() {
     private val freshTweetItem = TweetItem(freshTweet, emptyList())
 
     private val userService: UserService = mockk(relaxUnitFun = true) {
-        coEvery { fetchTimelineTweets(null, null) } returns Result.Success(listOf(tweetItem))
+        coEvery { fetchTimelineTweets(null, null) } returns listOf(tweetItem)
         coEvery {
             fetchTimelineTweets(tweetEntity, null)
-        } returns Result.Success(listOf(freshTweetItem))
+        } returns listOf(freshTweetItem)
         coEvery {
             fetchTimelineTweets(null, 23121993)
-        } returns Result.Success(listOf(tweetItem, freshTweetItem))
+        } returns listOf(tweetItem, freshTweetItem)
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -97,7 +96,7 @@ class HomeTimelineViewModelTest : BaseTest() {
                 any(),
                 any()
             )
-        } returns Result.Failure(Exception())
+        } throws Exception()
         val sut = viewModel()
         sut.testStates {
             assert(expectItem() == State(true))
@@ -115,7 +114,7 @@ class HomeTimelineViewModelTest : BaseTest() {
     fun `state updates correctly on retry`() = test {
         coEvery {
             userService.fetchTimelineTweets(any(), any())
-        } returns Result.Failure(Exception()) andThen Result.Success(listOf(tweetItem))
+        } throws Exception() andThen listOf(tweetItem)
         val sut = viewModel()
 
         sut.testStates {
@@ -137,9 +136,7 @@ class HomeTimelineViewModelTest : BaseTest() {
 
     @Test
     fun `state updates correctly in case of paginated failure`() = test {
-        coEvery { userService.fetchTimelineTweets(null, 23121993) } returns Result.Failure(
-            Exception()
-        )
+        coEvery { userService.fetchTimelineTweets(null, 23121993) } throws Exception()
         val sut = viewModel()
 
         sut.testStates {

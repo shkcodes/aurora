@@ -1,8 +1,6 @@
 package com.shkcodes.aurora.ui.profile
 
 import androidx.lifecycle.viewModelScope
-import com.shkcodes.aurora.api.evaluate
-import com.shkcodes.aurora.api.zip
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
@@ -21,6 +19,7 @@ import com.shkcodes.aurora.ui.profile.ProfileContract.ProfileSideEffect.ScrollTo
 import com.shkcodes.aurora.ui.profile.ProfileContract.ViewModel
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -70,11 +69,12 @@ class ProfileViewModel @Inject constructor(
 
     private fun fetchData(userHandle: String) {
         viewModelScope.launch {
-            zip(
-                userService.fetchUserProfile(userHandle),
-                userService.fetchUserTweets(userHandle),
-                userService.fetchUserFavorites(userHandle)
-            ).evaluate({ data ->
+            runCatching {
+                val userProfile = async { userService.fetchUserProfile(userHandle) }
+                val userTweets = async { userService.fetchUserTweets(userHandle) }
+                val userFavorites = async { userService.fetchUserFavorites(userHandle) }
+                Triple(userProfile.await(), userTweets.await(), userFavorites.await())
+            }.onSuccess { data ->
                 val media = data.second.map { it.tweetMedia }.flatten()
                 currentState =
                     currentState.copy(
@@ -85,14 +85,14 @@ class ProfileViewModel @Inject constructor(
                         autoplayVideos = autoplayVideos,
                         media = media
                     )
-            }, {
+            }.onFailure {
                 Timber.e(it)
                 currentState = currentState.copy(
                     isLoading = false,
                     isTerminalError = true,
                     errorMessage = errorHandler.getErrorMessage(it)
                 )
-            })
+            }
         }
     }
 
@@ -101,10 +101,13 @@ class ProfileViewModel @Inject constructor(
         val lastFavoriteId = currentState.favorites.lastOrNull()?.tweetId
         currentState = currentState.copy(isPaginatedLoading = true, isPaginatedError = false)
         viewModelScope.launch {
-            zip(
-                userService.fetchUserTweets(currentState.user!!.screenName, lastTweetId),
-                userService.fetchUserFavorites(currentState.user!!.screenName, lastFavoriteId),
-            ).evaluate({
+            runCatching {
+                val tweets =
+                    async { userService.fetchUserTweets(currentState.user!!.screenName, lastTweetId) }
+                val favorites =
+                    async { userService.fetchUserFavorites(currentState.user!!.screenName, lastFavoriteId) }
+                tweets.await() to favorites.await()
+            }.onSuccess {
                 val media = it.first.map(TweetItem::tweetMedia).flatten()
                 currentState = currentState.copy(
                     tweets = it.first,
@@ -112,11 +115,11 @@ class ProfileViewModel @Inject constructor(
                     favorites = it.second,
                     isPaginatedLoading = false
                 )
-            }, {
+            }.onFailure {
                 Timber.e(it)
                 currentState = currentState.copy(isPaginatedLoading = false, isPaginatedError = true)
                 onSideEffect(SideEffect.Action(ScrollToBottom(currentState)))
-            })
+            }
         }
     }
 }

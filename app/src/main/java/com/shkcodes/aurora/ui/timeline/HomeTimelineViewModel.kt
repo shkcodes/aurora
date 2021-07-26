@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.ui.timeline
 
 import androidx.lifecycle.viewModelScope
-import com.shkcodes.aurora.api.evaluate
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.Event
@@ -104,33 +103,34 @@ class HomeTimelineViewModel @Inject constructor(
         newerThan: TweetEntity? = null
     ) {
         viewModelScope.launch {
-            userService.fetchTimelineTweets(newerThan, afterId).evaluate({
-                val newItems = if (newerThan != null) it else emptyList()
-                if (newItems.isNotEmpty()) {
-                    onSideEffect(SideEffect.Action(RetainScrollState(newItems.size)))
-                }
-                eventBus.sendEvent(TogglePaginatedLoading(false))
-                currentState = currentState.copy(
-                    isLoading = false, isPaginatedLoading = false, autoplayVideos = autoplayVideos,
-                    tweets = if (newerThan != null) it + currentState.tweets else it,
-                    newTweets = newItems
-                )
-            }, {
-                Timber.e(it)
-                currentState = if (afterId == null) {
-                    currentState.copy(
-                        isLoading = false,
-                        isTerminalError = true,
-                        errorMessage = errorHandler.getErrorMessage(it)
+            runCatching { userService.fetchTimelineTweets(newerThan, afterId) }
+                .onSuccess {
+                    val newItems = if (newerThan != null) it else emptyList()
+                    if (newItems.isNotEmpty()) {
+                        onSideEffect(SideEffect.Action(RetainScrollState(newItems.size)))
+                    }
+                    eventBus.sendEvent(TogglePaginatedLoading(false))
+                    currentState = currentState.copy(
+                        isLoading = false, isPaginatedLoading = false, autoplayVideos = autoplayVideos,
+                        tweets = if (newerThan != null) it + currentState.tweets else it,
+                        newTweets = newItems
                     )
-                } else {
-                    currentState.copy(isPaginatedError = true, isPaginatedLoading = false)
+                }.onFailure {
+                    Timber.e(it)
+                    currentState = if (afterId == null) {
+                        currentState.copy(
+                            isLoading = false,
+                            isTerminalError = true,
+                            errorMessage = errorHandler.getErrorMessage(it)
+                        )
+                    } else {
+                        currentState.copy(isPaginatedError = true, isPaginatedLoading = false)
+                    }
+                    if (afterId != null) {
+                        onSideEffect(SideEffect.Action(ScrollToBottom(currentState.tweets.size)))
+                    }
+                    eventBus.sendEvent(TogglePaginatedLoading(false))
                 }
-                if (afterId != null) {
-                    onSideEffect(SideEffect.Action(ScrollToBottom(currentState.tweets.size)))
-                }
-                eventBus.sendEvent(TogglePaginatedLoading(false))
-            })
         }
     }
 

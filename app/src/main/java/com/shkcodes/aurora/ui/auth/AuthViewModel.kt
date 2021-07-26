@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.ui.auth
 
 import androidx.lifecycle.viewModelScope
-import com.shkcodes.aurora.api.evaluate
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
@@ -36,12 +35,14 @@ class AuthViewModel @Inject constructor(
                 val verifier = intent.authorizationResponse.split("=").last()
                 currentState = Loading
                 viewModelScope.launch {
-                    authService.getAccessToken(verifier, token).evaluate({
+                    runCatching {
+                        authService.getAccessToken(verifier, token)
+                    }.onSuccess {
                         authService.isLoggedIn = true
                         onSideEffect(SideEffect.DisplayScreen(Screen.Home))
-                    }, {
+                    }.onFailure {
                         currentState = Error(errorHandler.getErrorMessage(it))
-                    })
+                    }
                 }
             }
 
@@ -54,11 +55,12 @@ class AuthViewModel @Inject constructor(
 
     private fun fetchRequestToken() {
         viewModelScope.launch {
-            authService.getRequestToken().evaluate({
-                currentState = RequestToken(token = it)
-            }, {
-                currentState = Error(errorHandler.getErrorMessage(it))
-            })
+            runCatching { authService.getRequestToken() }
+                .onSuccess {
+                    currentState = RequestToken(token = it)
+                }.onFailure {
+                    currentState = Error(errorHandler.getErrorMessage(it))
+                }
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.shkcodes.aurora.auth
 
-import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
@@ -20,8 +19,7 @@ import kotlin.time.ExperimentalTime
 class AuthViewModelTest : BaseTest() {
 
     private val authService: AuthService = mockk(relaxUnitFun = true) {
-        coEvery { getRequestToken() } returns Result.Success("token")
-        coEvery { getAccessToken(any(), any()) } returns Result.Success(Unit)
+        coEvery { getRequestToken() } returns "token"
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
@@ -43,7 +41,7 @@ class AuthViewModelTest : BaseTest() {
 
     @Test
     fun `state updates correctly on init in case of error`() = test {
-        coEvery { authService.getRequestToken() } returns Result.Failure(Exception())
+        coEvery { authService.getRequestToken() } throws Exception()
         val sut = viewModel()
 
         sut.testStates {
@@ -73,7 +71,7 @@ class AuthViewModelTest : BaseTest() {
 
     @Test
     fun `state updates correctly on request access token in case of failure`() = test {
-        coEvery { authService.getAccessToken(any(), any()) } returns Result.Failure(Exception())
+        coEvery { authService.getAccessToken(any(), any()) } throws Exception()
 
         val sut = viewModel()
 
@@ -93,7 +91,7 @@ class AuthViewModelTest : BaseTest() {
 
     @Test
     fun `state updates correctly on retry event`() = test {
-        coEvery { authService.getRequestToken() } returns Result.Failure(Exception())
+        coEvery { authService.getRequestToken() } throws Exception()
 
         val sut = viewModel()
 

@@ -1,8 +1,6 @@
 package com.shkcodes.aurora.service
 
-import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.api.UserApi
-import com.shkcodes.aurora.api.execute
 import com.shkcodes.aurora.api.response.User
 import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
@@ -36,15 +34,13 @@ class UserService @Inject constructor(
             return difference.toMinutes() >= TIMELINE_REFRESH_THRESHOLD
         }
 
-    suspend fun fetchTimelineTweets(newerThan: TweetEntity?, afterId: Long?): Result<TweetItems> {
-        return execute {
-            if (isTimelineStale || afterId != null || newerThan != null) {
-                val freshTweets = userApi.getTimelineTweets(afterId = afterId, sinceId = newerThan?.id)
-                tweetsDao.cacheTimeline(freshTweets, TweetType.TIMELINE)
-                if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()
-            }
-            tweetsDao.getCachedTimeline(newerThan?.createdAt ?: minTime)
+    suspend fun fetchTimelineTweets(newerThan: TweetEntity?, afterId: Long?): TweetItems {
+        if (isTimelineStale || afterId != null || newerThan != null) {
+            val freshTweets = userApi.getTimelineTweets(afterId = afterId, sinceId = newerThan?.id)
+            tweetsDao.cacheTimeline(freshTweets, TweetType.TIMELINE)
+            if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()
         }
+        return tweetsDao.getCachedTimeline(newerThan?.createdAt ?: minTime)
     }
 
     suspend fun flushTweetsCache() {
@@ -59,30 +55,24 @@ class UserService @Inject constructor(
         return tweetsDao.getUserTweets(userHandle)
     }
 
-    suspend fun fetchUserProfile(userHandle: String): Result<User> {
-        return execute { userApi.getUserProfile(userHandle) }
+    suspend fun fetchUserProfile(userHandle: String): User {
+        return userApi.getUserProfile(userHandle)
     }
 
-    suspend fun fetchUserTweets(userHandle: String, afterId: Long? = null): Result<TweetItems> {
-        return execute {
-            val tweets = userApi.getUserTweets(userHandle, afterId)
-            tweetsDao.cacheTimeline(tweets, TweetType.USER)
-            tweetsDao.getUserTweets(userHandle)
-        }
+    suspend fun fetchUserTweets(userHandle: String, afterId: Long? = null): TweetItems {
+        val tweets = userApi.getUserTweets(userHandle, afterId)
+        tweetsDao.cacheTimeline(tweets, TweetType.USER)
+        return tweetsDao.getUserTweets(userHandle)
     }
 
-    suspend fun fetchUserFavorites(userHandle: String, afterId: Long? = null): Result<TweetItems> {
-        return execute {
-            val tweets = userApi.getFavoriteTweets(userHandle, afterId)
-            tweetsDao.cacheTimeline(tweets, TweetType.FAVORITES, userHandle)
-            tweetsDao.getUserFavorites(userHandle)
-        }
+    suspend fun fetchUserFavorites(userHandle: String, afterId: Long? = null): TweetItems {
+        val tweets = userApi.getFavoriteTweets(userHandle, afterId)
+        tweetsDao.cacheTimeline(tweets, TweetType.FAVORITES, userHandle)
+        return tweetsDao.getUserFavorites(userHandle)
     }
 
-    suspend fun postTweet(content: String): Result<Unit> {
-        return execute {
-            val tweet = userApi.postTweet(content)
-            tweetsDao.cacheTimeline(listOf(tweet), TweetType.USER, tweet.user.screenName)
-        }
+    suspend fun postTweet(content: String) {
+        val tweet = userApi.postTweet(content)
+        tweetsDao.cacheTimeline(listOf(tweet), TweetType.USER, tweet.user.screenName)
     }
 }

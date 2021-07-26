@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.create
 
 import android.net.Uri
-import com.shkcodes.aurora.api.Result
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.base.SideEffect.DisplayScreen
@@ -18,7 +17,6 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
 import com.shkcodes.aurora.ui.create.CreateTweetContract.State
 import com.shkcodes.aurora.ui.create.CreateTweetViewModel
-import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
@@ -28,9 +26,7 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class CreateTweetViewModelTest : BaseTest() {
 
-    private val userService: UserService = mockk(relaxUnitFun = true) {
-        coEvery { postTweet(any()) } returns Result.Success(Unit)
-    }
+    private val userService: UserService = mockk(relaxUnitFun = true)
     private val stringProvider = object : StringProvider {
         override fun getString(stringId: StringId): String {
             return stringId.name
