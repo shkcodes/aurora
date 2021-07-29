@@ -8,6 +8,11 @@ import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.cache.entities.TweetType
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
+import com.shkcodes.aurora.util.ApiConstants.MEDIA_ATTACHMENT_NAME
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
@@ -71,8 +76,16 @@ class UserService @Inject constructor(
         return tweetsDao.getUserFavorites(userHandle)
     }
 
-    suspend fun postTweet(content: String) {
-        val tweet = userApi.postTweet(content)
-        tweetsDao.cacheTimeline(listOf(tweet), TweetType.USER, tweet.user.screenName)
+    suspend fun postTweet(content: String, mediaIds: List<String>) {
+        userApi.postTweet(mediaIds.joinToString(","), content)
+    }
+
+    suspend fun uploadMedia(file: File): String {
+        val body = MultipartBody.Part.createFormData(
+            MEDIA_ATTACHMENT_NAME,
+            file.name,
+            file.asRequestBody("*/*".toMediaTypeOrNull())
+        )
+        return userApi.uploadMedia(body).mediaId
     }
 }

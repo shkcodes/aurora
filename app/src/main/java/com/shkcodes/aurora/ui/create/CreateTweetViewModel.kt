@@ -8,6 +8,7 @@ import com.shkcodes.aurora.base.StringId.TOO_MANY_IMAGES
 import com.shkcodes.aurora.base.StringId.TOO_MANY_VIDEOS
 import com.shkcodes.aurora.base.StringId.UNSUPPORTED_ATTACHMENT
 import com.shkcodes.aurora.base.StringProvider
+import com.shkcodes.aurora.service.FileService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.Screen.Previous
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ATTACHMENT_TYPE_IMAGE
@@ -29,6 +30,7 @@ import javax.inject.Inject
 class CreateTweetViewModel @Inject constructor(
     override val dispatcherProvider: DispatcherProvider,
     private val userService: UserService,
+    private val fileService: FileService,
     private val stringProvider: StringProvider
 ) : ViewModel() {
 
@@ -68,7 +70,10 @@ class CreateTweetViewModel @Inject constructor(
             isSameTypeOfSelection && isValidMedia && (isValidImageSelection || isValidVideoSelection)
 
         if (isValidSelection) {
-            currentState = currentState.copy(mediaAttachments = attachments, hasImageAttachments = isImageSelection)
+            currentState = currentState.copy(
+                mediaAttachments = attachments,
+                hasImageAttachments = isImageSelection
+            )
         } else {
             val error = when {
                 !isSameTypeOfSelection -> stringProvider.getString(MULTIPLE_TYPES)
@@ -83,8 +88,21 @@ class CreateTweetViewModel @Inject constructor(
     private fun postTweet() {
         viewModelScope.launch {
             currentState = currentState.copy(isLoading = true)
-            userService.postTweet(currentState.content.orEmpty())
+            val mediaIds = if (currentState.mediaAttachments.isNotEmpty()) {
+                uploadMedia()
+            } else {
+                emptyList()
+            }
+            userService.postTweet(
+                currentState.content.orEmpty(),
+                mediaIds
+            )
             onSideEffect(SideEffect.DisplayScreen(Previous))
         }
+    }
+
+    private suspend fun uploadMedia(): List<String> {
+        val files = currentState.mediaAttachments.map { fileService.getFile(it) }
+        return files.map { userService.uploadMedia(it) }
     }
 }

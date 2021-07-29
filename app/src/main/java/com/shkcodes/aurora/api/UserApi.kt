@@ -1,11 +1,16 @@
 package com.shkcodes.aurora.api
 
-import com.shkcodes.aurora.api.response.Tweet
+import com.shkcodes.aurora.api.response.MediaUploadResponse
 import com.shkcodes.aurora.api.response.Tweets
 import com.shkcodes.aurora.api.response.User
+import com.shkcodes.aurora.util.ApiConstants.UPLOAD_MEDIA_URL
+import okhttp3.MultipartBody
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface UserApi {
 
@@ -39,5 +44,15 @@ interface UserApi {
     ): Tweets
 
     @POST("1.1/statuses/update.json")
-    suspend fun postTweet(@Query("status") content: String): Tweet
+    suspend fun postTweet(
+        @Query("media_ids", encoded = true) mediaIds: String,
+        @Query("status") content: String
+    )
+
+    @POST()
+    @Multipart
+    suspend fun uploadMedia(
+        @Part imageFile: MultipartBody.Part,
+        @Url url: String = UPLOAD_MEDIA_URL
+    ): MediaUploadResponse
 }

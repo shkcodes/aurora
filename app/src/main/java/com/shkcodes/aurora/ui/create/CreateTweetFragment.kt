@@ -64,8 +64,11 @@ class CreateTweetFragment : BaseFragment<State, Intent>() {
         with(binding) {
             tweetContent.isVisible = !state.isLoading
             postTweet.isVisible = !state.isLoading
+            bottomBar.isVisible = !state.isLoading
             progressBar.isVisible = state.isLoading
-            imagesCarousel.isVisible = state.hasImageAttachments && state.mediaAttachments.isNotEmpty()
+            tweetContent.isEnabled = !state.isLoading
+            imagesCarousel.isVisible =
+                state.hasImageAttachments && state.mediaAttachments.isNotEmpty() && !state.isLoading
             renderImagesCarousel(state.mediaAttachments)
         }
     }

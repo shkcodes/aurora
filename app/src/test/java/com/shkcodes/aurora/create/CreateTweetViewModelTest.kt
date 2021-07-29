@@ -6,6 +6,7 @@ import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.base.SideEffect.DisplayScreen
 import com.shkcodes.aurora.base.StringId
 import com.shkcodes.aurora.base.StringProvider
+import com.shkcodes.aurora.service.FileService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.Screen.Previous
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ATTACHMENT_TYPE_IMAGE
@@ -17,9 +18,11 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
 import com.shkcodes.aurora.ui.create.CreateTweetContract.State
 import com.shkcodes.aurora.ui.create.CreateTweetViewModel
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
+import java.io.File
 import kotlin.time.ExperimentalTime
 
 
@@ -27,13 +30,17 @@ import kotlin.time.ExperimentalTime
 class CreateTweetViewModelTest : BaseTest() {
 
     private val userService: UserService = mockk(relaxUnitFun = true)
+    private val fileService: FileService = mockk {
+        every { getFile(any()) } returns File("nice")
+    }
     private val stringProvider = object : StringProvider {
         override fun getString(stringId: StringId): String {
             return stringId.name
         }
     }
 
-    private fun viewModel() = CreateTweetViewModel(testDispatcherProvider, userService, stringProvider)
+    private fun viewModel() =
+        CreateTweetViewModel(testDispatcherProvider, userService, fileService, stringProvider)
 
 
     @Test
