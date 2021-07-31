@@ -4,14 +4,15 @@ import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts.GetMultipleContents
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import coil.ImageLoader
 import com.fueled.reclaim.ItemsViewAdapter
-import com.google.android.material.snackbar.Snackbar
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentCreateTweetBinding
 import com.shkcodes.aurora.ui.Screen.Previous
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ERROR_DURATION
 import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.MediaSelectionError
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
@@ -23,6 +24,7 @@ import com.shkcodes.aurora.ui.create.items.ImageAttachmentAdapterItem
 import com.shkcodes.aurora.util.observeTextChanges
 import com.shkcodes.aurora.util.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -92,11 +94,16 @@ class CreateTweetFragment : BaseFragment<State, Intent>() {
     override fun handleAction(sideEffect: SideEffect.Action<*>) {
         when (val action = sideEffect.action) {
             is MediaSelectionError -> {
-                Snackbar.make(
-                    binding.root,
-                    action.message,
-                    Snackbar.LENGTH_LONG
-                ).show()
+                with(binding) {
+                    error.text = action.message
+                    error.animate().translationY(0F).start()
+                    attachmentOptions.animate().translationY(attachmentOptions.height * -1F).start()
+                    viewLifecycleOwner.lifecycle.coroutineScope.launchWhenResumed {
+                        delay(ERROR_DURATION)
+                        error.animate().translationY(error.height.toFloat()).start()
+                        attachmentOptions.animate().translationY(0F).start()
+                    }
+                }
             }
         }
     }

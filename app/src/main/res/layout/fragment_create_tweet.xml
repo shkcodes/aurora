@@ -54,6 +54,7 @@
         app:shapeAppearance="@style/roundedTopCornersShape">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/attachmentOptions"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -117,8 +118,18 @@
                 app:layout_constraintStart_toEndOf="@+id/camera"
                 app:layout_constraintTop_toTopOf="@id/postTweet" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_create_tweet_error"
+            android:fontFamily="@font/montserrat_semibold"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/keyline_1"
+            android:textColor="?attr/colorOnError"
+            android:translationY="@dimen/error_message_translation" />
 
     </com.google.android.material.card.MaterialCardView>
 
