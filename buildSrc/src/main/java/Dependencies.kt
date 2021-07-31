@@ -41,6 +41,8 @@ object Versions {
 
     const val jsoup = "1.13.1"
 
+    const val twitter4j = "4.0.7"
+
     const val timber = "4.7.1"
 
     const val gestureView = "2.7.1"
@@ -99,6 +101,8 @@ object Dependencies {
     const val roomKtx = "androidx.room:room-ktx:${Versions.room}"
 
     const val jsoup = "org.jsoup:jsoup:${Versions.jsoup}"
+
+    const val twitter4j = "org.twitter4j:twitter4j-core:${Versions.twitter4j}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 

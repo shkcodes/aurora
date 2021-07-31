@@ -24,6 +24,9 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
 import com.shkcodes.aurora.ui.create.CreateTweetContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -88,21 +91,20 @@ class CreateTweetViewModel @Inject constructor(
     private fun postTweet() {
         viewModelScope.launch {
             currentState = currentState.copy(isLoading = true)
-            val mediaIds = if (currentState.mediaAttachments.isNotEmpty()) {
-                uploadMedia()
-            } else {
-                emptyList()
-            }
-            userService.postTweet(
-                currentState.content.orEmpty(),
-                mediaIds
-            )
-            onSideEffect(SideEffect.DisplayScreen(Previous))
+            runCatching {
+                withContext(dispatcherProvider.io) {
+                    userService.postTweet(
+                        currentState.content.orEmpty(),
+                        mediaFiles(), currentState.hasImageAttachments
+                    )
+                }
+            }.onSuccess {
+                onSideEffect(SideEffect.DisplayScreen(Previous))
+            }.onFailure(Timber::e)
         }
     }
 
-    private suspend fun uploadMedia(): List<String> {
-        val files = currentState.mediaAttachments.map { fileService.getFile(it) }
-        return files.map { userService.uploadMedia(it) }
+    private fun mediaFiles(): List<File> {
+        return currentState.mediaAttachments.map { fileService.getFile(it) }
     }
 }

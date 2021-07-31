@@ -1,5 +1,6 @@
 package com.shkcodes.aurora.service
 
+import com.shkcodes.aurora.api.TwitterApi
 import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.response.Tweet
 import com.shkcodes.aurora.base.BaseTest
@@ -66,10 +67,11 @@ class UserServiceTest : BaseTest() {
     private val fakeTimeProvider = mockk<TimeProvider> {
         every { now() } returns fakeTime
     }
+    private val twitterApi = mockk<TwitterApi>()
 
     private val preferenceManager = mockk<PreferenceManager>()
 
-    private fun sut() = UserService(userApi, tweetsDao, preferenceManager, fakeTimeProvider)
+    private fun sut() = UserService(userApi, tweetsDao, preferenceManager, fakeTimeProvider, twitterApi)
 
     @Test
     fun `get timeline tweets returns fresh tweets if cached data is stale`() =

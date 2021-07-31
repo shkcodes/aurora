@@ -28,6 +28,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.create
+import twitter4j.Twitter
+import twitter4j.TwitterFactory
+import twitter4j.conf.ConfigurationBuilder
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -89,6 +92,19 @@ object ApiModule {
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(moshiConverterFactory)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTweeter(): Twitter {
+        val builder = ConfigurationBuilder().apply {
+            setOAuthConsumerKey(BuildConfig.CONSUMER_KEY)
+            setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET)
+            setOAuthAccessToken(BuildConfig.ACCESS_TOKEN)
+            setOAuthAccessTokenSecret(BuildConfig.ACCESS_SECRET)
+        }
+
+        return TwitterFactory(builder.build()).instance
     }
 
     @Provides

@@ -1,5 +1,6 @@
 package com.shkcodes.aurora.service
 
+import com.shkcodes.aurora.api.TwitterApi
 import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.response.User
 import com.shkcodes.aurora.cache.PreferenceManager
@@ -8,10 +9,7 @@ import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
 import com.shkcodes.aurora.cache.entities.TweetType
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
-import com.shkcodes.aurora.util.ApiConstants.MEDIA_ATTACHMENT_NAME
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
+import twitter4j.StatusUpdate
 import java.io.File
 import java.time.Duration
 import java.time.Instant
@@ -28,7 +26,8 @@ class UserService @Inject constructor(
     private val userApi: UserApi,
     private val tweetsDao: TweetsDao,
     private val preferenceManager: PreferenceManager,
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
+    private val twitterApi: TwitterApi
 ) {
     private val minTime = Instant.EPOCH.atZone(ZoneOffset.UTC)
 
@@ -76,16 +75,23 @@ class UserService @Inject constructor(
         return tweetsDao.getUserFavorites(userHandle)
     }
 
-    suspend fun postTweet(content: String, mediaIds: List<String>) {
-        userApi.postTweet(mediaIds.joinToString(","), content)
+    @Suppress("SpreadOperator")
+    fun postTweet(content: String, attachments: List<File>, hasImageAttachments: Boolean) {
+        val mediaIds = attachments.map {
+            if (hasImageAttachments) {
+                uploadImage(it)
+            } else {
+                uploadVideo(it)
+            }
+        }
+        twitterApi.updateStatus(StatusUpdate(content).apply { setMediaIds(*mediaIds.toLongArray()) })
     }
 
-    suspend fun uploadMedia(file: File): String {
-        val body = MultipartBody.Part.createFormData(
-            MEDIA_ATTACHMENT_NAME,
-            file.name,
-            file.asRequestBody("*/*".toMediaTypeOrNull())
-        )
-        return userApi.uploadMedia(body).mediaId
+    private fun uploadImage(file: File): Long {
+        return twitterApi.uploadMedia(file).mediaId
+    }
+
+    private fun uploadVideo(file: File): Long {
+        return twitterApi.uploadMediaChunked(file.name, file.inputStream()).mediaId
     }
 }

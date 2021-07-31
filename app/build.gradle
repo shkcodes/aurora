@@ -104,6 +104,8 @@ dependencies {
 
     implementation Dependencies.jsoup
 
+    implementation Dependencies.twitter4j
+
     implementation Dependencies.timber
 
     implementation Dependencies.gestureView
