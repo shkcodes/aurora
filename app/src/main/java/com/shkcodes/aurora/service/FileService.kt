@@ -31,4 +31,8 @@ class FileService @Inject constructor(@ApplicationContext private val context: C
             it.getString(nameIndex)
         }
     }
+
+    fun clearCache() {
+        context.externalCacheDir?.deleteRecursively()
+    }
 }
