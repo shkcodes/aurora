@@ -111,7 +111,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val sut = viewModel()
             val uris = (0..2).map { mockk<Uri>() }
             sut.testSideEffects {
-                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE,AttachmentType.VIDEO)))
+                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE, AttachmentType.VIDEO)))
                 assert(expectItem() == SideEffect.Action(MediaSelectionError(StringId.MULTIPLE_TYPES.name)))
             }
         }
@@ -141,7 +141,7 @@ class CreateTweetViewModelTest : BaseTest() {
         }
 
     @Test
-    fun `updates state successfully on image removal `() =
+    fun `updates state successfully on image removal`() =
         testDispatcher.runBlockingTest {
             val sut = viewModel()
             val uris = (0..1).map { mockk<Uri>() }
@@ -156,7 +156,7 @@ class CreateTweetViewModelTest : BaseTest() {
         }
 
     @Test
-    fun `updates state successfully on video removal `() =
+    fun `updates state successfully on video removal`() =
         testDispatcher.runBlockingTest {
             val sut = viewModel()
             sut.testStates {
@@ -165,6 +165,54 @@ class CreateTweetViewModelTest : BaseTest() {
                 expectItem()
                 sut.handleIntent(RemoveVideo)
                 assert(expectItem().mediaAttachments.isEmpty())
+            }
+        }
+
+    @Test
+    fun `updates state correctly on adding additional images`() =
+        testDispatcher.runBlockingTest {
+            val sut = viewModel()
+            val uris = (0..1).map { mockk<Uri>() }
+            sut.testStates {
+                expectItem()
+                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE)))
+                val state = expectItem()
+                assert(state.mediaAttachments.size == 2 && state.hasImageAttachments)
+                sut.handleIntent(MediaSelected(listOf(mockk()), setOf(AttachmentType.IMAGE)))
+                val stateFinal = expectItem()
+                assert(stateFinal.mediaAttachments.size == 3 && stateFinal.hasImageAttachments)
+            }
+        }
+
+    @Test
+    fun `updates state correctly on adding additional images exceeding image attachment limit`() =
+        testDispatcher.runBlockingTest {
+            val sut = viewModel()
+            val uris = (0..1).map { mockk<Uri>() }
+            sut.testStates {
+                expectItem()
+                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE)))
+                val state = expectItem()
+                assert(state.mediaAttachments.size == 2 && state.hasImageAttachments)
+                sut.handleIntent(MediaSelected(listOf(mockk(), mockk()), setOf(AttachmentType.IMAGE)))
+                val stateFinal = expectItem()
+                assert(stateFinal.mediaAttachments.size == 4 && stateFinal.hasImageAttachments)
+            }
+        }
+
+    @Test
+    fun `updates state correctly on adding additional media of different type`() =
+        testDispatcher.runBlockingTest {
+            val sut = viewModel()
+            val uris = (0..1).map { mockk<Uri>() }
+            sut.testStates {
+                expectItem()
+                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE)))
+                val state = expectItem()
+                assert(state.mediaAttachments.size == 2 && state.hasImageAttachments)
+                sut.handleIntent(MediaSelected(listOf(mockk()), setOf(AttachmentType.VIDEO)))
+                val stateFinal = expectItem()
+                assert(stateFinal.mediaAttachments.size == 1 && !stateFinal.hasImageAttachments)
             }
         }
 

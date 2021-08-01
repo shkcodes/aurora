@@ -78,8 +78,18 @@ class CreateTweetViewModel @Inject constructor(
             isSameTypeOfSelection && isValidMedia && (isValidImageSelection || isValidVideoSelection)
 
         if (isValidSelection) {
+            val allAttachments = attachments + currentState.mediaAttachments
+            val updatedAttachments = if (types.first() == IMAGE && currentState.attachmentType == IMAGE) {
+                if (allAttachments.size > IMAGE_ATTACHMENT_LIMIT) {
+                    allAttachments.subList(0, IMAGE_ATTACHMENT_LIMIT)
+                } else {
+                    allAttachments
+                }
+            } else {
+                attachments
+            }
             currentState = currentState.copy(
-                mediaAttachments = attachments,
+                mediaAttachments = updatedAttachments,
                 attachmentType = types.first()
             )
         } else {
