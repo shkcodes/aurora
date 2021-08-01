@@ -83,6 +83,7 @@ dependencies {
     implementation Dependencies.reclaim
 
     implementation Dependencies.coil
+    implementation Dependencies.coilGifSupport
     implementation Dependencies.swipeRefresh
     implementation Dependencies.viewPager
     implementation Dependencies.constraintLayout

@@ -3,8 +3,12 @@ package com.shkcodes.aurora.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import androidx.room.Room
 import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import com.shkcodes.aurora.cache.AuroraDatabase
 import com.shkcodes.aurora.util.CacheConstants.PREFERENCES_NAME
 import dagger.Module
@@ -39,5 +43,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideImageLoader(application: Application) = ImageLoader(application)
+    fun provideImageLoader(application: Application) = ImageLoader.Builder(application)
+        .componentRegistry {
+            if (SDK_INT >= Build.VERSION_CODES.P) {
+                add(ImageDecoderDecoder(application))
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
 }

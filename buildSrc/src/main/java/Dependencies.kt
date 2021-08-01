@@ -79,6 +79,7 @@ object Dependencies {
 
     const val reclaim = "com.github.fueled:reclaim:${Versions.reclaim}"
     const val coil = "io.coil-kt:coil:${Versions.coil}"
+    const val coilGifSupport = "io.coil-kt:coil-gif:${Versions.coil}"
     const val swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefresh}"
     const val viewPager = "androidx.viewpager2:viewpager2:${Versions.viewPager}"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
