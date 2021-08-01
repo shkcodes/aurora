@@ -17,7 +17,7 @@
         android:id="@+id/remove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/accessibility_remove_image_attachment"
+        android:contentDescription="@string/accessibility_remove_attachment"
         android:padding="@dimen/space_small"
         android:src="@drawable/ic_remove"
         app:layout_constraintEnd_toEndOf="parent"

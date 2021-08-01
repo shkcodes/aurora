@@ -13,7 +13,7 @@ import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.Screen.Previous
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ATTACHMENT_TYPE_IMAGE
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ATTACHMENT_TYPE_VIDEO
-import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.MEDIA_ATTACHMENT_LIMIT
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.IMAGE_ATTACHMENT_LIMIT
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.VALID_ATTACHMENT_TYPES
 import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.MediaSelectionError
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent
@@ -21,6 +21,7 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveVideo
 import com.shkcodes.aurora.ui.create.CreateTweetContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -56,6 +57,10 @@ class CreateTweetViewModel @Inject constructor(
                     currentState.mediaAttachments.toMutableList().apply { remove(intent.uri) }
                 currentState = currentState.copy(mediaAttachments = updatedAttachments)
             }
+
+            is RemoveVideo -> {
+                currentState = currentState.copy(mediaAttachments = emptyList())
+            }
         }
     }
 
@@ -68,7 +73,7 @@ class CreateTweetViewModel @Inject constructor(
         val isImageSelection = types.contains(ATTACHMENT_TYPE_IMAGE)
         val isVideoSelection = types.contains(ATTACHMENT_TYPE_VIDEO)
         val isValidVideoSelection = isVideoSelection && attachments.size == 1
-        val isValidImageSelection = isImageSelection && attachments.size <= MEDIA_ATTACHMENT_LIMIT
+        val isValidImageSelection = isImageSelection && attachments.size <= IMAGE_ATTACHMENT_LIMIT
         val isValidSelection =
             isSameTypeOfSelection && isValidMedia && (isValidImageSelection || isValidVideoSelection)
 

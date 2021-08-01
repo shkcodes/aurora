@@ -18,6 +18,14 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <style name="IconButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="iconPadding">0dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="android:shadowColor">@android:color/transparent</item>
+        <item name="strokeColor">@android:color/transparent</item>
+    </style>
+
     <style name="roundedCornerShape" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/two_dp</item>

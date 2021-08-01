@@ -16,6 +16,7 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveVideo
 import com.shkcodes.aurora.ui.create.CreateTweetContract.State
 import com.shkcodes.aurora.ui.create.CreateTweetViewModel
 import io.mockk.every
@@ -152,6 +153,19 @@ class CreateTweetViewModelTest : BaseTest() {
                 assert(state.mediaAttachments.size == 2 && state.hasImageAttachments)
                 sut.handleIntent(RemoveImage(uris.first()))
                 assert(expectItem().mediaAttachments.size == 1)
+            }
+        }
+
+    @Test
+    fun `updates state successfully on video removal `() =
+        testDispatcher.runBlockingTest {
+            val sut = viewModel()
+            sut.testStates {
+                expectItem()
+                sut.handleIntent(MediaSelected(listOf(mockk()), setOf(ATTACHMENT_TYPE_VIDEO)))
+                expectItem()
+                sut.handleIntent(RemoveVideo)
+                assert(expectItem().mediaAttachments.isEmpty())
             }
         }
 

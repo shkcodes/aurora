@@ -30,6 +30,31 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0" />
 
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/player"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/attachment_video_height"
+        android:layout_margin="@dimen/space"
+        android:background="@color/black"
+        android:visibility="gone"
+        app:controller_layout_id="@layout/layout_controller_create_tweet"
+        app:hide_on_touch="true"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:resize_mode="zoom"
+        app:show_timeout="0" />
+
+    <ImageView
+        android:id="@+id/removeVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/accessibility_remove_attachment"
+        android:padding="@dimen/space_small"
+        android:src="@drawable/ic_remove"
+        app:layout_constraintEnd_toEndOf="@id/player"
+        app:layout_constraintTop_toTopOf="@id/player" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/imagesCarousel"
         android:layout_width="0dp"
@@ -67,13 +92,14 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <ImageView
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/location"
+                style="@style/IconButton"
                 android:layout_width="@dimen/attachment_icons_height"
                 android:layout_height="@dimen/attachment_icons_height"
                 android:layout_marginStart="@dimen/keyline_1"
-                android:contentDescription="@string/accessibility_location"
-                android:src="@drawable/ic_location"
+                app:icon="@drawable/ic_location"
+                app:iconTint="@color/color_create_tweet_attachment_icon"
                 app:layout_constraintBottom_toBottomOf="@id/postTweet"
                 app:layout_constraintEnd_toStartOf="@+id/media"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -81,37 +107,40 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/postTweet" />
 
-            <ImageView
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/camera"
+                style="@style/IconButton"
                 android:layout_width="@dimen/attachment_icons_height"
                 android:layout_height="@dimen/attachment_icons_height"
-                android:contentDescription="@string/accessibility_camera"
-                android:src="@drawable/ic_camera"
+                app:icon="@drawable/ic_camera"
+                app:iconTint="@color/color_create_tweet_attachment_icon"
                 app:layout_constraintBottom_toBottomOf="@id/postTweet"
                 app:layout_constraintEnd_toStartOf="@+id/gif"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/media"
                 app:layout_constraintTop_toTopOf="@id/postTweet" />
 
-            <ImageView
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/media"
+                style="@style/IconButton"
                 android:layout_width="@dimen/attachment_icons_height"
                 android:layout_height="@dimen/attachment_icons_height"
-                android:contentDescription="@string/accessibility_media"
-                android:src="@drawable/ic_media"
+                app:icon="@drawable/ic_media"
+                app:iconTint="@color/color_create_tweet_attachment_icon"
                 app:layout_constraintBottom_toBottomOf="@id/postTweet"
                 app:layout_constraintEnd_toStartOf="@+id/camera"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/location"
                 app:layout_constraintTop_toTopOf="@id/postTweet" />
 
-            <ImageView
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/gif"
+                style="@style/IconButton"
                 android:layout_width="@dimen/attachment_icons_height"
                 android:layout_height="@dimen/attachment_icons_height"
                 android:layout_marginEnd="@dimen/space_xlarge"
-                android:contentDescription="@string/accessibility_gif"
-                android:src="@drawable/ic_gif_filled"
+                app:icon="@drawable/ic_gif_filled"
+                app:iconTint="@color/color_create_tweet_attachment_icon"
                 app:layout_constraintBottom_toBottomOf="@id/postTweet"
                 app:layout_constraintEnd_toStartOf="@+id/postTweet"
                 app:layout_constraintHorizontal_bias="0.5"
