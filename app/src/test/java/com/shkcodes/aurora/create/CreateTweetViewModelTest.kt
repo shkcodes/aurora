@@ -9,8 +9,7 @@ import com.shkcodes.aurora.base.StringProvider
 import com.shkcodes.aurora.service.FileService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.Screen.Previous
-import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ATTACHMENT_TYPE_IMAGE
-import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ATTACHMENT_TYPE_VIDEO
+import com.shkcodes.aurora.ui.create.AttachmentType
 import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.MediaSelectionError
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
@@ -90,7 +89,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val sut = viewModel()
             val uris = (0..5).map { mockk<Uri>() }
             sut.testSideEffects {
-                sut.handleIntent(MediaSelected(uris, setOf(ATTACHMENT_TYPE_IMAGE)))
+                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE)))
                 assert(expectItem() == SideEffect.Action(MediaSelectionError(StringId.TOO_MANY_IMAGES.name)))
             }
         }
@@ -101,7 +100,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val sut = viewModel()
             val uris = (0..2).map { mockk<Uri>() }
             sut.testSideEffects {
-                sut.handleIntent(MediaSelected(uris, setOf(ATTACHMENT_TYPE_VIDEO)))
+                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.VIDEO)))
                 assert(expectItem() == SideEffect.Action(MediaSelectionError(StringId.TOO_MANY_VIDEOS.name)))
             }
         }
@@ -112,7 +111,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val sut = viewModel()
             val uris = (0..2).map { mockk<Uri>() }
             sut.testSideEffects {
-                sut.handleIntent(MediaSelected(uris, setOf(ATTACHMENT_TYPE_VIDEO, ATTACHMENT_TYPE_IMAGE)))
+                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE,AttachmentType.VIDEO)))
                 assert(expectItem() == SideEffect.Action(MediaSelectionError(StringId.MULTIPLE_TYPES.name)))
             }
         }
@@ -123,7 +122,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val sut = viewModel()
             val uris = (0..2).map { mockk<Uri>() }
             sut.testSideEffects {
-                sut.handleIntent(MediaSelected(uris, setOf("boom")))
+                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.OTHER)))
                 assert(expectItem() == SideEffect.Action(MediaSelectionError(StringId.UNSUPPORTED_ATTACHMENT.name)))
             }
         }
@@ -135,7 +134,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val uris = (0..1).map { mockk<Uri>() }
             sut.testStates {
                 expectItem()
-                sut.handleIntent(MediaSelected(uris, setOf(ATTACHMENT_TYPE_IMAGE)))
+                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE)))
                 val state = expectItem()
                 assert(state.mediaAttachments.size == 2 && state.hasImageAttachments)
             }
@@ -148,7 +147,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val uris = (0..1).map { mockk<Uri>() }
             sut.testStates {
                 expectItem()
-                sut.handleIntent(MediaSelected(uris, setOf(ATTACHMENT_TYPE_IMAGE)))
+                sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE)))
                 val state = expectItem()
                 assert(state.mediaAttachments.size == 2 && state.hasImageAttachments)
                 sut.handleIntent(RemoveImage(uris.first()))
@@ -162,7 +161,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val sut = viewModel()
             sut.testStates {
                 expectItem()
-                sut.handleIntent(MediaSelected(listOf(mockk()), setOf(ATTACHMENT_TYPE_VIDEO)))
+                sut.handleIntent(MediaSelected(listOf(mockk()), setOf(AttachmentType.VIDEO)))
                 expectItem()
                 sut.handleIntent(RemoveVideo)
                 assert(expectItem().mediaAttachments.isEmpty())

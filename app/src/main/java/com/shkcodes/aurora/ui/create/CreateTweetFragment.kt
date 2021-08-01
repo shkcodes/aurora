@@ -23,7 +23,7 @@ import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentCreateTweetBinding
 import com.shkcodes.aurora.ui.Screen.Previous
-import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ATTACHMENT_TYPE_IMAGE
+import com.shkcodes.aurora.ui.create.AttachmentType.VIDEO
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.CAPTURED_IMAGE_TYPE
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ERROR_DURATION
 import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.MediaSelectionError
@@ -55,13 +55,12 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
     private val mediaSelectionRequest = registerForActivityResult(GetMultipleContents()) { uris: List<Uri> ->
         val contentResolver = requireContext().contentResolver
         val selectedTypes = uris.map {
-            val type = contentResolver.getType(it)
-            type?.substring(0, type.indexOf("/")).orEmpty()
+            AttachmentType.from(contentResolver.getType(it).orEmpty())
         }.toSet()
         viewModel.handleIntent(MediaSelected(uris, selectedTypes))
     }
     private val captureImageRequest = registerForActivityResult(TakePicture()) {
-        viewModel.handleIntent(MediaSelected(listOf(imageUri!!), setOf(ATTACHMENT_TYPE_IMAGE)))
+        viewModel.handleIntent(MediaSelected(listOf(imageUri!!), setOf(AttachmentType.IMAGE)))
     }
     private val imagesAdapter = ItemsViewAdapter()
     private val videoPlayer: SimpleExoPlayer by lazy {
@@ -112,7 +111,8 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
             imagesCarousel.isVisible =
                 state.hasImageAttachments && state.mediaAttachments.isNotEmpty() && !state.isLoading
             renderImagesCarousel(state.mediaAttachments)
-            val hasVideoAttachment = !state.hasImageAttachments && state.mediaAttachments.isNotEmpty()
+            val hasVideoAttachment =
+                state.attachmentType == VIDEO && state.mediaAttachments.isNotEmpty()
             player.isVisible = hasVideoAttachment && !state.isLoading
             if (hasVideoAttachment && videoUri != state.mediaAttachments.first()) {
                 videoUri = state.mediaAttachments.first()

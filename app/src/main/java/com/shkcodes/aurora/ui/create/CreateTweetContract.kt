@@ -13,18 +13,21 @@ interface CreateTweetContract {
         val isLoading: Boolean = false,
         val content: String? = null,
         val mediaAttachments: List<Uri> = emptyList(),
-        val hasImageAttachments: Boolean = true
+        val attachmentType: AttachmentType? = null
     ) {
-        val hasMaxAttachments =
-            (hasImageAttachments && mediaAttachments.size == IMAGE_ATTACHMENT_LIMIT) ||
-                (!hasImageAttachments && mediaAttachments.size == VIDEO_ATTACHMENT_LIMIT)
+        val hasMaxAttachments = when (attachmentType) {
+            AttachmentType.IMAGE -> mediaAttachments.size == IMAGE_ATTACHMENT_LIMIT
+            else -> mediaAttachments.size == VIDEO_ATTACHMENT_LIMIT
+        }
+        val hasImageAttachments =
+            attachmentType == AttachmentType.IMAGE || attachmentType == AttachmentType.GIF
     }
 
     sealed class Intent {
         object PostTweet : Intent()
         object RemoveVideo : Intent()
         data class ContentChange(val content: String) : Intent()
-        data class MediaSelected(val attachments: List<Uri>, val types: Set<String>) : Intent()
+        data class MediaSelected(val attachments: List<Uri>, val types: Set<AttachmentType>) : Intent()
         data class RemoveImage(val uri: Uri) : Intent()
     }
 
@@ -35,10 +38,7 @@ interface CreateTweetContract {
     object Constants {
         const val IMAGE_ATTACHMENT_LIMIT = 4
         const val VIDEO_ATTACHMENT_LIMIT = 1
-        const val ATTACHMENT_TYPE_IMAGE = "image"
-        const val ATTACHMENT_TYPE_VIDEO = "video"
         const val ERROR_DURATION = 2500L
         const val CAPTURED_IMAGE_TYPE = ".jpg"
-        val VALID_ATTACHMENT_TYPES = listOf("image", "video")
     }
 }

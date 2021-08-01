@@ -17,9 +17,9 @@
     <string name="error_no_internet">No internet connection</string>
     <string name="error_unknown">An unknown error has occurred</string>
     <string name="error_timeout">Could not reach the servers</string>
-    <string name="error_too_many_videos">Can only attach one video</string>
+    <string name="error_too_many_videos">Can only attach a single video or gif</string>
     <string name="error_too_many_images">Can only attach 4 images</string>
-    <string name="error_multiple_attachments_type">Can only attach either an image or a video</string>
+    <string name="error_multiple_attachments_type">Can only attach single type of media</string>
     <string name="error_unsupported_attachment">Unsupported file type</string>
 
     <string name="title_home">Home</string>

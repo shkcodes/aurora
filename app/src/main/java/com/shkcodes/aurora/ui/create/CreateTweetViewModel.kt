@@ -11,10 +11,11 @@ import com.shkcodes.aurora.base.StringProvider
 import com.shkcodes.aurora.service.FileService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.Screen.Previous
-import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ATTACHMENT_TYPE_IMAGE
-import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ATTACHMENT_TYPE_VIDEO
+import com.shkcodes.aurora.ui.create.AttachmentType.GIF
+import com.shkcodes.aurora.ui.create.AttachmentType.IMAGE
+import com.shkcodes.aurora.ui.create.AttachmentType.OTHER
+import com.shkcodes.aurora.ui.create.AttachmentType.VIDEO
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.IMAGE_ATTACHMENT_LIMIT
-import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.VALID_ATTACHMENT_TYPES
 import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.MediaSelectionError
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
@@ -69,24 +70,23 @@ class CreateTweetViewModel @Inject constructor(
         val attachments = intent.attachments
         if (attachments.isEmpty()) return
         val isSameTypeOfSelection = types.size == 1
-        val isValidMedia = types.all { VALID_ATTACHMENT_TYPES.contains(it) }
-        val isImageSelection = types.contains(ATTACHMENT_TYPE_IMAGE)
-        val isVideoSelection = types.contains(ATTACHMENT_TYPE_VIDEO)
-        val isValidVideoSelection = isVideoSelection && attachments.size == 1
-        val isValidImageSelection = isImageSelection && attachments.size <= IMAGE_ATTACHMENT_LIMIT
+        val isValidMedia = types.none { it == OTHER }
+        val isValidVideoSelection =
+            (types.firstOrNull() == VIDEO || types.firstOrNull() == GIF) && attachments.size == 1
+        val isValidImageSelection = types.firstOrNull() == IMAGE && attachments.size <= IMAGE_ATTACHMENT_LIMIT
         val isValidSelection =
             isSameTypeOfSelection && isValidMedia && (isValidImageSelection || isValidVideoSelection)
 
         if (isValidSelection) {
             currentState = currentState.copy(
                 mediaAttachments = attachments,
-                hasImageAttachments = isImageSelection
+                attachmentType = types.first()
             )
         } else {
             val error = when {
                 !isSameTypeOfSelection -> stringProvider.getString(MULTIPLE_TYPES)
                 !isValidMedia -> stringProvider.getString(UNSUPPORTED_ATTACHMENT)
-                isImageSelection -> stringProvider.getString(TOO_MANY_IMAGES)
+                types.first() == IMAGE -> stringProvider.getString(TOO_MANY_IMAGES)
                 else -> stringProvider.getString(TOO_MANY_VIDEOS)
             }
             onSideEffect(SideEffect.Action(MediaSelectionError(error)))
