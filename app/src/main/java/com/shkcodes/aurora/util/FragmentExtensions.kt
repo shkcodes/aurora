@@ -55,3 +55,6 @@ fun Fragment.reenterTransitionListener(
         (reenterTransition as Transition).removeListener(listener)
     }
 }
+
+val Fragment.fileProviderAuthority: String
+    get() = requireContext().applicationContext.packageName.toString() + ".provider"

@@ -2,6 +2,8 @@ package com.shkcodes.aurora.ui.create
 
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts.GetMultipleContents
+import androidx.activity.result.contract.ActivityResultContracts.TakePicture
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -21,6 +23,8 @@ import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentCreateTweetBinding
 import com.shkcodes.aurora.ui.Screen.Previous
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ATTACHMENT_TYPE_IMAGE
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.CAPTURED_IMAGE_TYPE
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ERROR_DURATION
 import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.MediaSelectionError
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent
@@ -31,10 +35,13 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveVideo
 import com.shkcodes.aurora.ui.create.CreateTweetContract.State
 import com.shkcodes.aurora.ui.create.items.ImageAttachmentAdapterItem
+import com.shkcodes.aurora.util.fileProviderAuthority
 import com.shkcodes.aurora.util.observeTextChanges
 import com.shkcodes.aurora.util.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import java.io.File
+import java.util.UUID
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,6 +50,7 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
     @Inject
     lateinit var imageLoader: ImageLoader
     private var videoUri: Uri? = null
+    private var imageUri: Uri? = null
 
     private val mediaSelectionRequest = registerForActivityResult(GetMultipleContents()) { uris: List<Uri> ->
         val contentResolver = requireContext().contentResolver
@@ -51,6 +59,9 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
             type?.substring(0, type.indexOf("/")).orEmpty()
         }.toSet()
         viewModel.handleIntent(MediaSelected(uris, selectedTypes))
+    }
+    private val captureImageRequest = registerForActivityResult(TakePicture()) {
+        viewModel.handleIntent(MediaSelected(listOf(imageUri!!), setOf(ATTACHMENT_TYPE_IMAGE)))
     }
     private val imagesAdapter = ItemsViewAdapter()
     private val videoPlayer: SimpleExoPlayer by lazy {
@@ -79,6 +90,10 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
             postTweet.setOnClickListener { viewModel.handleIntent(PostTweet) }
             media.setOnClickListener {
                 mediaSelectionRequest.launch("*/*")
+            }
+            camera.setOnClickListener {
+                createTempImageUri()
+                captureImageRequest.launch(imageUri)
             }
             removeVideo.setOnClickListener {
                 viewModel.handleIntent(RemoveVideo)
@@ -161,5 +176,13 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun pausePlayback() {
         videoPlayer.playWhenReady = false
+    }
+
+    private fun createTempImageUri() {
+        imageUri = FileProvider.getUriForFile(
+            requireContext(),
+            fileProviderAuthority,
+            File(requireContext().externalCacheDir, "${UUID.randomUUID()}$CAPTURED_IMAGE_TYPE")
+        )
     }
 }

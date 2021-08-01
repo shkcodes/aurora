@@ -8,13 +8,15 @@ import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val PREFIX = "copy_"
+
 @Singleton
 class FileService @Inject constructor(@ApplicationContext private val context: Context) {
 
     fun getFile(uri: Uri): File {
         return uri.authority.let {
             context.contentResolver.openInputStream(uri).use {
-                val photoFile = File(context.externalCacheDir, fileName(uri)).apply {
+                val photoFile = File(context.externalCacheDir, "$PREFIX${fileName(uri)}").apply {
                     it?.copyTo(outputStream())
                 }
                 photoFile

@@ -37,7 +37,8 @@ interface CreateTweetContract {
         const val VIDEO_ATTACHMENT_LIMIT = 1
         const val ATTACHMENT_TYPE_IMAGE = "image"
         const val ATTACHMENT_TYPE_VIDEO = "video"
-        val VALID_ATTACHMENT_TYPES = listOf("image", "video")
         const val ERROR_DURATION = 2500L
+        const val CAPTURED_IMAGE_TYPE = ".jpg"
+        val VALID_ATTACHMENT_TYPES = listOf("image", "video")
     }
 }
