@@ -98,6 +98,7 @@
                 android:layout_width="@dimen/attachment_icons_height"
                 android:layout_height="@dimen/attachment_icons_height"
                 android:layout_marginStart="@dimen/keyline_1"
+                android:visibility="gone"
                 app:icon="@drawable/ic_location"
                 app:iconTint="@color/color_create_tweet_attachment_icon"
                 app:layout_constraintBottom_toBottomOf="@id/postTweet"
@@ -125,6 +126,7 @@
                 style="@style/IconButton"
                 android:layout_width="@dimen/attachment_icons_height"
                 android:layout_height="@dimen/attachment_icons_height"
+                android:layout_marginStart="@dimen/keyline_1"
                 app:icon="@drawable/ic_media"
                 app:iconTint="@color/color_create_tweet_attachment_icon"
                 app:layout_constraintBottom_toBottomOf="@id/postTweet"
@@ -133,16 +135,23 @@
                 app:layout_constraintStart_toEndOf="@+id/location"
                 app:layout_constraintTop_toTopOf="@id/postTweet" />
 
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.55" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/gif"
                 style="@style/IconButton"
                 android:layout_width="@dimen/attachment_icons_height"
                 android:layout_height="@dimen/attachment_icons_height"
-                android:layout_marginEnd="@dimen/space_xlarge"
+                android:layout_marginEnd="@dimen/keyline_1"
                 app:icon="@drawable/ic_gif_filled"
                 app:iconTint="@color/color_create_tweet_attachment_icon"
                 app:layout_constraintBottom_toBottomOf="@id/postTweet"
-                app:layout_constraintEnd_toStartOf="@+id/postTweet"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/camera"
                 app:layout_constraintTop_toTopOf="@id/postTweet" />
