@@ -21,6 +21,7 @@
     <string name="error_too_many_images">Can only attach 4 images</string>
     <string name="error_multiple_attachments_type">Can only attach single type of media</string>
     <string name="error_unsupported_attachment">Unsupported file type</string>
+    <string name="error_gif_download">Unable to download this gif</string>
 
     <string name="title_home">Home</string>
     <string name="title_home_timeline">Home Timeline</string>

@@ -10,8 +10,9 @@ import com.shkcodes.aurora.service.FileService
 import com.shkcodes.aurora.service.UserService
 import com.shkcodes.aurora.ui.Screen.Previous
 import com.shkcodes.aurora.ui.create.AttachmentType
-import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.MediaSelectionError
+import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.AttachmentError
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.GifSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
@@ -32,6 +33,7 @@ class CreateTweetViewModelTest : BaseTest() {
     private val userService: UserService = mockk(relaxUnitFun = true)
     private val fileService: FileService = mockk {
         every { getFile(any()) } returns File("nice")
+        every { downloadGif(any(), any()) } returns mockk()
     }
     private val stringProvider = object : StringProvider {
         override fun getString(stringId: StringId): String {
@@ -90,7 +92,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val uris = (0..5).map { mockk<Uri>() }
             sut.testSideEffects {
                 sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE)))
-                assert(expectItem() == SideEffect.Action(MediaSelectionError(StringId.TOO_MANY_IMAGES.name)))
+                assert(expectItem() == SideEffect.Action(AttachmentError(StringId.TOO_MANY_IMAGES.name)))
             }
         }
 
@@ -101,7 +103,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val uris = (0..2).map { mockk<Uri>() }
             sut.testSideEffects {
                 sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.VIDEO)))
-                assert(expectItem() == SideEffect.Action(MediaSelectionError(StringId.TOO_MANY_VIDEOS.name)))
+                assert(expectItem() == SideEffect.Action(AttachmentError(StringId.TOO_MANY_VIDEOS.name)))
             }
         }
 
@@ -112,7 +114,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val uris = (0..2).map { mockk<Uri>() }
             sut.testSideEffects {
                 sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.IMAGE, AttachmentType.VIDEO)))
-                assert(expectItem() == SideEffect.Action(MediaSelectionError(StringId.MULTIPLE_TYPES.name)))
+                assert(expectItem() == SideEffect.Action(AttachmentError(StringId.MULTIPLE_TYPES.name)))
             }
         }
 
@@ -123,7 +125,7 @@ class CreateTweetViewModelTest : BaseTest() {
             val uris = (0..2).map { mockk<Uri>() }
             sut.testSideEffects {
                 sut.handleIntent(MediaSelected(uris, setOf(AttachmentType.OTHER)))
-                assert(expectItem() == SideEffect.Action(MediaSelectionError(StringId.UNSUPPORTED_ATTACHMENT.name)))
+                assert(expectItem() == SideEffect.Action(AttachmentError(StringId.UNSUPPORTED_ATTACHMENT.name)))
             }
         }
 
@@ -213,6 +215,29 @@ class CreateTweetViewModelTest : BaseTest() {
                 sut.handleIntent(MediaSelected(listOf(mockk()), setOf(AttachmentType.VIDEO)))
                 val stateFinal = expectItem()
                 assert(stateFinal.mediaAttachments.size == 1 && !stateFinal.hasImageAttachments)
+            }
+        }
+
+    @Test
+    fun `updates state correctly on valid gif selection`() =
+        testDispatcher.runBlockingTest {
+            val sut = viewModel()
+            sut.testStates {
+                expectItem()
+                sut.handleIntent(GifSelected("id", "uri"))
+                assert(expectItem().isDownloadingGif)
+                val state = expectItem()
+                assert(!state.isDownloadingGif && state.attachmentType == AttachmentType.GIF && state.mediaAttachments.size == 1)
+            }
+        }
+
+    @Test
+    fun `updates state correctly on invalid gif selection`() =
+        testDispatcher.runBlockingTest {
+            val sut = viewModel()
+            sut.testSideEffects {
+                sut.handleIntent(GifSelected(null, "uri"))
+                assert(expectItem() == SideEffect.Action(AttachmentError(StringId.GIF_DOWNLOAD_ERROR.name)))
             }
         }
 

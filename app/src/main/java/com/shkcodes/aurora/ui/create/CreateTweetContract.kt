@@ -13,7 +13,8 @@ interface CreateTweetContract {
         val isLoading: Boolean = false,
         val content: String? = null,
         val mediaAttachments: List<Uri> = emptyList(),
-        val attachmentType: AttachmentType? = null
+        val attachmentType: AttachmentType? = null,
+        val isDownloadingGif: Boolean = false
     ) {
         val hasMaxAttachments = when (attachmentType) {
             AttachmentType.IMAGE -> mediaAttachments.size == IMAGE_ATTACHMENT_LIMIT
@@ -29,16 +30,18 @@ interface CreateTweetContract {
         data class ContentChange(val content: String) : Intent()
         data class MediaSelected(val attachments: List<Uri>, val types: Set<AttachmentType>) : Intent()
         data class RemoveImage(val uri: Uri) : Intent()
+        data class GifSelected(val id: String?, val url: String?) : Intent()
     }
 
     sealed class CreateTweetSideEffect {
-        data class MediaSelectionError(val message: String) : CreateTweetSideEffect()
+        data class AttachmentError(val message: String) : CreateTweetSideEffect()
     }
 
     object Constants {
         const val IMAGE_ATTACHMENT_LIMIT = 4
         const val VIDEO_ATTACHMENT_LIMIT = 1
         const val ERROR_DURATION = 2500L
-        const val CAPTURED_IMAGE_TYPE = ".jpg"
+        const val EXTENSION_CAPTURED_IMAGE = ".jpg"
+        const val GIPHY_DIALOG_TAG = "aurora_giphy_dialog"
     }
 }

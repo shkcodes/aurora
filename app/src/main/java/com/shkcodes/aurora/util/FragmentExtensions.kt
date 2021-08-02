@@ -1,5 +1,6 @@
 package com.shkcodes.aurora.util
 
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.transition.Transition
 import com.google.android.material.transition.MaterialSharedAxis
@@ -56,5 +57,5 @@ fun Fragment.reenterTransitionListener(
     }
 }
 
-val Fragment.fileProviderAuthority: String
-    get() = requireContext().applicationContext.packageName.toString() + ".provider"
+val Context.fileProviderAuthority: String
+    get() = "$packageName.provider"

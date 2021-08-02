@@ -43,6 +43,8 @@ object Versions {
 
     const val twitter4j = "4.0.7"
 
+    const val giphy = "2.1.3"
+
     const val timber = "4.7.1"
 
     const val gestureView = "2.7.1"
@@ -104,6 +106,8 @@ object Dependencies {
     const val jsoup = "org.jsoup:jsoup:${Versions.jsoup}"
 
     const val twitter4j = "org.twitter4j:twitter4j-core:${Versions.twitter4j}"
+
+    const val giphy = "com.giphy.sdk:ui:${Versions.giphy}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 

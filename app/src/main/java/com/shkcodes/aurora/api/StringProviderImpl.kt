@@ -22,6 +22,7 @@ class StringProviderImpl @Inject constructor(
             StringId.UNSUPPORTED_ATTACHMENT -> R.string.error_unsupported_attachment
             StringId.TOO_MANY_VIDEOS -> R.string.error_too_many_videos
             StringId.MULTIPLE_TYPES -> R.string.error_multiple_attachments_type
+            StringId.GIF_DOWNLOAD_ERROR -> R.string.error_gif_download
         }
     )
 }

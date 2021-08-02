@@ -1,8 +1,10 @@
 package com.shkcodes.aurora.ui.create
 
+import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.SideEffect
+import com.shkcodes.aurora.base.StringId.GIF_DOWNLOAD_ERROR
 import com.shkcodes.aurora.base.StringId.MULTIPLE_TYPES
 import com.shkcodes.aurora.base.StringId.TOO_MANY_IMAGES
 import com.shkcodes.aurora.base.StringId.TOO_MANY_VIDEOS
@@ -16,9 +18,10 @@ import com.shkcodes.aurora.ui.create.AttachmentType.IMAGE
 import com.shkcodes.aurora.ui.create.AttachmentType.OTHER
 import com.shkcodes.aurora.ui.create.AttachmentType.VIDEO
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.IMAGE_ATTACHMENT_LIMIT
-import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.MediaSelectionError
+import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.AttachmentError
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.GifSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
@@ -62,6 +65,10 @@ class CreateTweetViewModel @Inject constructor(
             is RemoveVideo -> {
                 currentState = currentState.copy(mediaAttachments = emptyList())
             }
+
+            is GifSelected -> {
+                saveGif(intent)
+            }
         }
     }
 
@@ -78,16 +85,7 @@ class CreateTweetViewModel @Inject constructor(
             isSameTypeOfSelection && isValidMedia && (isValidImageSelection || isValidVideoSelection)
 
         if (isValidSelection) {
-            val allAttachments = attachments + currentState.mediaAttachments
-            val updatedAttachments = if (types.first() == IMAGE && currentState.attachmentType == IMAGE) {
-                if (allAttachments.size > IMAGE_ATTACHMENT_LIMIT) {
-                    allAttachments.subList(0, IMAGE_ATTACHMENT_LIMIT)
-                } else {
-                    allAttachments
-                }
-            } else {
-                attachments
-            }
+            val updatedAttachments = determineFinalAttachments(attachments, types.first())
             currentState = currentState.copy(
                 mediaAttachments = updatedAttachments,
                 attachmentType = types.first()
@@ -99,7 +97,23 @@ class CreateTweetViewModel @Inject constructor(
                 types.first() == IMAGE -> stringProvider.getString(TOO_MANY_IMAGES)
                 else -> stringProvider.getString(TOO_MANY_VIDEOS)
             }
-            onSideEffect(SideEffect.Action(MediaSelectionError(error)))
+            onSideEffect(SideEffect.Action(AttachmentError(error)))
+        }
+    }
+
+    private fun determineFinalAttachments(
+        newAttachments: List<Uri>,
+        attachmentType: AttachmentType
+    ): List<Uri> {
+        val allAttachments = newAttachments + currentState.mediaAttachments
+        return if (attachmentType == IMAGE && currentState.attachmentType == IMAGE) {
+            if (allAttachments.size > IMAGE_ATTACHMENT_LIMIT) {
+                allAttachments.subList(0, IMAGE_ATTACHMENT_LIMIT)
+            } else {
+                allAttachments
+            }
+        } else {
+            newAttachments
         }
     }
 
@@ -121,5 +135,23 @@ class CreateTweetViewModel @Inject constructor(
 
     private fun mediaFiles(): List<File> {
         return currentState.mediaAttachments.map { fileService.getFile(it) }
+    }
+
+    private fun saveGif(intent: GifSelected) {
+        viewModelScope.launch {
+            if (intent.id == null || intent.url == null) {
+                onSideEffect(SideEffect.Action(AttachmentError(stringProvider.getString(GIF_DOWNLOAD_ERROR))))
+            } else {
+                currentState = currentState.copy(isDownloadingGif = true)
+                val uri = withContext(dispatcherProvider.io) {
+                    fileService.downloadGif(intent.id, intent.url)
+                }
+                currentState = currentState.copy(
+                    isDownloadingGif = false,
+                    mediaAttachments = listOf(uri),
+                    attachmentType = GIF
+                )
+            }
+        }
     }
 }

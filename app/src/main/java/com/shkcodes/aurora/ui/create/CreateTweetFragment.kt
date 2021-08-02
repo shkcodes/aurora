@@ -13,22 +13,29 @@ import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import coil.ImageLoader
 import com.fueled.reclaim.ItemsViewAdapter
+import com.giphy.sdk.core.models.Media
+import com.giphy.sdk.ui.GPHContentType
+import com.giphy.sdk.ui.GPHSettings
+import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.shkcodes.aurora.BuildConfig
 import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentCreateTweetBinding
 import com.shkcodes.aurora.ui.Screen.Previous
 import com.shkcodes.aurora.ui.create.AttachmentType.VIDEO
-import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.CAPTURED_IMAGE_TYPE
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ERROR_DURATION
-import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.MediaSelectionError
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.EXTENSION_CAPTURED_IMAGE
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.GIPHY_DIALOG_TAG
+import com.shkcodes.aurora.ui.create.CreateTweetContract.CreateTweetSideEffect.AttachmentError
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.GifSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
@@ -45,7 +52,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
+class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, GifSelectionListener {
 
     @Inject
     lateinit var imageLoader: ImageLoader
@@ -97,6 +104,14 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
             removeVideo.setOnClickListener {
                 viewModel.handleIntent(RemoveVideo)
             }
+            gif.setOnClickListener {
+                val dialog = GiphyDialogFragment.newInstance(
+                    GPHSettings(mediaTypeConfig = arrayOf(GPHContentType.gif), showSuggestionsBar = false),
+                    BuildConfig.GIPHY_KEY
+                )
+                dialog.gifSelectionListener = this@CreateTweetFragment
+                dialog.show(childFragmentManager, GIPHY_DIALOG_TAG)
+            }
         }
         viewLifecycleOwner.lifecycle.addObserver(this)
     }
@@ -124,6 +139,7 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
             }
             media.isEnabled = !state.hasMaxAttachments
             videoPlayer.playWhenReady = !state.isLoading
+            gif.isEnabled = !state.isDownloadingGif
         }
     }
 
@@ -145,7 +161,7 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
 
     override fun handleAction(sideEffect: SideEffect.Action<*>) {
         when (val action = sideEffect.action) {
-            is MediaSelectionError -> {
+            is AttachmentError -> {
                 with(binding) {
                     error.text = action.message
                     error.animate().translationY(0F).start()
@@ -181,8 +197,14 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver {
     private fun createTempImageUri() {
         imageUri = FileProvider.getUriForFile(
             requireContext(),
-            fileProviderAuthority,
-            File(requireContext().externalCacheDir, "${UUID.randomUUID()}$CAPTURED_IMAGE_TYPE")
+            requireContext().fileProviderAuthority,
+            File(requireContext().externalCacheDir, "${UUID.randomUUID()}$EXTENSION_CAPTURED_IMAGE")
         )
+    }
+
+    override fun gifSelected(media: Media) {
+        with(media.images) {
+            viewModel.handleIntent(GifSelected(original?.mediaId, original?.gifUrl))
+        }
     }
 }

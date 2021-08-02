@@ -56,6 +56,7 @@ android {
         type.buildConfigField 'String', 'ACCESS_TOKEN', "\"" + localProperties['access_token'] + "\""
         type.buildConfigField 'String', 'ACCESS_SECRET', "\"" + localProperties['access_secret'] + "\""
         type.buildConfigField 'String', 'CALLBACK_URL', "\"" + localProperties['callback_url'] + "\""
+        type.buildConfigField 'String', 'GIPHY_KEY', "\"" + localProperties['giphy_key'] + "\""
     }
 }
 detekt {
@@ -109,6 +110,8 @@ dependencies {
     implementation Dependencies.jsoup
 
     implementation Dependencies.twitter4j
+
+    implementation Dependencies.giphy
 
     implementation Dependencies.timber
 
