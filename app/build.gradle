@@ -7,6 +7,9 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
 }
 
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
 android {
     compileSdkVersion Versions.compileSdkVersion
 
@@ -48,11 +51,11 @@ android {
         viewBinding true
     }
     buildTypes.each { type ->
-        type.buildConfigField 'String', 'CONSUMER_KEY', "\"${System.getenv('TWITTER_CONSUMER_KEY')}\""
-        type.buildConfigField 'String', 'CONSUMER_SECRET', "\"${System.getenv('TWITTER_CONSUMER_SECRET')}\""
-        type.buildConfigField 'String', 'ACCESS_TOKEN', "\"${System.getenv('TWITTER_ACCESS_TOKEN')}\""
-        type.buildConfigField 'String', 'ACCESS_SECRET', "\"${System.getenv('TWITTER_ACCESS_SECRET')}\""
-        type.buildConfigField 'String', 'CALLBACK_URL', "\"${System.getenv('TWITTER_CALLBACK_URL')}\""
+        type.buildConfigField 'String', 'CONSUMER_KEY', "\"" + localProperties['consumer_key'] + "\""
+        type.buildConfigField 'String', 'CONSUMER_SECRET', "\"" + localProperties['consumer_secret'] + "\""
+        type.buildConfigField 'String', 'ACCESS_TOKEN', "\"" + localProperties['access_token'] + "\""
+        type.buildConfigField 'String', 'ACCESS_SECRET', "\"" + localProperties['access_secret'] + "\""
+        type.buildConfigField 'String', 'CALLBACK_URL', "\"" + localProperties['callback_url'] + "\""
     }
 }
 detekt {
