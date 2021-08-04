@@ -24,8 +24,8 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.GifSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveAttachment
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
-import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveVideo
 import com.shkcodes.aurora.ui.create.CreateTweetContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -62,8 +62,8 @@ class CreateTweetViewModel @Inject constructor(
                 currentState = currentState.copy(mediaAttachments = updatedAttachments)
             }
 
-            is RemoveVideo -> {
-                currentState = currentState.copy(mediaAttachments = emptyList())
+            is RemoveAttachment -> {
+                currentState = currentState.copy(mediaAttachments = emptyList(), attachmentType = null)
             }
 
             is GifSelected -> {

@@ -26,7 +26,7 @@ interface CreateTweetContract {
 
     sealed class Intent {
         object PostTweet : Intent()
-        object RemoveVideo : Intent()
+        object RemoveAttachment : Intent()
         data class ContentChange(val content: String) : Intent()
         data class MediaSelected(val attachments: List<Uri>, val types: Set<AttachmentType>) : Intent()
         data class RemoveImage(val uri: Uri) : Intent()

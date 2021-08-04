@@ -12,6 +12,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import coil.ImageLoader
+import coil.load
 import com.fueled.reclaim.ItemsViewAdapter
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.ui.GPHContentType
@@ -28,6 +29,8 @@ import com.shkcodes.aurora.base.BaseFragment
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.databinding.FragmentCreateTweetBinding
 import com.shkcodes.aurora.ui.Screen.Previous
+import com.shkcodes.aurora.ui.create.AttachmentType.GIF
+import com.shkcodes.aurora.ui.create.AttachmentType.IMAGE
 import com.shkcodes.aurora.ui.create.AttachmentType.VIDEO
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.ERROR_DURATION
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Constants.EXTENSION_CAPTURED_IMAGE
@@ -38,8 +41,8 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.ContentChange
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.GifSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.MediaSelected
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.PostTweet
+import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveAttachment
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
-import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveVideo
 import com.shkcodes.aurora.ui.create.CreateTweetContract.State
 import com.shkcodes.aurora.ui.create.items.ImageAttachmentAdapterItem
 import com.shkcodes.aurora.util.fileProviderAuthority
@@ -67,7 +70,7 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, Gi
         viewModel.handleIntent(MediaSelected(uris, selectedTypes))
     }
     private val captureImageRequest = registerForActivityResult(TakePicture()) {
-        viewModel.handleIntent(MediaSelected(listOf(imageUri!!), setOf(AttachmentType.IMAGE)))
+        viewModel.handleIntent(MediaSelected(listOf(imageUri!!), setOf(IMAGE)))
     }
     private val imagesAdapter = ItemsViewAdapter()
     private val videoPlayer: SimpleExoPlayer by lazy {
@@ -101,8 +104,8 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, Gi
                 createTempImageUri()
                 captureImageRequest.launch(imageUri)
             }
-            removeVideo.setOnClickListener {
-                viewModel.handleIntent(RemoveVideo)
+            removeAnimatedMedia.setOnClickListener {
+                viewModel.handleIntent(RemoveAttachment)
             }
             gif.setOnClickListener {
                 val dialog = GiphyDialogFragment.newInstance(
@@ -124,7 +127,7 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, Gi
             progressBar.isVisible = state.isLoading
             tweetContent.isEnabled = !state.isLoading
             imagesCarousel.isVisible =
-                state.hasImageAttachments && state.mediaAttachments.isNotEmpty() && !state.isLoading
+                state.attachmentType == IMAGE && state.mediaAttachments.isNotEmpty() && !state.isLoading
             renderImagesCarousel(state.mediaAttachments)
             val hasVideoAttachment =
                 state.attachmentType == VIDEO && state.mediaAttachments.isNotEmpty()
@@ -133,13 +136,18 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, Gi
                 videoUri = state.mediaAttachments.first()
                 playVideo()
             }
+            if (state.attachmentType == GIF && !gifPreview.isVisible) {
+                gifPreview.load(state.mediaAttachments.first(), imageLoader)
+            }
+            gifPreview.isVisible = state.attachmentType == GIF && !state.isLoading && !state.isDownloadingGif
             if (state.mediaAttachments.isEmpty()) {
                 videoUri = null
                 videoPlayer.stop()
             }
             media.isEnabled = !state.hasMaxAttachments
+            camera.isEnabled = !state.hasMaxAttachments
             videoPlayer.playWhenReady = !state.isLoading
-            gif.isEnabled = !state.isDownloadingGif
+            gif.isEnabled = !state.isDownloadingGif && !state.hasMaxAttachments
         }
     }
 
@@ -204,7 +212,7 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, Gi
 
     override fun gifSelected(media: Media) {
         with(media.images) {
-            viewModel.handleIntent(GifSelected(original?.mediaId, original?.gifUrl))
+            viewModel.handleIntent(GifSelected(downsizedMedium?.mediaId, downsizedMedium?.gifUrl))
         }
     }
 }
