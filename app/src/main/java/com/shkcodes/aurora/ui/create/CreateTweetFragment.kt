@@ -131,7 +131,7 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, Gi
             renderImagesCarousel(state.mediaAttachments)
             val hasVideoAttachment =
                 state.attachmentType == VIDEO && state.mediaAttachments.isNotEmpty()
-            player.isVisible = hasVideoAttachment && !state.isLoading
+            playerContainer.isVisible = hasVideoAttachment && !state.isLoading
             if (hasVideoAttachment && videoUri != state.mediaAttachments.first()) {
                 videoUri = state.mediaAttachments.first()
                 playVideo()
@@ -144,10 +144,11 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, Gi
                 videoUri = null
                 videoPlayer.stop()
             }
-            media.isEnabled = !state.hasMaxAttachments
-            camera.isEnabled = !state.hasMaxAttachments
+            val bottomBarEnabled = !state.hasMaxAttachments && !state.isDownloadingGif
+            media.isEnabled = bottomBarEnabled
+            camera.isEnabled = bottomBarEnabled
             videoPlayer.playWhenReady = !state.isLoading
-            gif.isEnabled = !state.isDownloadingGif && !state.hasMaxAttachments
+            gif.isEnabled = bottomBarEnabled
         }
     }
 
