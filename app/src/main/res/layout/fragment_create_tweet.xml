@@ -17,103 +17,121 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/tweetContent"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/keyline_1"
-        android:background="@null"
-        android:hint="@string/create_tweet_hint"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@id/imagesCarousel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/playerContainer"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/attachment_animated_media_height"
-        android:layout_margin="@dimen/space"
-        android:elevation="0dp"
-        android:visibility="gone"
-        app:cardCornerRadius="@dimen/two_dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tweetContent"
-        app:layout_constraintVertical_bias="1">
-
-        <com.google.android.exoplayer2.ui.PlayerView
-            android:id="@+id/player"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/black"
-            app:controller_layout_id="@layout/layout_controller_create_tweet"
-            app:hide_on_touch="true"
-            app:resize_mode="zoom"
-            app:show_timeout="0" />
-    </com.google.android.material.card.MaterialCardView>
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/animatedMediaBarrierVertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="playerContainer,gifPreview" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/animatedMediaBarrierHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="end"
-        app:constraint_referenced_ids="playerContainer,gifPreview" />
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/gifPreview"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/space"
-        android:adjustViewBounds="true"
-        android:contentDescription="@null"
-        android:scaleType="centerCrop"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/bottomBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="wrap"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tweetContent"
-        app:layout_constraintVertical_bias="1"
-        app:layout_constraintWidth_percent="0.6"
-        app:shapeAppearance="@style/roundedCornerShape"
-        tools:visibility="visible" />
-
-    <ImageView
-        android:id="@+id/removeAnimatedMedia"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_remove_attachment"
-        android:contentDescription="@string/accessibility_remove_attachment"
-        android:elevation="@dimen/one_dp"
-        android:padding="@dimen/space_small"
-        android:src="@drawable/ic_remove"
-        app:layout_constraintEnd_toEndOf="@id/animatedMediaBarrierHorizontal"
-        app:layout_constraintTop_toTopOf="@id/animatedMediaBarrierVertical" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/imagesCarousel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/space"
-        android:orientation="horizontal"
+        android:fillViewport="true"
         android:overScrollMode="never"
-        android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tweetContent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/keyline_1"
+                android:background="@null"
+                android:hint="@string/create_tweet_hint"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintBottom_toTopOf="@id/imagesCarousel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/playerContainer"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/attachment_animated_media_height"
+                android:layout_margin="@dimen/space"
+                android:elevation="0dp"
+                android:visibility="gone"
+                app:cardCornerRadius="@dimen/two_dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tweetContent"
+                app:layout_constraintVertical_bias="1">
+
+                <com.google.android.exoplayer2.ui.PlayerView
+                    android:id="@+id/player"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/black"
+                    app:controller_layout_id="@layout/layout_controller_create_tweet"
+                    app:hide_on_touch="true"
+                    app:resize_mode="zoom"
+                    app:show_timeout="0" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/animatedMediaBarrierVertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="top"
+                app:constraint_referenced_ids="playerContainer,gifPreview" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/animatedMediaBarrierHorizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="playerContainer,gifPreview" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/gifPreview"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="@dimen/space"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_default="wrap"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tweetContent"
+                app:layout_constraintVertical_bias="1"
+                app:layout_constraintWidth_percent="0.6"
+                app:shapeAppearance="@style/roundedCornerShape"
+                tools:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/removeAnimatedMedia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_remove_attachment"
+                android:contentDescription="@string/accessibility_remove_attachment"
+                android:elevation="@dimen/one_dp"
+                android:padding="@dimen/space_small"
+                android:src="@drawable/ic_remove"
+                app:layout_constraintEnd_toEndOf="@id/animatedMediaBarrierHorizontal"
+                app:layout_constraintTop_toTopOf="@id/animatedMediaBarrierVertical" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/imagesCarousel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/space"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottomBar"
