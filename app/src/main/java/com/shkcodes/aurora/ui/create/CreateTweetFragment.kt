@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts.GetMultipleContents
 import androidx.activity.result.contract.ActivityResultContracts.TakePicture
 import androidx.core.content.FileProvider
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -140,6 +141,7 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, Gi
                 gifPreview.load(state.mediaAttachments.first(), imageLoader)
             }
             gifPreview.isVisible = state.attachmentType == GIF && !state.isLoading && !state.isDownloadingGif
+            gifLoadingIndicator.isVisible = state.isDownloadingGif
             if (state.mediaAttachments.isEmpty()) {
                 videoUri = null
                 videoPlayer.stop()
@@ -149,6 +151,7 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, Gi
             camera.isEnabled = bottomBarEnabled
             videoPlayer.playWhenReady = !state.isLoading
             gif.isEnabled = bottomBarEnabled
+            gif.isInvisible = state.isDownloadingGif
         }
     }
 

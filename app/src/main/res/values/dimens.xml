@@ -30,6 +30,7 @@
     <dimen name="attachment_icons_height">24dp</dimen>
     <dimen name="attachment_image_height">100dp</dimen>
     <dimen name="attachment_animated_media_height">200dp</dimen>
+    <dimen name="gif_loading_indicator_size">18dp</dimen>
     <dimen name="error_message_translation">100dp</dimen>
 
 </resources>
