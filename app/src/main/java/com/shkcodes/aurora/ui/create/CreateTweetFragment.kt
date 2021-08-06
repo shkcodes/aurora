@@ -69,8 +69,8 @@ class CreateTweetFragment : BaseFragment<State, Intent>(), LifecycleObserver, Gi
         }.toSet()
         viewModel.handleIntent(MediaSelected(uris, selectedTypes))
     }
-    private val captureImageRequest = registerForActivityResult(TakePicture()) {
-        viewModel.handleIntent(MediaSelected(listOf(imageUri!!), setOf(IMAGE)))
+    private val captureImageRequest = registerForActivityResult(TakePicture()) { pictureTaken ->
+        if (pictureTaken) viewModel.handleIntent(MediaSelected(listOf(imageUri!!), setOf(IMAGE)))
     }
     private val imagesAdapter = ItemsViewAdapter()
     private val videoPlayer: SimpleExoPlayer by lazy {
