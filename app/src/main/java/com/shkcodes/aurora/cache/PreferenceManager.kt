@@ -28,10 +28,10 @@ class PreferenceManager @Inject constructor(
         }
     }
 
-    var isLoggedIn: Boolean = getData(PrefKey.IS_LOGGED_IN) ?: false
+    var authorization: Authorization? = getData(PrefKey.AUTHORIZATION)
         set(value) {
             field = value
-            setData(PrefKey.IS_LOGGED_IN, value)
+            setData(PrefKey.AUTHORIZATION, value)
         }
 
     var timelineRefreshTime: LocalDateTime =
@@ -56,7 +56,7 @@ class PreferenceManager @Inject constructor(
 
 internal object PrefKey {
     const val SCHEMA_VERSION = "schema_version"
-    const val IS_LOGGED_IN = "is_logged_in"
+    const val AUTHORIZATION = "authorization"
     const val HOME_TIMELINE_REFRESH_TIME = "home_timeline_refresh_time"
     const val AUTOPLAY_VIDEOS = "autoplay_videos"
 }

@@ -3,8 +3,8 @@ package com.shkcodes.aurora.ui.splash
 import androidx.lifecycle.viewModelScope
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.SideEffect
-import com.shkcodes.aurora.service.AuthService
-import com.shkcodes.aurora.service.UserService
+import com.shkcodes.aurora.service.PreferenceService
+import com.shkcodes.aurora.service.TwitterService
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.splash.SplashContract.Constants.SPLASH_TIMEOUT
 import com.shkcodes.aurora.ui.splash.SplashContract.ViewModel
@@ -16,19 +16,19 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     override val dispatcherProvider: DispatcherProvider,
-    private val authService: AuthService,
-    private val userService: UserService
+    private val preferenceService: PreferenceService,
+    private val twitterService: TwitterService
 ) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            userService.flushTweetsCache()
-            delay(SPLASH_TIMEOUT)
-            val destination = if (authService.isLoggedIn) {
+            val destination = if (preferenceService.isLoggedIn) {
+                twitterService.switchToAccount(preferenceService.authorization!!)
                 Screen.Home
             } else {
                 Screen.Login
             }
+            delay(SPLASH_TIMEOUT)
             onSideEffect(SideEffect.DisplayScreen(destination))
         }
     }

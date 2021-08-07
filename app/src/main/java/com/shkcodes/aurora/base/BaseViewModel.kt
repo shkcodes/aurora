@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 abstract class BaseViewModel<S, I>(private val initialState: S) : ViewModel() {
 
@@ -36,5 +37,9 @@ abstract class BaseViewModel<S, I>(private val initialState: S) : ViewModel() {
 
     fun EventBus.emitEvent(event: Event) {
         viewModelScope.launch { sendEvent(event) }
+    }
+
+    suspend fun <T> execute(block: () -> T): Result<T> {
+        return runCatching { withContext(dispatcherProvider.io) { block() } }
     }
 }

@@ -3,7 +3,8 @@ package com.shkcodes.aurora.auth
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
-import com.shkcodes.aurora.service.AuthService
+import com.shkcodes.aurora.cache.Authorization
+import com.shkcodes.aurora.service.TwitterService
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.RequestAccessToken
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.Retry
@@ -18,15 +19,15 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class AuthViewModelTest : BaseTest() {
 
-    private val authService: AuthService = mockk(relaxUnitFun = true) {
-        coEvery { getRequestToken() } returns "token"
+    private val twitterService: TwitterService = mockk(relaxUnitFun = true) {
+        coEvery { getRequestToken() } returns Authorization("token", "secret")
     }
     private val errorHandler: ErrorHandler = mockk {
         every { getErrorMessage(any()) } returns "error"
     }
 
     private fun viewModel(): AuthViewModel {
-        return AuthViewModel(testDispatcherProvider, authService, errorHandler)
+        return AuthViewModel(testDispatcherProvider, twitterService, errorHandler)
     }
 
     @Test
@@ -35,13 +36,13 @@ class AuthViewModelTest : BaseTest() {
 
         sut.testStates {
             assert(expectItem() == State.Loading)
-            assert(expectItem() == State.RequestToken("token"))
+            assert(expectItem() == State.RequestToken(Authorization("token", "secret")))
         }
     }
 
     @Test
     fun `state updates correctly on init in case of error`() = test {
-        coEvery { authService.getRequestToken() } throws Exception()
+        coEvery { twitterService.getRequestToken() } throws Exception()
         val sut = viewModel()
 
         sut.testStates {
@@ -57,7 +58,7 @@ class AuthViewModelTest : BaseTest() {
 
         sut.testStates {
             assert(expectItem() == State.Loading)
-            assert(expectItem() == State.RequestToken("token"))
+            assert(expectItem() == State.RequestToken(Authorization("token", "secret")))
 
             sut.handleIntent(RequestAccessToken("verifier=verifierer"))
 
@@ -71,14 +72,14 @@ class AuthViewModelTest : BaseTest() {
 
     @Test
     fun `state updates correctly on request access token in case of failure`() = test {
-        coEvery { authService.getAccessToken(any(), any()) } throws Exception()
+        coEvery { twitterService.login(any(), any()) } throws Exception()
 
         val sut = viewModel()
 
 
         sut.testStates {
             assert(expectItem() == State.Loading)
-            assert(expectItem() == State.RequestToken("token"))
+            assert(expectItem() == State.RequestToken(Authorization("token", "secret")))
 
             sut.handleIntent(
                 RequestAccessToken("verifier=verifierer")
@@ -91,7 +92,7 @@ class AuthViewModelTest : BaseTest() {
 
     @Test
     fun `state updates correctly on retry event`() = test {
-        coEvery { authService.getRequestToken() } throws Exception()
+        coEvery { twitterService.getRequestToken() } throws Exception()
 
         val sut = viewModel()
 

@@ -1,6 +1,7 @@
 package com.shkcodes.aurora.ui.auth
 
 import com.shkcodes.aurora.base.BaseViewModel
+import com.shkcodes.aurora.cache.Authorization
 import com.shkcodes.aurora.ui.auth.AuthContract.Constant.AUTH_URL
 import com.shkcodes.aurora.ui.auth.AuthContract.State.Loading
 
@@ -11,8 +12,8 @@ interface AuthContract {
     sealed class State {
         object Loading : State()
         data class Error(val message: String) : State()
-        data class RequestToken(val token: String) : State() {
-            val authorizationUrl = "$AUTH_URL$token"
+        data class RequestToken(val authorization: Authorization) : State() {
+            val authorizationUrl = "$AUTH_URL${authorization.token}"
         }
     }
 

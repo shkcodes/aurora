@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.di
 
 import com.shkcodes.aurora.BuildConfig
-import com.shkcodes.aurora.api.AuthApi
 import com.shkcodes.aurora.api.AuthInterceptor
 import com.shkcodes.aurora.api.NetworkErrorHandler
 import com.shkcodes.aurora.api.StringProviderImpl
@@ -30,6 +29,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.create
 import twitter4j.Twitter
 import twitter4j.TwitterFactory
+import twitter4j.conf.Configuration
 import twitter4j.conf.ConfigurationBuilder
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -96,20 +96,19 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideTweeter(): Twitter {
-        val builder = ConfigurationBuilder().apply {
-            setOAuthConsumerKey(BuildConfig.CONSUMER_KEY)
-            setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET)
-            setOAuthAccessToken(BuildConfig.ACCESS_TOKEN)
-            setOAuthAccessTokenSecret(BuildConfig.ACCESS_SECRET)
-        }
-
-        return TwitterFactory(builder.build()).instance
+    fun provideTwitter(configuration: Configuration): Twitter {
+        return TwitterFactory(configuration).instance
     }
 
     @Provides
     @Singleton
-    fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create()
+    fun provideTwitterConfiguration(): Configuration {
+        return ConfigurationBuilder().apply {
+            setOAuthConsumerKey(BuildConfig.CONSUMER_KEY)
+            setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET)
+            setTweetModeExtended(true)
+        }.build()
+    }
 
     @Provides
     @Singleton

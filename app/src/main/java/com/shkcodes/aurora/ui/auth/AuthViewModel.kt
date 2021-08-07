@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
-import com.shkcodes.aurora.service.AuthService
+import com.shkcodes.aurora.service.TwitterService
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.RequestAccessToken
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     override val dispatcherProvider: DispatcherProvider,
-    private val authService: AuthService,
+    private val twitterService: TwitterService,
     private val errorHandler: ErrorHandler
 ) : ViewModel() {
 
@@ -31,14 +31,11 @@ class AuthViewModel @Inject constructor(
     override fun handleIntent(intent: Intent) {
         when (intent) {
             is RequestAccessToken -> {
-                val token = (currentState as RequestToken).token
+                val authorization = (currentState as RequestToken).authorization
                 val verifier = intent.authorizationResponse.split("=").last()
                 currentState = Loading
                 viewModelScope.launch {
-                    runCatching {
-                        authService.getAccessToken(verifier, token)
-                    }.onSuccess {
-                        authService.isLoggedIn = true
+                    execute { twitterService.login(authorization, verifier) }.onSuccess {
                         onSideEffect(SideEffect.DisplayScreen(Screen.Home))
                     }.onFailure {
                         currentState = Error(errorHandler.getErrorMessage(it))
@@ -55,9 +52,9 @@ class AuthViewModel @Inject constructor(
 
     private fun fetchRequestToken() {
         viewModelScope.launch {
-            runCatching { authService.getRequestToken() }
+            execute { twitterService.getRequestToken() }
                 .onSuccess {
-                    currentState = RequestToken(token = it)
+                    currentState = RequestToken(authorization = it)
                 }.onFailure {
                     currentState = Error(errorHandler.getErrorMessage(it))
                 }

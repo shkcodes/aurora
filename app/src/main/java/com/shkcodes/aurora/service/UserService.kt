@@ -14,12 +14,10 @@ import java.io.File
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
-import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val TIMELINE_REFRESH_THRESHOLD = 5 // minutes
-private const val CACHE_FLUSH_THRESHOLD = 2L // days
 
 @Singleton
 class UserService @Inject constructor(
@@ -45,10 +43,6 @@ class UserService @Inject constructor(
             if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()
         }
         return tweetsDao.getCachedTimeline(newerThan?.createdAt ?: minTime)
-    }
-
-    suspend fun flushTweetsCache() {
-        tweetsDao.removeTweets(ZonedDateTime.now().minusDays(CACHE_FLUSH_THRESHOLD))
     }
 
     suspend fun getMediaForTweet(tweetId: Long): List<MediaEntity> {

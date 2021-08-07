@@ -2,8 +2,8 @@ package com.shkcodes.aurora.splash
 
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.SideEffect
-import com.shkcodes.aurora.service.AuthService
-import com.shkcodes.aurora.service.UserService
+import com.shkcodes.aurora.service.PreferenceService
+import com.shkcodes.aurora.service.TwitterService
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.splash.SplashContract.Constants.SPLASH_TIMEOUT
 import com.shkcodes.aurora.ui.splash.SplashViewModel
@@ -16,14 +16,16 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class SplashViewModelTest : BaseTest() {
 
-    private val authService: AuthService = mockk()
-    private val userService: UserService = mockk()
+    private val preferenceService: PreferenceService = mockk {
+        every { authorization } returns mockk()
+    }
+    private val twitterService: TwitterService = mockk()
 
-    private fun viewModel() = SplashViewModel(testDispatcherProvider, authService, userService)
+    private fun viewModel() = SplashViewModel(testDispatcherProvider, preferenceService, twitterService)
 
     @Test
     fun `navigates to login after delay if user not logged in`() = testDispatcher.runBlockingTest {
-        every { authService.isLoggedIn } returns false
+        every { preferenceService.isLoggedIn } returns false
         viewModel().testSideEffects {
             advanceTimeBy(SPLASH_TIMEOUT)
             assert(SideEffect.DisplayScreen(Screen.Login) == expectItem())
@@ -33,7 +35,7 @@ class SplashViewModelTest : BaseTest() {
 
     @Test
     fun `navigates to home after delay if user logged in`() = testDispatcher.runBlockingTest {
-        every { authService.isLoggedIn } returns true
+        every { preferenceService.isLoggedIn } returns true
         viewModel().testSideEffects {
             advanceTimeBy(SPLASH_TIMEOUT)
             assert(SideEffect.DisplayScreen(Screen.Home) == expectItem())
