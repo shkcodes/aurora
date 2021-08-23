@@ -21,6 +21,7 @@ import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -71,8 +72,10 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 val userProfile = async { userService.fetchUserProfile(userHandle) }
-                val userTweets = async { userService.fetchUserTweets(userHandle) }
-                val userFavorites = async { userService.fetchUserFavorites(userHandle) }
+                val userTweets =
+                    async { withContext(dispatcherProvider.io) { userService.fetchUserTweets(userHandle) } }
+                val userFavorites =
+                    async { withContext(dispatcherProvider.io) { userService.fetchUserFavorites(userHandle) } }
                 Triple(userProfile.await(), userTweets.await(), userFavorites.await())
             }.onSuccess { data ->
                 val media = data.second.map { it.tweetMedia }.flatten()

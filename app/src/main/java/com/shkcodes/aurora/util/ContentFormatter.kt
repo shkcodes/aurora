@@ -9,9 +9,9 @@ import android.text.TextPaint
 import android.text.style.ClickableSpan
 import android.view.View
 import com.shkcodes.aurora.R
-import com.shkcodes.aurora.api.response.Url
 import com.shkcodes.aurora.api.response.User
 import com.shkcodes.aurora.cache.entities.TweetEntity
+import com.shkcodes.aurora.cache.entities.Url
 import com.shkcodes.aurora.ui.tweetlist.TweetItem
 import org.jsoup.Jsoup
 

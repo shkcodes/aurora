@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.shkcodes.aurora.api.response.Tweets
 import com.shkcodes.aurora.cache.entities.CachedTweets
 import com.shkcodes.aurora.cache.entities.MediaEntity
 import com.shkcodes.aurora.cache.entities.TweetEntity
@@ -14,6 +13,7 @@ import com.shkcodes.aurora.cache.entities.TweetType.NONE
 import com.shkcodes.aurora.cache.entities.toCachedTweets
 import com.shkcodes.aurora.cache.entities.toMediaEntity
 import com.shkcodes.aurora.ui.tweetlist.TweetItems
+import twitter4j.Status
 import java.time.ZonedDateTime
 
 @Dao
@@ -49,13 +49,13 @@ abstract class TweetsDao {
     @Query("SELECT * FROM tweets where id = :tweetId")
     abstract suspend fun getTweet(tweetId: Long): TweetEntity
 
-    suspend fun cacheTimeline(tweets: Tweets, tweetType: TweetType, likedBy: String? = null) {
-        val quoteTweets = tweets.mapNotNull { it.quoteTweet }
-        val retweets = tweets.mapNotNull { it.retweet }
-        val media = tweets.mapNotNull { it.toMediaEntity() }.flatten()
-        val quoteTweetsMedia = quoteTweets.mapNotNull { it.toMediaEntity() }.flatten()
-        val retweetsMedia = retweets.mapNotNull { it.toMediaEntity() }.flatten()
-        val retweetQuoteTweets = retweets.mapNotNull { it.quoteTweet }
+    suspend fun cacheTimeline(tweets: List<Status>, tweetType: TweetType, likedBy: String? = null) {
+        val quoteTweets = tweets.mapNotNull { it.quotedStatus }
+        val retweets = tweets.mapNotNull { it.retweetedStatus }
+        val media = tweets.map { it.toMediaEntity() }.flatten()
+        val quoteTweetsMedia = quoteTweets.map { it.toMediaEntity() }.flatten()
+        val retweetsMedia = retweets.map { it.toMediaEntity() }.flatten()
+        val retweetQuoteTweets = retweets.mapNotNull { it.quotedStatus }
         saveTweets(
             tweets.toCachedTweets(tweetType, likedBy) +
                 quoteTweets.toCachedTweets(NONE) +

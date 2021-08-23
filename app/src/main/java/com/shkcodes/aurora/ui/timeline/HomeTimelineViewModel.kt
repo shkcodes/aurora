@@ -30,6 +30,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -103,7 +104,14 @@ class HomeTimelineViewModel @Inject constructor(
         newerThan: TweetEntity? = null
     ) {
         viewModelScope.launch {
-            runCatching { userService.fetchTimelineTweets(newerThan, afterId) }
+            runCatching {
+                withContext(dispatcherProvider.io) {
+                    userService.fetchTimelineTweets(
+                        newerThan,
+                        afterId
+                    )
+                }
+            }
                 .onSuccess {
                     val newItems = if (newerThan != null) it else emptyList()
                     if (newItems.isNotEmpty()) {

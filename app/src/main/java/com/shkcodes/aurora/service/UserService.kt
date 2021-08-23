@@ -25,7 +25,8 @@ class UserService @Inject constructor(
     private val tweetsDao: TweetsDao,
     private val preferenceManager: PreferenceManager,
     private val timeProvider: TimeProvider,
-    private val twitterApi: TwitterApi
+    private val twitterApi: TwitterApi,
+    private val twitterService: TwitterService
 ) {
     private val minTime = Instant.EPOCH.atZone(ZoneOffset.UTC)
 
@@ -38,7 +39,12 @@ class UserService @Inject constructor(
 
     suspend fun fetchTimelineTweets(newerThan: TweetEntity?, afterId: Long?): TweetItems {
         if (isTimelineStale || afterId != null || newerThan != null) {
-            val freshTweets = userApi.getTimelineTweets(afterId = afterId, sinceId = newerThan?.id)
+            val freshTweets =
+                twitterService.getTimelineTweets(
+                    afterId,
+                    newerThan?.id
+                )
+
             tweetsDao.cacheTimeline(freshTweets, TweetType.TIMELINE)
             if (isTimelineStale) preferenceManager.timelineRefreshTime = timeProvider.now()
         }
@@ -58,13 +64,13 @@ class UserService @Inject constructor(
     }
 
     suspend fun fetchUserTweets(userHandle: String, afterId: Long? = null): TweetItems {
-        val tweets = userApi.getUserTweets(userHandle, afterId)
+        val tweets = twitterService.getUserTweets(userHandle, afterId)
         tweetsDao.cacheTimeline(tweets, TweetType.USER)
         return tweetsDao.getUserTweets(userHandle)
     }
 
     suspend fun fetchUserFavorites(userHandle: String, afterId: Long? = null): TweetItems {
-        val tweets = userApi.getFavoriteTweets(userHandle, afterId)
+        val tweets = twitterService.getFavoriteTweets(userHandle, afterId)
         tweetsDao.cacheTimeline(tweets, TweetType.FAVORITES, userHandle)
         return tweetsDao.getUserFavorites(userHandle)
     }

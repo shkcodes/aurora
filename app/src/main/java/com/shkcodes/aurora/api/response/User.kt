@@ -1,5 +1,6 @@
 package com.shkcodes.aurora.api.response
 
+import com.shkcodes.aurora.cache.entities.Url
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

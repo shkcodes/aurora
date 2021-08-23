@@ -3,10 +3,7 @@ package com.shkcodes.aurora.cache.entities
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.shkcodes.aurora.api.response.MediaType.GIF
-import com.shkcodes.aurora.api.response.MediaType.PHOTO
-import com.shkcodes.aurora.api.response.MediaType.VIDEO
-import com.shkcodes.aurora.api.response.Tweet
+import twitter4j.Status
 
 enum class MediaType {
     GIF, VIDEO, PHOTO
@@ -27,25 +24,25 @@ data class MediaEntity(
     val isAnimatedMedia = mediaType == MediaType.VIDEO || mediaType == MediaType.GIF
 }
 
-fun Tweet.toMediaEntity(): List<MediaEntity>? {
-    return extendedEntities?.media?.map {
+fun Status.toMediaEntity(): List<MediaEntity> {
+    return mediaEntities.map {
         MediaEntity(
             id = it.id,
             tweetId = id,
-            bitrate = it.videoInfo?.variants?.firstOrNull()?.bitrate,
-            duration = it.videoInfo?.duration ?: 0,
-            url = it.videoInfo?.variants?.maxByOrNull { it.bitrate }?.url ?: it.url,
+            bitrate = it.videoVariants?.firstOrNull()?.bitrate?.toLong(),
+            duration = it.videoDurationMillis,
+            url = it.videoVariants?.maxByOrNull { it.bitrate }?.url ?: it.mediaURLHttps,
             mediaType = it.type.toEntityMediaType(),
-            thumbnail = it.url,
-            aspectRatio = it.aspectRatio
+            thumbnail = it.mediaURLHttps,
+            aspectRatio = it.videoAspectRatioWidth.toDouble()
         )
     }
 }
 
-private fun com.shkcodes.aurora.api.response.MediaType.toEntityMediaType(): MediaType {
+private fun String.toEntityMediaType(): MediaType {
     return when (this) {
-        GIF -> MediaType.GIF
-        PHOTO -> MediaType.PHOTO
-        VIDEO -> MediaType.VIDEO
+        "animated_gif" -> MediaType.GIF
+        "photo" -> MediaType.PHOTO
+        else -> MediaType.VIDEO
     }
 }
