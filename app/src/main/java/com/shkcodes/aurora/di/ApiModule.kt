@@ -4,7 +4,6 @@ import com.shkcodes.aurora.BuildConfig
 import com.shkcodes.aurora.api.AuthInterceptor
 import com.shkcodes.aurora.api.NetworkErrorHandler
 import com.shkcodes.aurora.api.StringProviderImpl
-import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.adapters.LocalDateTimeAdapter
 import com.shkcodes.aurora.api.adapters.ZonedDateTimeAdapter
 import com.shkcodes.aurora.base.ErrorHandler
@@ -26,7 +25,6 @@ import okhttp3.logging.HttpLoggingInterceptor.Level
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import retrofit2.create
 import twitter4j.Twitter
 import twitter4j.TwitterFactory
 import twitter4j.conf.Configuration
@@ -109,10 +107,6 @@ object ApiModule {
             setTweetModeExtended(true)
         }.build()
     }
-
-    @Provides
-    @Singleton
-    fun provideUserApi(retrofit: Retrofit): UserApi = retrofit.create()
 
     @Provides
     @Singleton

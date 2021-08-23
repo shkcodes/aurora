@@ -71,7 +71,8 @@ class ProfileViewModel @Inject constructor(
     private fun fetchData(userHandle: String) {
         viewModelScope.launch {
             runCatching {
-                val userProfile = async { userService.fetchUserProfile(userHandle) }
+                val userProfile =
+                    async { withContext(dispatcherProvider.io) { userService.fetchUserProfile(userHandle) } }
                 val userTweets =
                     async { withContext(dispatcherProvider.io) { userService.fetchUserTweets(userHandle) } }
                 val userFavorites =

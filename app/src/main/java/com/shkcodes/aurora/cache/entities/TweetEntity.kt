@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import twitter4j.Status
+import twitter4j.URLEntity
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -65,10 +66,12 @@ fun Status.toTweetEntity(tweetType: TweetType, likedBy: String?): TweetEntity {
     )
 }
 
+fun URLEntity.toUrl() = Url(url, displayURL, expandedURL)
+
 private val Status.sharedUrls: List<Url>
     get() {
         return urlEntities.filterNot { it.url == quotedStatusPermalink?.url }
-            .map { Url(it.url, it.displayURL, it.expandedURL) }
+            .map(URLEntity::toUrl)
     }
 
 private fun Status.purgeUrls(): String {

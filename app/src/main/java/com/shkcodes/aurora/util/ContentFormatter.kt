@@ -42,10 +42,10 @@ data class AnnotatedContent(
 
 fun User.annotatedLink(context: Context, handler: (String) -> Unit): SpannableStringBuilder? {
     return url?.let {
-        val span = ColoredClickableSpan(context.getColor(R.color.colorPrimary)) { handler(it.second) }
+        val span = ColoredClickableSpan(context.getColor(R.color.colorPrimary)) { handler(it.url) }
         SpannableStringBuilder().apply {
-            append(it.first)
-            setSpan(span, 0, it.first.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            append(it.displayUrl)
+            setSpan(span, 0, it.displayUrl.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 }

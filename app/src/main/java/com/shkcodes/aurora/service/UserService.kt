@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.service
 
 import com.shkcodes.aurora.api.TwitterApi
-import com.shkcodes.aurora.api.UserApi
 import com.shkcodes.aurora.api.response.User
 import com.shkcodes.aurora.cache.PreferenceManager
 import com.shkcodes.aurora.cache.dao.TweetsDao
@@ -21,7 +20,6 @@ private const val TIMELINE_REFRESH_THRESHOLD = 5 // minutes
 
 @Singleton
 class UserService @Inject constructor(
-    private val userApi: UserApi,
     private val tweetsDao: TweetsDao,
     private val preferenceManager: PreferenceManager,
     private val timeProvider: TimeProvider,
@@ -59,8 +57,8 @@ class UserService @Inject constructor(
         return tweetsDao.getUserTweets(userHandle)
     }
 
-    suspend fun fetchUserProfile(userHandle: String): User {
-        return userApi.getUserProfile(userHandle)
+    fun fetchUserProfile(userHandle: String): User {
+        return twitterService.getProfile(userHandle)
     }
 
     suspend fun fetchUserTweets(userHandle: String, afterId: Long? = null): TweetItems {

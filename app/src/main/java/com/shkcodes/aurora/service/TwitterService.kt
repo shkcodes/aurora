@@ -2,6 +2,7 @@ package com.shkcodes.aurora.service
 
 import com.shkcodes.aurora.BuildConfig
 import com.shkcodes.aurora.api.TwitterApi
+import com.shkcodes.aurora.api.response.toUser
 import com.shkcodes.aurora.cache.Authorization
 import com.shkcodes.aurora.cache.toAccessToken
 import com.shkcodes.aurora.cache.toAuthorization
@@ -63,5 +64,9 @@ class TwitterService @Inject constructor(
             paging.maxId = afterId
         }
         return twitterApi.getFavorites(userHandle, paging)
+    }
+
+    fun getProfile(userHandle: String): com.shkcodes.aurora.api.response.User {
+        return twitterApi.showUser(userHandle)!!.toUser()
     }
 }
