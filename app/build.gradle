@@ -95,11 +95,7 @@ dependencies {
 
     detektPlugins Dependencies.detektFormatter
 
-    implementation Dependencies.retrofit
-    implementation Dependencies.okhttp
     implementation Dependencies.moshi
-    implementation Dependencies.moshiConverter
-    implementation Dependencies.scalarsConverter
     kapt Dependencies.moshiCompiler
 
     coreLibraryDesugaring Dependencies.desugarLib

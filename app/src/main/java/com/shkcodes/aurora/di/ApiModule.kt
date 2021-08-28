@@ -1,9 +1,9 @@
 package com.shkcodes.aurora.di
 
 import com.shkcodes.aurora.BuildConfig
-import com.shkcodes.aurora.api.AuthInterceptor
 import com.shkcodes.aurora.api.NetworkErrorHandler
 import com.shkcodes.aurora.api.StringProviderImpl
+import com.shkcodes.aurora.api.TwitterApi
 import com.shkcodes.aurora.api.adapters.LocalDateTimeAdapter
 import com.shkcodes.aurora.api.adapters.ZonedDateTimeAdapter
 import com.shkcodes.aurora.base.ErrorHandler
@@ -12,24 +12,14 @@ import com.shkcodes.aurora.base.EventBusImpl
 import com.shkcodes.aurora.base.StringProvider
 import com.shkcodes.aurora.service.DefaultTimeProvider
 import com.shkcodes.aurora.service.TimeProvider
-import com.shkcodes.aurora.util.ApiConstants
-import com.shkcodes.aurora.util.ApiConstants.API_TIMEOUT
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import okhttp3.logging.HttpLoggingInterceptor.Level
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
-import twitter4j.Twitter
 import twitter4j.TwitterFactory
 import twitter4j.conf.Configuration
 import twitter4j.conf.ConfigurationBuilder
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Suppress("TooManyFunctions")
@@ -39,10 +29,8 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) Level.BODY else Level.NONE
-        }
+    fun provideTwitterApi(configuration: Configuration): TwitterApi {
+        return TwitterFactory(configuration).instance
     }
 
     @Provides
@@ -59,48 +47,7 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideGsonConverterFactory(moshi: Moshi): MoshiConverterFactory {
-        return MoshiConverterFactory.create(moshi)
-    }
-
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor,
-        authInterceptor: AuthInterceptor,
-    ): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .addInterceptor(authInterceptor)
-            .connectTimeout(API_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(API_TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(API_TIMEOUT, TimeUnit.SECONDS)
-        return builder.build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideRetrofit(
-        okHttpClient: OkHttpClient,
-        moshiConverterFactory: MoshiConverterFactory,
-    ): Retrofit {
-        return Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(ApiConstants.API_BASE_URL)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .addConverterFactory(moshiConverterFactory)
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideTwitter(configuration: Configuration): Twitter {
-        return TwitterFactory(configuration).instance
-    }
-
-    @Provides
-    @Singleton
-    fun provideTwitterConfiguration(): Configuration {
+    fun provideApiConfiguration(): Configuration {
         return ConfigurationBuilder().apply {
             setOAuthConsumerKey(BuildConfig.CONSUMER_KEY)
             setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET)
