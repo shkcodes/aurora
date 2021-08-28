@@ -47,6 +47,12 @@
         app:layout_constraintTop_toBottomOf="@id/quoteTweetCard"
         tools:visibility="visible" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        app:constraint_referenced_ids="quoteTweetCard,linkPreview"
+        app:barrierDirection="bottom"
+        android:layout_height="wrap_content"/>
 
     <ImageView
         android:id="@+id/retweetIndicator"
@@ -57,7 +63,7 @@
         android:contentDescription="@string/accessibility_retweet_icon"
         android:src="@drawable/ic_repeat"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/quoteTweetCard"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
         app:tint="@color/colorSecondary" />
 
     <TextView
@@ -73,7 +79,7 @@
         app:layout_constraintBottom_toBottomOf="@id/retweetIndicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/retweetIndicator"
-        app:layout_constraintTop_toBottomOf="@id/quoteTweetCard"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
         tools:text="Shashank Retweeted" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
