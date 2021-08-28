@@ -4,7 +4,7 @@ object Versions {
     const val targetSdkVersion = 30
 
     const val gradle = "4.2.1"
-    const val kotlin = "1.4.32"
+    const val kotlin = "1.5.30"
 
     const val coreKtx = "1.3.2"
     const val appCompat = "1.2.0"
