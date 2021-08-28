@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
-import com.shkcodes.aurora.service.TwitterService
+import com.shkcodes.aurora.service.AuthService
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent
 import com.shkcodes.aurora.ui.auth.AuthContract.Intent.RequestAccessToken
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     override val dispatcherProvider: DispatcherProvider,
-    private val twitterService: TwitterService,
+    private val authService: AuthService,
     private val errorHandler: ErrorHandler
 ) : ViewModel() {
 
@@ -35,7 +35,7 @@ class AuthViewModel @Inject constructor(
                 val verifier = intent.authorizationResponse.split("=").last()
                 currentState = Loading
                 viewModelScope.launch {
-                    execute { twitterService.login(authorization, verifier) }.onSuccess {
+                    runCatching { authService.login(authorization, verifier) }.onSuccess {
                         onSideEffect(SideEffect.DisplayScreen(Screen.Home))
                     }.onFailure {
                         currentState = Error(errorHandler.getErrorMessage(it))
@@ -52,7 +52,7 @@ class AuthViewModel @Inject constructor(
 
     private fun fetchRequestToken() {
         viewModelScope.launch {
-            execute { twitterService.getRequestToken() }
+            runCatching { authService.getRequestToken() }
                 .onSuccess {
                     currentState = RequestToken(authorization = it)
                 }.onFailure {

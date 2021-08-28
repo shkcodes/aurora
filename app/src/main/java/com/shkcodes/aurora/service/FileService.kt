@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.core.content.FileProvider
+import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.util.fileProviderAuthority
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
@@ -16,7 +17,10 @@ private const val PREFIX = "copy_"
 private const val EXTENSION_GIF = ".gif"
 
 @Singleton
-class FileService @Inject constructor(@ApplicationContext private val context: Context) {
+class FileService @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val dispatcherProvider: DispatcherProvider
+) {
 
     fun getFile(uri: Uri): File {
         return uri.authority.let {
@@ -37,9 +41,9 @@ class FileService @Inject constructor(@ApplicationContext private val context: C
         }
     }
 
-    fun downloadGif(id: String, url: String): Uri {
+    suspend fun downloadGif(id: String, url: String): Uri {
         val file = File(context.externalCacheDir, "$id$EXTENSION_GIF")
-        downloadFile(url, file)
+        dispatcherProvider.execute { downloadFile(url, file) }
         return FileProvider.getUriForFile(context, context.fileProviderAuthority, file)
     }
 

@@ -29,7 +29,6 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
 import com.shkcodes.aurora.ui.create.CreateTweetContract.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -121,12 +120,11 @@ class CreateTweetViewModel @Inject constructor(
         viewModelScope.launch {
             currentState = currentState.copy(isLoading = true)
             runCatching {
-                withContext(dispatcherProvider.io) {
-                    userService.postTweet(
-                        currentState.content.orEmpty(),
-                        mediaFiles(), currentState.hasImageAttachments
-                    )
-                }
+                userService.postTweet(
+                    currentState.content.orEmpty(),
+                    mediaFiles(),
+                    currentState.hasImageAttachments
+                )
             }.onSuccess {
                 onSideEffect(SideEffect.DisplayScreen(Previous))
             }.onFailure(Timber::e)
@@ -143,9 +141,7 @@ class CreateTweetViewModel @Inject constructor(
                 onSideEffect(SideEffect.Action(AttachmentError(stringProvider.getString(GIF_DOWNLOAD_ERROR))))
             } else {
                 currentState = currentState.copy(isDownloadingGif = true)
-                val uri = withContext(dispatcherProvider.io) {
-                    fileService.downloadGif(intent.id, intent.url)
-                }
+                val uri = fileService.downloadGif(intent.id, intent.url)
                 currentState = currentState.copy(
                     isDownloadingGif = false,
                     mediaAttachments = listOf(uri),

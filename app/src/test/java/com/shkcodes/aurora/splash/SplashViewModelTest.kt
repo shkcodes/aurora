@@ -2,8 +2,8 @@ package com.shkcodes.aurora.splash
 
 import com.shkcodes.aurora.base.BaseTest
 import com.shkcodes.aurora.base.SideEffect
+import com.shkcodes.aurora.service.AuthService
 import com.shkcodes.aurora.service.PreferenceService
-import com.shkcodes.aurora.service.TwitterService
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.splash.SplashContract.Constants.SPLASH_TIMEOUT
 import com.shkcodes.aurora.ui.splash.SplashViewModel
@@ -19,9 +19,9 @@ class SplashViewModelTest : BaseTest() {
     private val preferenceService: PreferenceService = mockk {
         every { userCredentials } returns mockk()
     }
-    private val twitterService: TwitterService = mockk()
+    private val authService: AuthService = mockk()
 
-    private fun viewModel() = SplashViewModel(testDispatcherProvider, preferenceService, twitterService)
+    private fun viewModel() = SplashViewModel(testDispatcherProvider, preferenceService, authService)
 
     @Test
     fun `navigates to login after delay if user not logged in`() = testDispatcher.runBlockingTest {

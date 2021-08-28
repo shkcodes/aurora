@@ -19,6 +19,7 @@ import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveAttachment
 import com.shkcodes.aurora.ui.create.CreateTweetContract.Intent.RemoveImage
 import com.shkcodes.aurora.ui.create.CreateTweetContract.State
 import com.shkcodes.aurora.ui.create.CreateTweetViewModel
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
@@ -33,7 +34,7 @@ class CreateTweetViewModelTest : BaseTest() {
     private val userService: UserService = mockk(relaxUnitFun = true)
     private val fileService: FileService = mockk {
         every { getFile(any()) } returns File("nice")
-        every { downloadGif(any(), any()) } returns mockk()
+        coEvery { downloadGif(any(), any()) } returns mockk()
     }
     private val stringProvider = object : StringProvider {
         override fun getString(stringId: StringId): String {
