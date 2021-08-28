@@ -5,6 +5,8 @@ import com.shkcodes.aurora.api.TwitterApi
 import com.shkcodes.aurora.api.response.toUser
 import com.shkcodes.aurora.cache.Authorization
 import com.shkcodes.aurora.cache.UserCredentials
+import com.shkcodes.aurora.cache.dao.UsersDao
+import com.shkcodes.aurora.cache.entities.toEntity
 import com.shkcodes.aurora.cache.toAccessToken
 import com.shkcodes.aurora.cache.toAuthorization
 import com.shkcodes.aurora.cache.toRequestToken
@@ -13,16 +15,19 @@ import twitter4j.Paging
 import twitter4j.ResponseList
 import twitter4j.Status
 import twitter4j.TwitterFactory
+import twitter4j.User
 import twitter4j.conf.Configuration
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val TWEETS_PER_PAGE = 200
+private const val FRIENDS_PER_PAGE = 200
 
 @Singleton
 class TwitterService @Inject constructor(
     private val config: Configuration,
-    private val preferenceService: PreferenceService
+    private val preferenceService: PreferenceService,
+    private val usersDao: UsersDao
 ) {
     private var twitterApi: TwitterApi = TwitterFactory(config).instance
 
@@ -38,8 +43,23 @@ class TwitterService @Inject constructor(
     fun login(authorization: Authorization, verifier: String) {
         val credentials =
             twitterApi.getOAuthAccessToken(authorization.toRequestToken(), verifier).toUserCredentials()
+        cacheFriends(credentials.userId)
         switchToAccount(credentials)
     }
+
+    private fun cacheFriends(userId: Long) {
+        var cursor = -1L
+        while (cursor != 0L) {
+            val response = twitterApi.getFriendsList(
+                userId, cursor,
+                FRIENDS_PER_PAGE, true, false
+            )
+            val friends = response.map(User::toEntity)
+            usersDao.saveUsers(friends)
+            cursor = response.nextCursor
+        }
+    }
+
 
     fun getTimelineTweets(afterId: Long?, sinceId: Long?): ResponseList<Status> {
         val paging = Paging(1, TWEETS_PER_PAGE)

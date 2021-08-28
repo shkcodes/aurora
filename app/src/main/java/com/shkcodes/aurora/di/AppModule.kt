@@ -43,6 +43,10 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideUsersDao(database: AuroraDatabase) = database.usersDao()
+
+    @Provides
+    @Singleton
     fun provideImageLoader(application: Application) = ImageLoader.Builder(application)
         .componentRegistry {
             if (SDK_INT >= Build.VERSION_CODES.P) {
