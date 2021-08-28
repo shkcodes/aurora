@@ -17,7 +17,7 @@ import kotlin.time.ExperimentalTime
 class SplashViewModelTest : BaseTest() {
 
     private val preferenceService: PreferenceService = mockk {
-        every { authorization } returns mockk()
+        every { userCredentials } returns mockk()
     }
     private val twitterService: TwitterService = mockk()
 

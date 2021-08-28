@@ -28,10 +28,10 @@ class PreferenceManager @Inject constructor(
         }
     }
 
-    var authorization: Authorization? = getData(PrefKey.AUTHORIZATION)
+    var userCredentials: UserCredentials? = getData(PrefKey.USER_CREDENTIALS)
         set(value) {
             field = value
-            setData(PrefKey.AUTHORIZATION, value)
+            setData(PrefKey.USER_CREDENTIALS, value)
         }
 
     var timelineRefreshTime: LocalDateTime =
@@ -56,7 +56,7 @@ class PreferenceManager @Inject constructor(
 
 internal object PrefKey {
     const val SCHEMA_VERSION = "schema_version"
-    const val AUTHORIZATION = "authorization"
+    const val USER_CREDENTIALS = "user_credentials"
     const val HOME_TIMELINE_REFRESH_TIME = "home_timeline_refresh_time"
     const val AUTOPLAY_VIDEOS = "autoplay_videos"
 }

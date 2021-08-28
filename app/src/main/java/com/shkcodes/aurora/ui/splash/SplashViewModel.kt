@@ -23,7 +23,7 @@ class SplashViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val destination = if (preferenceService.isLoggedIn) {
-                twitterService.switchToAccount(preferenceService.authorization!!)
+                twitterService.switchToAccount(preferenceService.userCredentials!!)
                 Screen.Home
             } else {
                 Screen.Login

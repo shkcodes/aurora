@@ -2,7 +2,6 @@ package com.shkcodes.aurora.cache
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import twitter4j.auth.AccessToken
 import twitter4j.auth.RequestToken
 
 @JsonClass(generateAdapter = true)
@@ -14,7 +13,5 @@ data class Authorization(
 )
 
 fun RequestToken.toAuthorization() = Authorization(token, tokenSecret)
-fun AccessToken.toAuthorization() = Authorization(token, tokenSecret)
 
 fun Authorization.toRequestToken() = RequestToken(token, tokenSecret)
-fun Authorization.toAccessToken() = AccessToken(token, tokenSecret)

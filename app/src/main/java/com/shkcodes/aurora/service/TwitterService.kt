@@ -4,9 +4,11 @@ import com.shkcodes.aurora.BuildConfig
 import com.shkcodes.aurora.api.TwitterApi
 import com.shkcodes.aurora.api.response.toUser
 import com.shkcodes.aurora.cache.Authorization
+import com.shkcodes.aurora.cache.UserCredentials
 import com.shkcodes.aurora.cache.toAccessToken
 import com.shkcodes.aurora.cache.toAuthorization
 import com.shkcodes.aurora.cache.toRequestToken
+import com.shkcodes.aurora.cache.toUserCredentials
 import twitter4j.Paging
 import twitter4j.ResponseList
 import twitter4j.Status
@@ -24,9 +26,9 @@ class TwitterService @Inject constructor(
 ) {
     private var twitterApi: TwitterApi = TwitterFactory(config).instance
 
-    fun switchToAccount(authorization: Authorization) {
-        preferenceService.authorization = authorization
-        twitterApi = TwitterFactory(config).getInstance(authorization.toAccessToken())
+    fun switchToAccount(credentials: UserCredentials) {
+        preferenceService.userCredentials = credentials
+        twitterApi = TwitterFactory(config).getInstance(credentials.toAccessToken())
     }
 
     fun getRequestToken(): Authorization {
@@ -34,9 +36,9 @@ class TwitterService @Inject constructor(
     }
 
     fun login(authorization: Authorization, verifier: String) {
-        val authorization =
-            twitterApi.getOAuthAccessToken(authorization.toRequestToken(), verifier).toAuthorization()
-        switchToAccount(authorization)
+        val credentials =
+            twitterApi.getOAuthAccessToken(authorization.toRequestToken(), verifier).toUserCredentials()
+        switchToAccount(credentials)
     }
 
     fun getTimelineTweets(afterId: Long?, sinceId: Long?): ResponseList<Status> {

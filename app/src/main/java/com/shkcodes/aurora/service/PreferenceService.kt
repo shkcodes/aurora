@@ -1,7 +1,7 @@
 package com.shkcodes.aurora.service
 
-import com.shkcodes.aurora.cache.Authorization
 import com.shkcodes.aurora.cache.PreferenceManager
+import com.shkcodes.aurora.cache.UserCredentials
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,7 +11,7 @@ class PreferenceService @Inject constructor(
 ) {
 
     val isLoggedIn: Boolean
-        get() = preferenceManager.authorization != null
+        get() = preferenceManager.userCredentials != null
 
     var autoplayVideos: Boolean
         get() = preferenceManager.autoplayVideos
@@ -19,9 +19,9 @@ class PreferenceService @Inject constructor(
             preferenceManager.autoplayVideos = value
         }
 
-    var authorization: Authorization?
-        get() = preferenceManager.authorization
+    var userCredentials: UserCredentials?
+        get() = preferenceManager.userCredentials
         set(value) {
-            preferenceManager.authorization = value
+            preferenceManager.userCredentials = value
         }
 }
