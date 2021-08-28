@@ -52,6 +52,7 @@ class TweetAdapterItem(
                     context.getString(R.string.user_handle_placeholder, tweet.userHandle)
                 time.text = tweet.createdAt.toPrettyTime()
                 tweetMedia.show(media, imageLoader, { imageView, index ->
+                    animationHelper.isQuoteTweet = false
                     animationHelper.tweetIndex = positionInAdapter
                     animationHelper.mediaIndex = index
                     handler.onMediaClick(media[index], index, imageView)
@@ -95,6 +96,9 @@ class TweetAdapterItem(
             content.text = annotatedContent.quotedContent
             content.handleClickableSpans()
             tweetMedia.show(quoteTweetMedia, imageLoader, { imageView, index ->
+                animationHelper.isQuoteTweet = true
+                animationHelper.tweetIndex = positionInAdapter
+                animationHelper.mediaIndex = index
                 handler.onMediaClick(quoteTweetMedia[index], index, imageView)
             })
         }

@@ -14,10 +14,16 @@ import javax.inject.Singleton
 class SharedElementTransitionHelper @Inject constructor() {
     var tweetIndex: Int = -1
     var mediaIndex: Int = -1
+    var isQuoteTweet = false
 
     fun getTweetImageView(list: RecyclerView): ImageView? {
-        return (list.findViewHolderForAdapterPosition(tweetIndex) as TweetItemViewHolder)
-            .binding.primaryTweet.tweetMedia.getImageView(mediaIndex)
+        val rootBinding = (list.findViewHolderForAdapterPosition(tweetIndex) as TweetItemViewHolder).binding
+        val tweetMedia = if (isQuoteTweet) {
+            rootBinding.quoteTweet.tweetMedia
+        } else {
+            rootBinding.primaryTweet.tweetMedia
+        }
+        return tweetMedia.getImageView(mediaIndex)
     }
 
     fun getPagerImageView(pager: ViewPager2): ImageView? {
