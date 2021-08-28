@@ -78,7 +78,6 @@ dependencies {
     implementation Dependencies.viewModel
 
     implementation Dependencies.hilt
-    implementation Dependencies.hiltViewModel
     kapt Dependencies.hiltCompiler
     kapt Dependencies.hiltCompilerJetpack
 
