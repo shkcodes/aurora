@@ -17,7 +17,7 @@ import org.jsoup.Jsoup
 
 // Regex containing the syntax tokens
 val symbolPattern by lazy {
-    Regex("""(https?://[^\s\t\n]+)|(@\w+)|(#\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)""")
+    Regex("""(https?://[^\s\t\n]+)|(@\w+)|(#\w+)|(_[\w]+_)|(~[\w]+~)""")
 }
 
 class ColoredClickableSpan(
