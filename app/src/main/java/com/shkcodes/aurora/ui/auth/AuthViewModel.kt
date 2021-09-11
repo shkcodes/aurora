@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.ui.auth
 
 import androidx.lifecycle.viewModelScope
-import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.AuthService
@@ -19,7 +18,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    override val dispatcherProvider: DispatcherProvider,
     private val authService: AuthService,
     private val errorHandler: ErrorHandler
 ) : ViewModel() {

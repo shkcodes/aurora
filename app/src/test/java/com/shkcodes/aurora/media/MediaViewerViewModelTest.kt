@@ -21,7 +21,7 @@ class MediaViewerViewModelTest : BaseTest() {
         coEvery { getMediaForTweet(any()) } returns listOf(media)
     }
 
-    private fun viewModel() = MediaViewerViewModel(testDispatcherProvider, userService)
+    private fun viewModel() = MediaViewerViewModel(userService)
 
     @Test
     fun `updates state correctly on init`() = testDispatcher.runBlockingTest {

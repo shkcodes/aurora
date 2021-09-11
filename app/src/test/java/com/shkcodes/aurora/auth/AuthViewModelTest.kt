@@ -27,7 +27,7 @@ class AuthViewModelTest : BaseTest() {
     }
 
     private fun viewModel(): AuthViewModel {
-        return AuthViewModel(testDispatcherProvider, authService, errorHandler)
+        return AuthViewModel(authService, errorHandler)
     }
 
     @Test

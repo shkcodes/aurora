@@ -59,7 +59,7 @@ class ProfileViewModelTest : BaseTest() {
     }
 
     private fun viewModel() =
-        ProfileViewModel(testDispatcherProvider, userService, errorHandler, preferenceService)
+        ProfileViewModel(userService, errorHandler, preferenceService)
 
     @Test
     fun `updates state successfully on user profile fetch success`() =

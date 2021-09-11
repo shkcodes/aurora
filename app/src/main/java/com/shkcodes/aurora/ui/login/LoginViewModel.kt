@@ -1,6 +1,5 @@
 package com.shkcodes.aurora.ui.login
 
-import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.ui.Screen
 import com.shkcodes.aurora.ui.login.LoginContract.Intent
@@ -9,9 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    override val dispatcherProvider: DispatcherProvider
-) : ViewModel() {
+class LoginViewModel @Inject constructor() : ViewModel() {
 
     override fun handleIntent(intent: Intent) {
         when (intent) {

@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.ui.main
 
 import androidx.lifecycle.viewModelScope
-import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.Event
 import com.shkcodes.aurora.base.Event.TogglePaginatedLoading
 import com.shkcodes.aurora.base.EventBus
@@ -14,7 +13,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    override val dispatcherProvider: DispatcherProvider,
     eventBus: EventBus,
     fileService: FileService
 ) : ViewModel() {

@@ -21,7 +21,7 @@ class SplashViewModelTest : BaseTest() {
     }
     private val authService: AuthService = mockk()
 
-    private fun viewModel() = SplashViewModel(testDispatcherProvider, preferenceService, authService)
+    private fun viewModel() = SplashViewModel(preferenceService, authService)
 
     @Test
     fun `navigates to login after delay if user not logged in`() = testDispatcher.runBlockingTest {

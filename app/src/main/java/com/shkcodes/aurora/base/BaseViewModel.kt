@@ -8,8 +8,6 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<S, I>(private val initialState: S) : ViewModel() {
 
-    protected abstract val dispatcherProvider: DispatcherProvider
-
     private val viewStateFlow = MutableSharedFlow<S>(1).apply {
         tryEmit(initialState)
     }

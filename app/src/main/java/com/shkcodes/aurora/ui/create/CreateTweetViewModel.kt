@@ -2,7 +2,6 @@ package com.shkcodes.aurora.ui.create
 
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
-import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.base.StringId.GIF_DOWNLOAD_ERROR
 import com.shkcodes.aurora.base.StringId.MULTIPLE_TYPES
@@ -35,7 +34,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateTweetViewModel @Inject constructor(
-    override val dispatcherProvider: DispatcherProvider,
     private val userService: UserService,
     private val fileService: FileService,
     private val stringProvider: StringProvider

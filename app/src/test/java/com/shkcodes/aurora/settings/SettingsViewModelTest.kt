@@ -21,7 +21,7 @@ class SettingsViewModelTest : BaseTest() {
     private val eventBus: EventBus = mockk()
 
     private fun viewModel(): SettingsViewModel {
-        return SettingsViewModel(testDispatcherProvider, preferenceService, eventBus)
+        return SettingsViewModel(preferenceService, eventBus)
     }
 
     @Test

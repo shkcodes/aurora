@@ -12,7 +12,7 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class LoginViewModelTest : BaseTest() {
 
-    private fun viewModel() = LoginViewModel(testDispatcherProvider)
+    private fun viewModel() = LoginViewModel()
 
     @Test
     fun `navigates to auth screen on show auth screen intent`() = testDispatcher.runBlockingTest {

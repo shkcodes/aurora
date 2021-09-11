@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.ui.splash
 
 import androidx.lifecycle.viewModelScope
-import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.SideEffect
 import com.shkcodes.aurora.service.AuthService
 import com.shkcodes.aurora.service.PreferenceService
@@ -15,7 +14,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    override val dispatcherProvider: DispatcherProvider,
     private val preferenceService: PreferenceService,
     private val authService: AuthService
 ) : ViewModel() {

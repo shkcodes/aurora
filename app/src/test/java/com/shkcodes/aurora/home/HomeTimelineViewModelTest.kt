@@ -72,7 +72,6 @@ class HomeTimelineViewModelTest : BaseTest() {
 
     private fun viewModel(): HomeTimelineViewModel {
         return HomeTimelineViewModel(
-            testDispatcherProvider,
             userService,
             errorHandler,
             preferenceService,

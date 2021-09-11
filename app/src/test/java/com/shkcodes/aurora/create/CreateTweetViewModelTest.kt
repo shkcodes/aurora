@@ -43,7 +43,7 @@ class CreateTweetViewModelTest : BaseTest() {
     }
 
     private fun viewModel() =
-        CreateTweetViewModel(testDispatcherProvider, userService, fileService, stringProvider)
+        CreateTweetViewModel(userService, fileService, stringProvider)
 
 
     @Test

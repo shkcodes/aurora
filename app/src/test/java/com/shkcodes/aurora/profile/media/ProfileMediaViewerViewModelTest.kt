@@ -39,7 +39,7 @@ class ProfileMediaViewerViewModelTest : BaseTest() {
     }
 
 
-    private fun viewModel() = ProfileMediaViewerViewModel(testDispatcherProvider, userService)
+    private fun viewModel() = ProfileMediaViewerViewModel(userService)
 
     @Test
     fun `updates state successfully on init`() = testDispatcher.runBlockingTest {

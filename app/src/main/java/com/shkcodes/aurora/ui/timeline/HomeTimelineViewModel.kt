@@ -1,7 +1,6 @@
 package com.shkcodes.aurora.ui.timeline
 
 import androidx.lifecycle.viewModelScope
-import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.base.ErrorHandler
 import com.shkcodes.aurora.base.Event
 import com.shkcodes.aurora.base.Event.AutoplayVideosToggled
@@ -30,13 +29,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeTimelineViewModel @Inject constructor(
-    override val dispatcherProvider: DispatcherProvider,
     private val userService: UserService,
     private val errorHandler: ErrorHandler,
     private val preferenceService: PreferenceService,
@@ -105,12 +102,7 @@ class HomeTimelineViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             runCatching {
-                withContext(dispatcherProvider.io) {
-                    userService.fetchTimelineTweets(
-                        newerThan,
-                        afterId
-                    )
-                }
+                userService.fetchTimelineTweets(newerThan, afterId)
             }
                 .onSuccess {
                     val newItems = if (newerThan != null) it else emptyList()

@@ -54,8 +54,8 @@ class UserService @Inject constructor(
         return tweetsDao.getUserTweets(userHandle)
     }
 
-    fun fetchUserProfile(userHandle: String): User {
-        return client.getProfile(userHandle).toUser()
+    suspend fun fetchUserProfile(userHandle: String): User {
+        return dispatcherProvider.execute { client.getProfile(userHandle).toUser() }
     }
 
     suspend fun fetchUserTweets(userHandle: String, afterId: Long? = null): TweetItems {
