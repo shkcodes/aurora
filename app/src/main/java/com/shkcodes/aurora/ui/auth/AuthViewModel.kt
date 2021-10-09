@@ -34,6 +34,7 @@ class AuthViewModel @Inject constructor(
                 currentState = Loading
                 viewModelScope.launch {
                     runCatching { authService.login(authorization, verifier) }.onSuccess {
+                        authService.cacheFriends()
                         onSideEffect(SideEffect.DisplayScreen(Screen.Home))
                     }.onFailure {
                         currentState = Error(errorHandler.getErrorMessage(it))

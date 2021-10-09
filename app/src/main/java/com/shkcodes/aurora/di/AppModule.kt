@@ -9,12 +9,15 @@ import androidx.room.Room
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.shkcodes.aurora.base.DispatcherProvider
 import com.shkcodes.aurora.cache.AuroraDatabase
 import com.shkcodes.aurora.util.CacheConstants.PREFERENCES_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
@@ -56,4 +59,10 @@ object AppModule {
             }
         }
         .build()
+
+    @Singleton
+    @Provides
+    fun providesCoroutineScope(dispatcherProvider: DispatcherProvider): CoroutineScope {
+        return CoroutineScope(SupervisorJob() + dispatcherProvider.default)
+    }
 }

@@ -27,6 +27,7 @@ class SplashViewModel @Inject constructor(
                 Screen.Login
             }
             delay(SPLASH_TIMEOUT)
+            authService.cacheFriends()
             onSideEffect(SideEffect.DisplayScreen(destination))
         }
     }

@@ -8,6 +8,8 @@ import com.shkcodes.aurora.cache.entities.toEntity
 import com.shkcodes.aurora.cache.toAccessToken
 import com.shkcodes.aurora.cache.toAuthorization
 import com.shkcodes.aurora.cache.toUserCredentials
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import twitter4j.User
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,13 +19,9 @@ class AuthService @Inject constructor(
     private val usersDao: UsersDao,
     private val dispatcherProvider: DispatcherProvider,
     private val client: TwitterClient,
-    private val preferenceService: PreferenceService
+    private val preferenceService: PreferenceService,
+    private val applicationScope: CoroutineScope
 ) {
-
-    fun switchToAccount(credentials: UserCredentials) {
-        preferenceService.userCredentials = credentials
-        twitterApi = TwitterFactory(config).getInstance(credentials.toAccessToken())
-    }
 
     fun initClient() {
         client.switchToAccount(preferenceService.userCredentials!!.toAccessToken())
@@ -37,17 +35,21 @@ class AuthService @Inject constructor(
         dispatcherProvider.execute {
             val credentials = client.login(authorization, verifier).toUserCredentials()
             preferenceService.userCredentials = credentials
-            cacheFriends(credentials.userId)
         }
     }
 
-    private fun cacheFriends(userId: Long) {
-        var cursor = -1L
-        while (cursor != 0L) {
-            val response = client.getFriendsList(userId, cursor)
-            val friends = response.map(User::toEntity)
-            usersDao.saveUsers(friends)
-            cursor = response.nextCursor
+    fun cacheFriends() {
+        applicationScope.launch {
+            dispatcherProvider.execute {
+                val userId = preferenceService.userCredentials!!.userId
+                var cursor = -1L
+                while (cursor != 0L) {
+                    val response = client.getFriendsList(userId, cursor)
+                    val friends = response.map(User::toEntity)
+                    usersDao.saveUsers(friends)
+                    cursor = response.nextCursor
+                }
+            }
         }
     }
 }
