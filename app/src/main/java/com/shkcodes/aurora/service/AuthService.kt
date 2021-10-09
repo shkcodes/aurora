@@ -10,7 +10,6 @@ import com.shkcodes.aurora.cache.toAuthorization
 import com.shkcodes.aurora.cache.toUserCredentials
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import twitter4j.User
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -45,7 +44,9 @@ class AuthService @Inject constructor(
                 var cursor = -1L
                 while (cursor != 0L) {
                     val response = client.getFriendsList(userId, cursor)
-                    val friends = response.map(User::toEntity)
+                    val friends = response.map {
+                        it.toEntity(userId)
+                    }
                     usersDao.saveUsers(friends)
                     cursor = response.nextCursor
                 }

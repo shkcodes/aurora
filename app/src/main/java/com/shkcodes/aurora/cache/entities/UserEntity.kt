@@ -1,16 +1,16 @@
 package com.shkcodes.aurora.cache.entities
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import twitter4j.User
 
-@Entity(tableName = "users")
+@Entity(tableName = "users", primaryKeys = ["id", "friendOf"])
 data class UserEntity(
-    @PrimaryKey val id: Long,
+    val id: Long,
     val handle: String,
     val name: String,
-    val profileImageUrl: String
+    val profileImageUrl: String,
+    val friendOf: Long
 )
 typealias Users = List<UserEntity>
 
-fun User.toEntity() = UserEntity(id, screenName, name, profileImageURLHttps)
+fun User.toEntity(friendOf: Long) = UserEntity(id, screenName, name, profileImageURLHttps, friendOf)
